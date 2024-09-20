@@ -88,6 +88,15 @@ class Grid:
                 self.gridMap[str(beginRow) + "," + str(beginCol + i)] = word[i]
                 
             self.wordlist.append(word)
+
+    # Adds a new blocked space to the grid
+    def addBlocked(self, x: int, y: int):
+        if (self.gridMap[str(x) + "," + str(y)] == "_"):
+            self.gridMap[str(x) + "," + str(y)] = "*"
+
+    # Changes a grid space's state to empty
+    def addEmpty(self, x: int, y: int):
+        self.gridMap[str(x) + "," + str(y)] = "_"
             
 class Generator:
     # Initializes the word generator with a seed
@@ -96,32 +105,35 @@ class Generator:
         self.data = ["RED","REGISTER","REJECT","RENT","ROPE","OTHER","OIL","ENTER","THREE","TREK","OBTUSE","OBESE","LAMP","LIGHTER","LOW","EXIT","EPITOME"]
     
     # Selects a random word from the list of data
-    def newWord(self, maxLength: int):
+    def newWord(self, length: int):
+        copiedData = copy.deepcopy(self.data)
+        i = 0
+        while (i < len(copiedData)):
+            word = copiedData[i]
+            if (len(word) != length):
+                copiedData.remove(word)
+                i -= 1
+            i += 1
+
         random.seed(self.seed)
-        i = random.randrange(0, len(self.data))
-        while (len(self.data[i]) > maxLength):
-            i = random.randrange(0, len(self.data))
-        return self.data[i]
+        i = random.randrange(0, len(copiedData))
+        return copiedData[i]
     
     # Selects a random word from the list of data, containing the specified chars at the specified indices
-    def newWordContains(self, maxLength: int, indices: list, chars: list):
+    def newWordContains(self, length: int, indices: list, chars: list):
         copiedData = copy.deepcopy(self.data)
         i = 0
         while (i < len(copiedData)):
             word = copiedData[i]
             for j in range(0, len(indices)):
-                if (word[indices[j]] != chars[indices[j]]):
+                if (word[indices[j]] != chars[indices[j]] or len(word) != length):
                     copiedData.remove(word)
                     i -= 1
                     break
             i += 1
-            
-        print(copiedData)
         
         random.seed(self.seed)
         i = random.randrange(0, len(copiedData))
-        while (len(copiedData[i]) > maxLength):
-            i = random.randrange(0, len(copiedData))
         return copiedData[i]
 
 def main():
