@@ -2,13 +2,12 @@ import random
 from _ast import pattern
 from random import Random
 
-
 #Initalizes seed grid
 def makeSeedGrid():
     rows = 11  # Total rows
     pattern = []
-    row1 = ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
-    row2 = ["-", "*", "-", "*", "-", "*", "-", "*", "-", "*", "-"]
+    row1 = ["_", "_", "_", "_", "_", "_", "_", "_", "_", "_", "_"]
+    row2 = ["_", "*", "_", "*", "_", "*", "_", "*", "_", "*", "_"]
     for i in range(rows):
         if i % 2 == 0:
             pattern.append(row1)
@@ -38,6 +37,7 @@ def check_value_vertical(matrix, value,index):
 def updateEdges(grid):
 
     #Checks row to see if it has blank tile
+    '''
     if "*" not in grid[0]:
         grid[0][random.randint(1, len(grid[0])-1)] = "*"
 
@@ -52,7 +52,14 @@ def updateEdges(grid):
         grid[random.randint(1, len(grid[0])-1)][len(grid[0])-1] = "*"
 
     return grid
+    '''
+    randCoordinate = random.randrange(3, len(grid) - 4)
+    grid[0][randCoordinate] = "*"
+    grid[len(grid)-1][len(grid) - 1 - randCoordinate] = "*"
+    grid[len(grid) - 1 - randCoordinate][0] = "*"
+    grid[randCoordinate][len(grid)-1] = "*"
 
+    return grid
 
 #Takes  grid and adds initial blank tiles
 def addBlanks(grid):
