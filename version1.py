@@ -13,15 +13,29 @@ class Grid:
         # height - the grid's height in the y direction
         # gridMap - a dict containing keys of x,y pairs and values of the letters stored there (initialized to None)
         # wordlist - a list containing the words currently on the grid
-    def __init__(self, rows: int, cols: int):
-        self.length = rows
-        self.height = cols
-        self.gridMap = dict()
-        self.wordlist = list()
-        
-        for i in range(0, rows):
-            for j in range(0, cols):
-                self.gridMap[str(i) + "," + str(j)] = "_"
+    def __init__(self, rows: int, cols: int, *, filepath = None):
+        try:
+            self.length = rows
+            self.height = cols
+            self.gridMap = dict()
+            self.wordlist = list()
+            fileGrid = open(filepath, "r")
+
+            for i in range(0, rows):
+                line = fileGrid.readline().split(" ")
+                for j in range(0, cols):
+                    line[j] = line[j].strip()
+                    self.gridMap[str(i) + "," + str(j)] = line[j]
+
+        except TypeError:
+            self.length = rows
+            self.height = cols
+            self.gridMap = dict()
+            self.wordlist = list()
+
+            for i in range(0, rows):
+                for j in range(0, cols):
+                    self.gridMap[str(i) + "," + str(j)] = "_"
                     
     # Overriding the string representation of the grid
     def __str__(self):
@@ -99,10 +113,16 @@ class Grid:
         self.gridMap[str(x) + "," + str(y)] = "_"
             
 class Generator:
-    # Initializes the word generator with a seed
-    def __init__(self):
+    # Initializes the word generator with a name, seed, and filepath
+    def __init__(self, name, filepath: str):
         self.seed = datetime.now().timestamp()
-        self.data = ["RED","REGISTER","REJECT","RENT","ROPE","OTHER","OIL","ENTER","THREE","TREK","OBTUSE","OBESE","LAMP","LIGHTER","LOW","EXIT","EPITOME"]
+        self.name = name
+        self.data = open(filepath, "r").read().split("\n")
+
+    # Overriding the default string representation to show the properties of this generator
+    def __str__(self):
+        returnString = "Name:\n" + self.name.__str__() +"\nSeed:\n" + self.seed.__str__() + "\nData:\n" + self.data.__str__()
+        return returnString
     
     # Selects a random word from the list of data
     def newWord(self, length: int):
@@ -139,15 +159,8 @@ class Generator:
 def main():
     print("start\n")
 
-    g = Grid(8, 8)
-    g.addWord("RED", True, 0, 0)
-    g.addWord("REGISTER", False, 0, 0)
+    g = Grid(11, 11, filepath="output.txt")
     print(g)
-    print()
-    
-    r = Generator()
-    print(r.newWord(50))
-    print(r.newWordContains(50, [0], ["R"]))
 
 if (__name__ == "__main__"):
     main()
