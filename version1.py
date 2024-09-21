@@ -5,6 +5,7 @@
 import copy
 from datetime import datetime
 import random
+from operator import length_hint
 
 
 class Grid:
@@ -13,6 +14,7 @@ class Grid:
         # height - the grid's height in the y direction
         # gridMap - a dict containing keys of x,y pairs and values of the letters stored there (initialized to None)
         # wordlist - a list containing the words currently on the grid
+    # Also includes an optional argument filepath, to import a pre-made grid
     def __init__(self, rows: int, cols: int, *, filepath = None):
         try:
             self.length = rows
@@ -111,46 +113,74 @@ class Grid:
     # Changes a grid space's state to empty
     def addEmpty(self, x: int, y: int):
         self.gridMap[str(x) + "," + str(y)] = "_"
+
+    # Checks to see where new words should be starting
+    def findNextOpen(self):
+        for row in range(0, self.length):
+            for col in range(0, self.height):
+                x = 0
+                y = 0
+                # First, we check for availability DOWN
+                if (self.gridMap[str(row) + "," + str(col)] != "*") and (col + 1 < self.length):
+                    x = 1
+                    while (col + x < self.length):
+                        if (self.gridMap[str(row) + "," + str(col + x)] == "_"):
+                            x += 1
+                        else:
+                            break
+                # Next, we check for availability DOWN
+                if (self.gridMap[str(row) + "," + str(col)] != "*") and (row + 1 < self.height):
+                    y = 1
+                    while (row + 1 < self.height):
+                        if (self.gridMap[str(row + y) + "," + str(col)] == "_"):
+                            y += 1
+                        else:
+                            break
+                # Finally, if either x or y is greater than 0, return
+                # Returns a tuple in the format (int i, int j, int x, int y)
+                    # i - target row
+                    # j - target column
+                    # x - length of the word ACROSS, or False if not available
+                    # y - length of the word DOWN, or False if not available
+                if (x > 1) or (y > 1):
+                    if (x <= 1):
+                        return (row, col, False, y)
+                    elif (y <= 1):
+                        return (row, col, x, False)
+                    return (row, col, x, y)
             
 class Generator:
-    # Initializes the word generator with a name, seed, and filepath
-    def __init__(self, name, filepath: str):
+    # Initializes the word generator with the following fields:
+        # seed - the generator's starting seed for RNG
+        # name - a name for the generator to display when printed out
+        # data - a list of words for it to hold
+    def __init__(self, name, letter: str):
         self.seed = datetime.now().timestamp()
         self.name = name
-        self.data = open(filepath, "r").read().split("\n")
+        self.data = open("../Crossword_Generator/Crossword Databases/{0}_words_converted.txt".format(letter), "r").read().split(" ")
 
     # Overriding the default string representation to show the properties of this generator
     def __str__(self):
-        returnString = "Name:\n" + self.name.__str__() +"\nSeed:\n" + self.seed.__str__() + "\nData:\n" + self.data.__str__()
+        returnString = "Name:\n " + self.name.__str__() +"\nSeed:\n " + self.seed.__str__() + "\nData:\n " + self.data.__str__()
         return returnString
     
-    # Selects a random word from the list of data
-    def newWord(self, length: int):
-        copiedData = copy.deepcopy(self.data)
-        i = 0
-        while (i < len(copiedData)):
-            word = copiedData[i]
-            if (len(word) != length):
-                copiedData.remove(word)
-                i -= 1
-            i += 1
-
-        random.seed(self.seed)
-        i = random.randrange(0, len(copiedData))
-        return copiedData[i]
-    
     # Selects a random word from the list of data, containing the specified chars at the specified indices
-    def newWordContains(self, length: int, indices: list, chars: list):
+    def newWord(self, length: int, indices: list, chars: list):
         copiedData = copy.deepcopy(self.data)
         i = 0
-        while (i < len(copiedData)):
-            word = copiedData[i]
-            for j in range(0, len(indices)):
-                if (word[indices[j]] != chars[indices[j]] or len(word) != length):
-                    copiedData.remove(word)
-                    i -= 1
-                    break
-            i += 1
+        try:
+            while (i < len(copiedData)):
+                word = copiedData[i]
+                for j in range(0, len(indices)):
+                    if (word[indices[j]] != chars[indices[j]] or len(word) != length):
+                        copiedData.remove(word)
+                        i -= 1
+                        break
+                i += 1
+        except IndexError:
+            print("ERROR OCCURRED.")
+            print(copiedData[i - 1])
+            quit()
         
         random.seed(self.seed)
         i = random.randrange(0, len(copiedData))
@@ -159,8 +189,13 @@ class Generator:
 def main():
     print("start\n")
 
-    g = Grid(11, 11, filepath="output.txt")
-    print(g)
+    grid = Grid(11, 11, filepath="../Crossword_Generator/output.txt")
+    grid.addWord("ARE", False, 0, 0)
+    print(grid)
+    tup = grid.findNextOpen()
+    if (tup[3] != False):
+        gen = Generator("gen", grid.gridMap[str(tup[0]) + "," + str(tup[1])])
+        print(gen.newWord(tup[3], [0], [grid.gridMap[str(tup[0]) + "," + str(tup[1])]]))
 
 if (__name__ == "__main__"):
     main()
