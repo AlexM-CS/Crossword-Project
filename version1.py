@@ -189,7 +189,7 @@ class Generator:
 def main():
     print("start\n")
 
-    grid = Grid(11, 11, filepath="../Crossword_Generator/output.txt")
+    grid = Grid(11, 11, filepath="../Crossword-Project/output.txt")
     grid.addWord("ARE", False, 0, 0)
     print(grid)
     tup = grid.findNextOpen()
