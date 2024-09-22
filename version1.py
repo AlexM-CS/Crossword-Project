@@ -5,7 +5,8 @@
 import copy
 from datetime import datetime
 import random
-from operator import length_hint
+from display import displayMap
+
 
 
 class Grid:
@@ -190,9 +191,12 @@ def main():
     print("start\n")
 
     grid = Grid(11, 11, filepath="../Crossword-Project/output.txt")
-    grid.addWord("ARE", False, 0, 0)
+    grid.addWord("JACKAS", False, 0, 0)
     print(grid)
+    displayMap(grid)
+
     tup = grid.findNextOpen()
+
     if (tup[3] != False):
         gen = Generator("gen", grid.gridMap[str(tup[0]) + "," + str(tup[1])])
         print(gen.newWord(tup[3], [0], [grid.gridMap[str(tup[0]) + "," + str(tup[1])]]))
