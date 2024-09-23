@@ -195,6 +195,7 @@ class IndexCell(WordCell):
         # an across and down word starting from here
         self.dir = dir
 
+    # Overriding the default string representation
     def __str__(self):
         return "Cell ({0},{1})\n".format(self.x, self.y) + "TYPE: IndexCell\nPROPERTIES: '{0}', '{1}'".format(self.letter, self.word)
 
