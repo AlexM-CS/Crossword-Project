@@ -190,7 +190,7 @@ def getAcrossAndDownTileIndexes(grid):
 
 #class representive of each blank word spot in the crossword generation
 class WordBlank:
-    def __init__(self, wordNum):
+    def __init__(self, wordNum: int):
         self.wordNum = wordNum
         self.coordinates = []
 
