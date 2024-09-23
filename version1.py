@@ -221,24 +221,24 @@ class EmptyCell(Cell):
 class WordList:
     #Creates a "wordcell" list that holds the body of the word
     def __init__(self):
-        self.wordbody = []
+        self.wordBody = []
 
     #Adds a cell to the wordbody list
     def addCell(self, cell: Cell):
-        self.wordbody.append(cell)
+        self.wordBody.append(cell)
 
     #returns the word of the cell
     def __str__(self):
         returnStr = ""
-        for word in self.wordbody:
+        for word in self.wordBody:
             returnStr += word.letter
         return returnStr
 
 
     def getHead(self):
-        if len(self.wordbody) == 0:
+        if len(self.wordBody) == 0:
             return
-        return self.wordbody[0]
+        return self.wordBody[0]
 
 class WordCell(Cell):
     # Initializes a WordCell with the following fields:

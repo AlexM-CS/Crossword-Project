@@ -185,7 +185,28 @@ def getAcrossAndDownTileIndexes(grid):
             if grid[row][column] == "A":
                 across.append((row, column))
     return across, down
-
+'''    
+iterates through all h,d, and a and checks to make sure that the size of the word space is >2. It removes all 
+that do not fit this parameter
+'''
+def checkAndRemoveAllSize2(grid):
+    for row in range(len(grid)):
+        for column in range(len(grid[0])):
+            hybrid = False
+            if grid[row][column] == "H":
+                hybrid = True
+            if grid[row][column] == "D" or hybrid:
+                downCheck = 0
+                p = 1
+                while(grid[row+p][column] == "_"):
+                    downCheck += 1
+                    p += 1
+            elif grid[row][column] == "A" or hybrid:
+                acrossCheck = 0
+                p = 1
+                while (grid[row + p][column] == "_"):
+                    acrossCheck += 1
+                    p += 1
 
 
 #class representive of each blank word spot in the crossword generation
