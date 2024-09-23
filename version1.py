@@ -248,6 +248,28 @@ class IndexCell(WordCell):
     def __str__(self):
         return "Cell ({0},{1})\n".format(self.x, self.y) + "TYPE: IndexCell\nPROPERTIES: '{0}', '{1}'".format(self.letter, self.word)
 
+class WordCell():
+    #Creates a "wordcell" list that holds the body of the word
+    def __init__(self):
+        self.wordbody = []
+
+    #Adds a cell to the wordbody list
+    def addCell(self, cell: WordCell):
+        self.wordbody.append(cell)
+
+    #returns the word of the cell
+    def __str__(self):
+        returnStr = ""
+        for word in self.wordbody:
+            returnStr += word.letter
+        return returnStr
+
+
+    def getHead(self):
+        if len(self.wordbody) == 0:
+            return
+        return self.wordbody[0]
+
 class Generator:
     # Initializes the word generator with the following fields:
         # seed - the generator's starting seed for RNG
