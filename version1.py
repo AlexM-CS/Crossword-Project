@@ -218,13 +218,34 @@ class EmptyCell(Cell):
 
     def __str__(self):
         return "Cell ({0},{1})\n".format(self.x, self.y) + "TYPE: EmptyCell"
+class WordList:
+    #Creates a "wordcell" list that holds the body of the word
+    def __init__(self):
+        self.wordbody = []
+
+    #Adds a cell to the wordbody list
+    def addCell(self, cell: Cell):
+        self.wordbody.append(cell)
+
+    #returns the word of the cell
+    def __str__(self):
+        returnStr = ""
+        for word in self.wordbody:
+            returnStr += word.letter
+        return returnStr
+
+
+    def getHead(self):
+        if len(self.wordbody) == 0:
+            return
+        return self.wordbody[0]
 
 class WordCell(Cell):
     # Initializes a WordCell with the following fields:
         # x - row of the grid that this cell belongs to
         # y - column of the grid that this cell belongs to
         # letter - the letter assigned to this cell
-    def __init__(self, x: int, y: int, letter: str, word: str):
+    def __init__(self, x: int, y: int, letter: str, word: WordList):
         super().__init__(x, y)
         self.letter = letter
         self.word = word
@@ -236,7 +257,7 @@ class IndexCell(WordCell):
     # Parent init
         # index - number for this cell
         # dir - boolean that determines direction (True = DOWN, False = ACROSS)
-    def __init__(self, x: int, y: int, letter: str, word: str, index: int, dir: bool):
+    def __init__(self, x: int, y: int, letter: str, word: WordList, index: int, dir: bool):
         super().__init__(x, y, letter, word)
         self.index = index
 
@@ -248,13 +269,13 @@ class IndexCell(WordCell):
     def __str__(self):
         return "Cell ({0},{1})\n".format(self.x, self.y) + "TYPE: IndexCell\nPROPERTIES: '{0}', '{1}'".format(self.letter, self.word)
 
-class WordCell():
+class WordList:
     #Creates a "wordcell" list that holds the body of the word
     def __init__(self):
         self.wordbody = []
 
     #Adds a cell to the wordbody list
-    def addCell(self, cell: WordCell):
+    def addCell(self, cell: Cell):
         self.wordbody.append(cell)
 
     #returns the word of the cell
