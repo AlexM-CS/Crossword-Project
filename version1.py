@@ -150,7 +150,54 @@ class Grid:
 
     def requiredLetters(self, direction: bool, beginRow: int, beginCol: int):
         pass
-            
+
+class Cell:
+    # Initializes a Cell with the following fields:
+        # x - row of the grid that this cell belongs to
+        # y - column of the grid that this cell belongs to
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
+
+    def __str__(self):
+        return "Cell ({0},{1})".format(self.x, self.y)
+
+class EmptyCell(Cell):
+    # Parent init
+    def __init__(self, x: int, y: int):
+        super().__init__(x, y)
+
+    def __str__(self):
+        return "Cell ({0},{1})\n".format(self.x, self.y) + "TYPE: EmptyCell"
+
+class WordCell(Cell):
+    # Initializes a WordCell with the following fields:
+        # x - row of the grid that this cell belongs to
+        # y - column of the grid that this cell belongs to
+        # letter - the letter assigned to this cell
+    def __init__(self, x: int, y: int, letter: str, word: str):
+        super().__init__(x, y)
+        self.letter = letter
+        self.word = word
+
+    def __str__(self):
+        return "Cell ({0},{1})\n".format(self.x, self.y) + "TYPE: WordCell\nPROPERTIES: '{0}', '{1}'".format(self.letter, self.word)
+
+class IndexCell(WordCell):
+    # Parent init
+        # index - number for this cell
+        # dir - boolean that determines direction (True = DOWN, False = ACROSS)
+    def __init__(self, x: int, y: int, letter: str, word: str, index: int, dir: bool):
+        super().__init__(x, y, letter, word)
+        self.index = index
+
+        # This maybe should change in the future, if the cell has both
+        # an across and down word starting from here
+        self.dir = dir
+
+    def __str__(self):
+        return "Cell ({0},{1})\n".format(self.x, self.y) + "TYPE: IndexCell\nPROPERTIES: '{0}', '{1}'".format(self.letter, self.word)
+
 class Generator:
     # Initializes the word generator with the following fields:
         # seed - the generator's starting seed for RNG
