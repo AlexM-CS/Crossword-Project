@@ -23,7 +23,7 @@ def printGrid(grid):
 
 
 #Helper method to check vertical axis of grid
-def check_value_vertical(matrix, value,index):
+def check_value_vertical(matrix, value, index):
     rows = len(matrix)
     cols = index
 
@@ -88,9 +88,66 @@ def addBlanks(grid):
 
     printGrid(newGrid)
 
-    newGrid =updateEdges(newGrid)
+    newGrid = updateEdges(newGrid)
+    '''
+    wordDex = []
+    wordNum = 1
+    for row in range(0, len(newGrid)):
+        for column in range(0, len(newGrid[row])):
+            
+            addWord = True
+            if wordNum == 1:
+                pass
+            else:
+                for eachWord in wordDex:
+                    if eachWord.checkCoord((row, column)):
+                        addWord = False
+            if addWord:
+                currentWord = WordBlank(wordNum)
+                x1 = row
+                y1 = column
+                while (x1 + 1 < len(newGrid)):
+                    x1 += 1
+                    if newGrid[x1][column] == "*":
+                        currentWord.addcoord((x1, column))
+                x1 = row
+                while (x1 - 1 >= 0):
+                    x1 -= 1
+                    if newGrid[x1][column] == "*":
+                        currentWord.addcoord((x1, column))
+
+                while (y1 + 1 < len(newGrid[0])):
+                    y1 += 1
+                    if newGrid[row][y1] == "*":
+                        currentWord.addcoord((row, y1))
+                y1 = column
+                while (y1 - 1 >= 0):
+                    y1 -= 1
+                    if newGrid[row][y1] == "*":
+                        currentWord.addcoord((row, y1))
+                wordNum+=1
+    '''
+
+
+
+
+
+
     return newGrid
 
+#class representive of each blank word spot in the crossword generation
+class WordBlank:
+    def __init__(self, wordNum):
+        self.wordNum = wordNum
+        self.coordinates = []
+
+    def addcoord(self, spot):
+        self.coordinates.append(spot)
+
+    def checkCoord(self, spot):
+        return spot in self.coordinates
+    def decreaseWordNum(self):
+        self.wordNum-=1
 
 
 #Takes grid and writes it to a file 
