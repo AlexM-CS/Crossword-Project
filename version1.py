@@ -73,8 +73,6 @@ class Grid:
     def getLetter(self, row: int, col: int):
         return self.gridMap[100 * row + col]
 
-
-
     #Initalizes 2D array of objects depedning on output from CrossGen
     def initGrid(self,file):
         grid = []
@@ -184,8 +182,23 @@ class Grid:
                         return (row, col, x, False)
                     return (row, col, x, y)
 
+    # Finds the letters that must appear in a word to be placed here
     def requiredLetters(self, direction: bool, beginRow: int, beginCol: int):
-        pass
+        i = 0
+        output = list()
+        if (direction): # True: the word will be DOWN
+            while (beginRow + i < self.length and self.gridMap[100 * (beginRow + i) + beginCol] != "*"):
+                if (self.gridMap[100 * (beginRow + i) + beginCol] != "_"):
+                    output.append(i, self.gridMap[100 * (beginRow + i) + beginCol])
+                i += 1
+
+        else: # False: the word will be ACROSS
+            while (beginCol + i < self.height and self.gridMap[100 * beginRow + beginCol + i] != "*"):
+                if (self.gridMap[100 * beginRow + beginCol + i] != "_"):
+                    output.append(i, self.gridMap[100 * beginRow + beginCol + i])
+                i += 1
+
+        return output
 
 class Cell:
     # Initializes a Cell with the following fields:
@@ -279,7 +292,6 @@ def main():
     grid.addWord("ASSASS", False, 0, 0)
     print(grid)
 
-
     #Added to test new 2D aray cell implementation
     twoDGrid = grid.initGrid("output1.txt")
     for row in twoDGrid:
@@ -287,8 +299,6 @@ def main():
             print(val)
 
     #displayMap(grid)
-
-
 
 if (__name__ == "__main__"):
     main()
