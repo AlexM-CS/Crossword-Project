@@ -186,6 +186,8 @@ def getAcrossAndDownTileIndexes(grid):
                 across.append((row, column))
     return across, down
 
+
+
 #class representive of each blank word spot in the crossword generation
 class WordBlank:
     def __init__(self, wordNum):

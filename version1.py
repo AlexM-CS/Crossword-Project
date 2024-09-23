@@ -159,7 +159,7 @@ class Generator:
     def __init__(self, name, letter: str):
         self.seed = datetime.now().timestamp()
         self.name = name
-        self.data = open("../Crossword-Project-main/Crossword Databases/{0}_words_converted.txt".format(letter), "r").read().split(" ")
+        self.data = open("../Crossword-Project/Crossword Databases/{0}_words_converted.txt".format(letter), "r").read().split(" ")
 
     # Overriding the default string representation to show the properties of this generator
     def __str__(self):
@@ -191,8 +191,8 @@ class Generator:
 def main():
     print("start\n")
 
-    grid = Grid(11, 11, filepath="../Crossword-Project-main/output.txt")
-    grid.addWord("JACKAS", False, 0, 0)
+    grid = Grid(11, 11, filepath="output.txt")
+    grid.addWord("JACKS", False, 0, 0)
     print(grid)
     displayMap(grid)
 
