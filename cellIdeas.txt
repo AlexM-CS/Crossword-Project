@@ -1,0 +1,12 @@
+class Cell:
+  self.row - x-coordinate in the grid
+  self.col - y-coordinate in the grid
+    these two could probably be stored as a tuple?
+
+  self.letter = None - can be overwritten later on to hold a letter
+
+  self.index = None - can be initialized later on to hold an index (where a word will be placed)
+  self.direction = None - boolean that stores the direction of the word
+    these may want to be stored as a tuple as well?
+    potentially even a list of tuples, as a single cell
+    can have up to 2 words starting there
