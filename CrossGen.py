@@ -1,6 +1,12 @@
 import random
 from _ast import pattern
+from copy import deepcopy
 from random import Random
+
+from pygame.examples import grid
+
+from display import displayMap, displayGrid
+
 
 #Initalizes seed grid
 def makeSeedGrid():
@@ -60,6 +66,10 @@ def updateEdges(grid):
     grid[randCoordinate][len(grid)-1] = "*"
 
     return grid
+
+
+
+
 
 #Takes  grid and adds initial blank tiles
 def addBlanks(grid):
@@ -135,6 +145,33 @@ def addBlanks(grid):
 
     return newGrid
 
+
+
+def markAcrossAndDownTiles(grid):
+    for row in range(len(grid)):
+        for column in range(len(grid[0])):
+            if grid[row][column] != "*":
+                if column == len(grid[0]) - 1:
+                    pass
+                elif column == 0:
+                    if grid[row][column+1] != "*":
+                        grid[row][column] = "A"
+                elif grid[row][column-1] == "*" and (grid[row][column+1] != "*" or column+1 == len(grid[0])):
+                    grid[row][column] = "A"
+                if row == len(grid) - 1:
+                    pass
+                elif row == 0:
+                    if grid[row+1][column] != "*":
+                        if grid[row][column] == "A":
+                            grid[row][column] = "H"
+                        else:
+                            grid[row][column] = "D"
+                elif grid[row-1][column] == "*" and (grid[row + 1][column] != "*" or row + 1 == len(grid)):
+                    if grid[row][column] == "A":
+                        grid[row][column] = "H"
+                    else:
+                        grid[row][column] = "D"
+
 #class representive of each blank word spot in the crossword generation
 class WordBlank:
     def __init__(self, wordNum):
@@ -174,6 +211,13 @@ def main():
     newGrid = addBlanks(seedGrid)
     printGrid(newGrid)
     write_to_file('output.txt', newGrid)
+
+
+    othergrid = deepcopy(newGrid)
+    markAcrossAndDownTiles(othergrid)
+    write_to_file('output1.txt', othergrid)
+    displayGrid(othergrid)
+
 
 
 
