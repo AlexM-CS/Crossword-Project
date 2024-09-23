@@ -7,8 +7,6 @@ from datetime import datetime
 import random
 from display import displayMap
 
-
-
 class Grid:
     # Initializes the Grid object with the following fields:
         # length - the grid's length in the x direction
@@ -28,7 +26,7 @@ class Grid:
                 line = fileGrid.readline().split(" ")
                 for j in range(0, cols):
                     line[j] = line[j].strip()
-                    self.gridMap[str(i) + "," + str(j)] = line[j]
+                    self.gridMap[100 * i + j] = line[j]
 
         except TypeError:
             self.length = rows
@@ -38,7 +36,7 @@ class Grid:
 
             for i in range(0, rows):
                 for j in range(0, cols):
-                    self.gridMap[str(i) + "," + str(j)] = "_"
+                    self.gridMap[100 * i + j] = "_"
                     
     # Overriding the string representation of the grid
     def __str__(self):
@@ -73,7 +71,7 @@ class Grid:
 
     # Gets the letter currently at the coordinates x, y 
     def getLetter(self, row: int, col: int):
-        return self.gridMap[str(row) + "," + str(col)]
+        return self.gridMap[100 * row + col]
 
     # Adds a word (and by extension, its letters) to the grid, if possible
     def addWord(self, word: str, direction: bool, beginRow: int, beginCol: int):
@@ -82,38 +80,38 @@ class Grid:
         word = word.upper()
         if (direction): # True: the word will be DOWN
             for i in range(0, len(word)):
-                current = self.gridMap[str(beginRow + i) + "," + str(beginCol)]
+                current = self.gridMap[100 * (beginRow + i) + beginCol]
                 if (beginRow + i >= self.length):
                     raise Exception("Words cannot fit out of bounds.")
                 elif (current != word[i] and current != "_"):
                     raise Exception("Words cannot overwrite previous letters.")
             
             for i in range(0, len(word)): # If this line has been reached, the word can fit in this location
-                self.gridMap[str(beginRow + i) + "," + str(beginCol)] = word[i]
+                self.gridMap[100 * (beginRow + i) + beginCol] = word[i]
                 
             self.wordlist.append(word)
             
         else: # False: the word will be ACROSS
             for i in range(0, len(word)):
-                current = self.gridMap[str(beginRow) + "," + str(beginCol + i)]
+                current = self.gridMap[100 * beginRow + beginCol + i]
                 if (beginCol + i >= self.length):
                     raise Exception("Words cannot fit out of bounds.")
                 elif (current != word[i] and current != "_"):
                     raise Exception("Words cannot overwrite previous letters.")
             
             for i in range(0, len(word)): # If this line has been reached, the word can fit in this location
-                self.gridMap[str(beginRow) + "," + str(beginCol + i)] = word[i]
+                self.gridMap[100 * beginRow + beginCol + i] = word[i]
                 
             self.wordlist.append(word)
 
     # Adds a new blocked space to the grid
     def addBlocked(self, x: int, y: int):
-        if (self.gridMap[str(x) + "," + str(y)] == "_"):
-            self.gridMap[str(x) + "," + str(y)] = "*"
+        if (self.gridMap[100 * x + y] == "_"):
+            self.gridMap[100 * x + y] = "*"
 
     # Changes a grid space's state to empty
     def addEmpty(self, x: int, y: int):
-        self.gridMap[str(x) + "," + str(y)] = "_"
+        self.gridMap[110 * x + y] = "_"
 
     # Checks to see where new words should be starting
     def findNextOpen(self):
@@ -122,18 +120,18 @@ class Grid:
                 x = 0
                 y = 0
                 # First, we check for availability DOWN
-                if (self.gridMap[str(row) + "," + str(col)] != "*") and (col + 1 < self.length):
+                if (self.gridMap[100 * row + col] != "*") and (col + 1 < self.length):
                     x = 1
                     while (col + x < self.length):
-                        if (self.gridMap[str(row) + "," + str(col + x)] == "_"):
+                        if (self.gridMap[100 * row + col + x] == "_"):
                             x += 1
                         else:
                             break
                 # Next, we check for availability DOWN
-                if (self.gridMap[str(row) + "," + str(col)] != "*") and (row + 1 < self.height):
+                if (self.gridMap[100 * row + col] != "*") and (row + 1 < self.height):
                     y = 1
                     while (row + 1 < self.height):
-                        if (self.gridMap[str(row + y) + "," + str(col)] == "_"):
+                        if (self.gridMap[100 * (row + y) + col] == "_"):
                             y += 1
                         else:
                             break
@@ -149,6 +147,9 @@ class Grid:
                     elif (y <= 1):
                         return (row, col, x, False)
                     return (row, col, x, y)
+
+    def requiredLetters(self, direction: bool, beginRow: int, beginCol: int):
+        pass
             
 class Generator:
     # Initializes the word generator with the following fields:
@@ -158,7 +159,7 @@ class Generator:
     def __init__(self, name, letter: str):
         self.seed = datetime.now().timestamp()
         self.name = name
-        self.data = open("../Crossword_Generator/Crossword Databases/{0}_words_converted.txt".format(letter), "r").read().split(" ")
+        self.data = open("../Crossword-Project-main/Crossword Databases/{0}_words_converted.txt".format(letter), "r").read().split(" ")
 
     # Overriding the default string representation to show the properties of this generator
     def __str__(self):
@@ -190,16 +191,10 @@ class Generator:
 def main():
     print("start\n")
 
-    grid = Grid(11, 11, filepath="../Crossword-Project/output.txt")
+    grid = Grid(11, 11, filepath="../Crossword-Project-main/output.txt")
     grid.addWord("JACKAS", False, 0, 0)
     print(grid)
     displayMap(grid)
-
-    tup = grid.findNextOpen()
-
-    if (tup[3] != False):
-        gen = Generator("gen", grid.gridMap[str(tup[0]) + "," + str(tup[1])])
-        print(gen.newWord(tup[3], [0], [grid.gridMap[str(tup[0]) + "," + str(tup[1])]]))
 
 if (__name__ == "__main__"):
     main()
