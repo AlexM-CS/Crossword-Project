@@ -172,6 +172,20 @@ def markAcrossAndDownTiles(grid):
                     else:
                         grid[row][column] = "D"
 
+def getAcrossAndDownTileIndexes(grid):
+    down = []
+    across = []
+    for row in range(len(grid)):
+        for column in range(len(grid[0])):
+            if grid[row][column] == "H":
+                down.append((row, column))
+                across.append((row, column))
+            if grid[row][column] == "D":
+                down.append((row, column))
+            if grid[row][column] == "A":
+                across.append((row, column))
+    return across, down
+
 #class representive of each blank word spot in the crossword generation
 class WordBlank:
     def __init__(self, wordNum):
