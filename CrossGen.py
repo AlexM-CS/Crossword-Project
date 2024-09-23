@@ -195,16 +195,15 @@ def checkAndRemoveAllSize2(grid):
             hybrid = False
             if grid[row][column] == "H":
                 hybrid = True
-            downCheck = 0
+            downCheck = 1
             if grid[row][column] == "D" or hybrid:
-                downCheck = 0
                 p = 1
                 while(grid[row+p][column] in ("_", "A")):
                     downCheck += 1
                     p += 1
                     if downCheck == 3 or (row + p) >= len(grid):
                         break
-            acrossCheck = 0
+            acrossCheck = 1
             if grid[row][column] == "A" or hybrid:
                 p = 1
                 while (grid[row][column + p] in ("_","D")):
@@ -271,7 +270,7 @@ def main():
     othergrid = deepcopy(newGrid)
     markAcrossAndDownTiles(othergrid)
     write_to_file('output1.txt', othergrid)
-    #checkAndRemoveAllSize2(othergrid)
+    checkAndRemoveAllSize2(othergrid)
     write_to_file('output2.txt', othergrid)
     displayGrid(othergrid)
 
