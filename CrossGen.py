@@ -3,7 +3,7 @@ from _ast import pattern
 from copy import deepcopy
 from random import Random
 
-from pygame.examples import grid
+#from pygame.examples import grid
 
 from display import displayMap, displayGrid
 
@@ -195,21 +195,22 @@ def checkAndRemoveAllSize2(grid):
             hybrid = False
             if grid[row][column] == "H":
                 hybrid = True
+            downCheck = 0
             if grid[row][column] == "D" or hybrid:
                 downCheck = 0
                 p = 1
-                while(grid[row+p][column] == "_"):
+                while(grid[row+p][column] in ("_", "A")):
                     downCheck += 1
                     p += 1
-                    if downCheck == 3:
+                    if downCheck == 3 or (row + p) >= len(grid):
                         break
+            acrossCheck = 0
             if grid[row][column] == "A" or hybrid:
-                acrossCheck = 0
                 p = 1
-                while (grid[row + p][column] == "_"):
+                while (grid[row][column + p] in ("_","D")):
                     acrossCheck += 1
                     p += 1
-                    if acrossCheck == 3:
+                    if acrossCheck == 3 or (column + p) >= len(grid[0]):
                         break
             if downCheck == 2:
                 grid[row + 1][column] = "*"
@@ -243,7 +244,7 @@ class WordBlank:
 
 
 #Takes grid and writes it to a file 
-def write_to_file(filename,grid):
+def write_to_file(filename: object, grid: object) -> object:
     lines = []
     for i in range(len(grid)):
         lines.append(" ".join(grid[i]))
@@ -270,6 +271,8 @@ def main():
     othergrid = deepcopy(newGrid)
     markAcrossAndDownTiles(othergrid)
     write_to_file('output1.txt', othergrid)
+    #checkAndRemoveAllSize2(othergrid)
+    write_to_file('output2.txt', othergrid)
     displayGrid(othergrid)
 
 
