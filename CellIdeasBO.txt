@@ -1,4 +1,4 @@
-Abstract Class Cell:
+Parent Class Cell:
 	int x
 	int y
 

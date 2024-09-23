@@ -228,7 +228,6 @@ def main():
     printGrid(newGrid)
     write_to_file('output.txt', newGrid)
 
-
     othergrid = deepcopy(newGrid)
     markAcrossAndDownTiles(othergrid)
     write_to_file('output1.txt', othergrid)

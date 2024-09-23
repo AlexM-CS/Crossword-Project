@@ -73,6 +73,42 @@ class Grid:
     def getLetter(self, row: int, col: int):
         return self.gridMap[100 * row + col]
 
+
+
+    #Initalizes 2D array of objects depedning on output from CrossGen
+    def initGrid(self,file):
+        grid = []
+        index = 0
+        # Open the file in read mode
+        with open(file, 'r') as f:
+            # Iterate through each line with its index (i is the row index)
+            for i, line in enumerate(f):
+                gridline = []  # Create an empty list for each line
+                # Split the line into elements (space-separated or comma-separated)
+                row = line.strip().split()
+                # Iterate through each value with its index (j is the column index)
+                for j, val in enumerate(row):
+                    if val == "*":
+                        gridline.append(EmptyCell(i, j))  # Pass the indices to EmptyCell
+                    elif val == "A":
+                        gridline.append(IndexCell(i,j,"_","_",False,index))
+                        index += 1
+                    elif val == "D":
+                        gridline.append(IndexCell(i,j,"_","_",True,index))
+                        index += 1
+                    elif val == "H":
+                        gridline.append(IndexCell(i,j,"_","_",True,index))
+                        index += 1
+                        gridline.append(IndexCell(i,j,"_","_",False,index))
+                        index += 1
+                    else:
+                        gridline.append(WordCell(i,j,"_","_",))
+
+
+                grid.append(gridline)  # Add the gridline to the main grid
+
+        return grid
+
     # Adds a word (and by extension, its letters) to the grid, if possible
     def addWord(self, word: str, direction: bool, beginRow: int, beginCol: int):
         if not (word.isalpha()):
@@ -240,9 +276,19 @@ def main():
     print("start\n")
 
     grid = Grid(11, 11, filepath="output.txt")
-    grid.addWord("JACKS", False, 0, 0)
+    grid.addWord("ASSASS", False, 0, 0)
     print(grid)
-    displayMap(grid)
+
+
+    #Added to test new 2D aray cell implementation
+    twoDGrid = grid.initGrid("output1.txt")
+    for row in twoDGrid:
+        for val in row:
+            print(val)
+
+    #displayMap(grid)
+
+
 
 if (__name__ == "__main__"):
     main()
