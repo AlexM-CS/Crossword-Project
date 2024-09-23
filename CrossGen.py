@@ -201,12 +201,30 @@ def checkAndRemoveAllSize2(grid):
                 while(grid[row+p][column] == "_"):
                     downCheck += 1
                     p += 1
-            elif grid[row][column] == "A" or hybrid:
+                    if downCheck == 3:
+                        break
+            if grid[row][column] == "A" or hybrid:
                 acrossCheck = 0
                 p = 1
                 while (grid[row + p][column] == "_"):
                     acrossCheck += 1
                     p += 1
+                    if acrossCheck == 3:
+                        break
+            if downCheck == 2:
+                grid[row + 1][column] = "*"
+                if grid[row][column] != "H":
+                    grid[row][column] = "_"
+                else:
+                    grid[row][column] = "A"
+            if acrossCheck == 2:
+                grid[row][column + 1] = "*"
+                if grid[row][column] != "H":
+                    grid[row][column] = "_"
+                else:
+                    grid[row][column] = "D"
+
+
 
 
 #class representive of each blank word spot in the crossword generation
