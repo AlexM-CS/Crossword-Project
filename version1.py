@@ -220,9 +220,8 @@ class EmptyCell(Cell):
         return "Cell ({0},{1})\n".format(self.x, self.y) + "TYPE: EmptyCell"
 class WordList:
     #Creates a "wordcell" list that holds the body of the word
-    def __init__(self, type: str):
+    def __init__(self):
         self.wordBody = []
-        self.type = type
 
     #Adds a cell to the wordbody list
     def addCell(self, cell: Cell):
@@ -234,6 +233,7 @@ class WordList:
         for word in self.wordBody:
             returnStr += word.letter
         return returnStr
+
 
     def getHead(self):
         if len(self.wordBody) == 0:
