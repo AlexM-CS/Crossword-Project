@@ -65,7 +65,7 @@ class IndexCell(LetterCell):
         self.word = ""
         self.intersections = 0
         self.length = 0
-        self.dir = dir
+        self.dir = dir # Note: across = True, down = False
 
     # Overriding the default string representation
         # return - string representation of this object

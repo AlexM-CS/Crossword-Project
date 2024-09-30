@@ -98,16 +98,61 @@ class Grid:
     def addHybridCell(self, x: int, y: int):
         self.grid[x][y] = HybridCell(x, y)
 
+    # Helper method for initIndexCells()
+        # return - int length the length of this IndexCell's word
+    def findLength(self, ic: IndexCell):
+        dir = ic.dir
+        length = 1
+        if (dir):  # True: the word is across
+            if (ic.x + length < self.length):
+                while (ic.x + length < self.length):
+                    if not (isinstance(self.grid[ic.x + length][ic.y], BlockedCell)):
+                        length += 1
+                    else:
+                        break
+
+        else:  # False: the word is down
+            if (ic.y + length < self.width):
+                while (ic.y + length < self.width):
+                    if not (isinstance(self.grid[ic.x][ic.y + length], BlockedCell)):
+                        length += 1
+                    else:
+                        break
+
+        return length
+
+    # Helper method for initIndexCells()
+        # return - list(LetterCell) the body of this IndexCell's word
+    def findBody(self, ic: IndexCell):
+        return list()
+
+    # Helper method for initIndexCells()
+        # return - int intersections the number of intersections this IndexCell's word will have with other words
+    def findIntersections(self, ic: IndexCell):
+        total = 0
+
+
+        return total
+
     # Fills in various fields for each of the IndexCells in the grid
     # Specifically: list(LetterCell) body, int intersections, int length
         # return - None
     def initIndexCells(self):
-        pass
+        for i in range(self.length):
+            for j in range(self.width):
+                currentCell = self.grid[i][j]
+                if (isinstance(currentCell,IndexCell)):
+                    currentCell.length = self.findLength(self, currentCell)
+                    currentCell.intersections = self.findIntersections(self, currentCell)
+                    currentCell.body = self.findBody(self, currentCell)
 
-    # Will assign a word to each of the IndexCells given, in order
-        # return - None
-    def createWords(self, indexCells: list):
-        pass
+                elif (isinstance(currentCell,HybridCell)):
+                    currentCell.across.length = self.findLength(self, currentCell.across)
+                    currentCell.across.intersections = self.findIntersections(self, currentCell.across)
+                    currentCell.across.body = self.findBody(self, currentCell.across)
+                    currentCell.down.length = self.findLength(self, currentCell.down)
+                    currentCell.down.intersections = self.findIntersections(self, currentCell.down)
+                    currentCell.down.body = self.findBody(self, currentCell.down)
 
     # Helper method for createWords()
         # return - None
@@ -117,4 +162,9 @@ class Grid:
     # Helper method for createWords()
         # return - None
     def addWordContains(self, required: list):
+        pass
+
+    # Will assign a word to each of the IndexCells given, in order
+        # return - None
+    def createWords(self, indexCells: list):
         pass
