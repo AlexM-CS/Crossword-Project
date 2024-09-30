@@ -1,0 +1,19 @@
+Changelog 9-29-2024, Alex Myska
+    Cell.py:
+        - Added a date and author headline
+        - Implemented Cell
+        - Implemented BlockedCell
+        - Implemented LetterCell
+        - Implemented IndexCell
+        - Implemented HybridCell
+    Grid.py:
+        - Added a date and author headline
+        - Implemented new Grid class
+        - Defined functions for the grid
+        - Implemented __str__
+    README.md:
+        - Added Brandon Knautz as an author
+    changes.txt:
+        - Created a changelog to be used when many changes are made at once
+        - The changelog should give a brief description of the changes made, and by who
+

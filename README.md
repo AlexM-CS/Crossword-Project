@@ -1,4 +1,4 @@
 # Crossword-Project
 Repository for the collaborative crossword project.
 
-Authors: Alexander Myska, Oliver Strauss
+Authors: Alexander Myska, Oliver Strauss, Brandon Knautz
