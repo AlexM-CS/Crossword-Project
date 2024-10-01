@@ -189,6 +189,7 @@ def getAcrossAndDownTileIndexes(grid):
 iterates through all h,d, and a and checks to make sure that the size of the word space is >2. It removes all 
 that do not fit this parameter
 '''
+'''
 def checkAndRemoveAllSize2(grid):
     for row in range(len(grid)):
         for column in range(len(grid[0])):
@@ -212,18 +213,30 @@ def checkAndRemoveAllSize2(grid):
                     if acrossCheck == 3 or (column + p) >= len(grid[0]):
                         break
             if downCheck == 2:
-                grid[row + 1][column] = "*"
-                if grid[row][column] != "H":
-                    grid[row][column] = "_"
+                if row > 0 and column > 0 and grid[row - 1][column] == "*" and grid[row][column + 1] == "*" and grid[row][column - 1] == "*":
+                    grid[row][column] = "*"
                 else:
-                    grid[row][column] = "A"
+                    if grid[row + 1][column] != "A":
+                        grid[row + 1][column] = "*"
+                    else:
+                        grid[row][column] = "*"
+                    if grid[row][column] != "H":
+                        grid[row][column] = "_"
+                    else:
+                        grid[row][column] = "A"
             if acrossCheck == 2:
-                grid[row][column + 1] = "*"
-                if grid[row][column] != "H":
-                    grid[row][column] = "_"
+                if column > 0 and row > 0 and grid[row - 1][column] == "*" and grid[row + 1][column] == "*" and grid[row][column - 1] == "*":
+                    grid[row][column] = "*"
                 else:
-                    grid[row][column] = "D"
-
+                    if grid[row][column + 1] != "D":
+                        grid[row][column + 1] = "*"
+                    else:
+                        grid[row][column] = "*"
+                    if grid[row][column] != "H":
+                        grid[row][column] = "_"
+                    else:
+                        grid[row][column] = "D"
+'''
 
 
 
