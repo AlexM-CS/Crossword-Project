@@ -148,22 +148,25 @@ class Grid:
     # Helper method for initIndexCells()
         # return - int intersections the number of intersections this IndexCell's word will have with other words
     def findIntersections(self, ic: IndexCell):
-        adjacent = 0
+        total = 0
         for cell in ic.body:
             if (cell.x + 1 < self.length):
-                if not (isinstance(self.grid[cell.x + 1][cell.y],BlockedCell)):
-                    adjacent += 1
+                if not (isinstance(self.grid[cell.x + 1][cell.y],BlockedCell) or (self.grid[cell.x + 1][cell.y] in ic.body)):
+                    total += 1
+                    continue
             if (cell.x - 1 >= 0):
-                if not (isinstance(self.grid[cell.x - 1][cell.y],BlockedCell)):
-                    adjacent += 1
+                if not (isinstance(self.grid[cell.x - 1][cell.y],BlockedCell) or (self.grid[cell.x - 1][cell.y] in ic.body)):
+                    total += 1
+                    continue
             if (cell.y + 1 < self.width):
-                if not (isinstance(self.grid[cell.x][cell.y + 1],BlockedCell)):
-                    adjacent += 1
+                if not (isinstance(self.grid[cell.x][cell.y + 1],BlockedCell) or (self.grid[cell.x][cell.y + 1] in ic.body)):
+                    total += 1
+                    continue
             if (cell.y - 1 >= 0):
-                if not (isinstance(self.grid[cell.x][cell.y - 1],BlockedCell)):
-                    adjacent += 1
-
-        return adjacent
+                if not (isinstance(self.grid[cell.x][cell.y - 1],BlockedCell) or (self.grid[cell.x][cell.y - 1] in ic.body)):
+                    total += 1
+                    continue
+        return total
 
     # Fills in various fields for each of the IndexCells in the grid
     # Specifically: list(LetterCell) body, int intersections, int length
@@ -172,18 +175,17 @@ class Grid:
         for i in range(self.length):
             for j in range(self.width):
                 currentCell = self.grid[i][j]
-                if (isinstance(currentCell,IndexCell)):
-                    currentCell.wordLength = self.findLength(self, currentCell)
-                    currentCell.intersections = self.findIntersections(self, currentCell)
-                    currentCell.body = self.findBody(self, currentCell)
-
-                elif (isinstance(currentCell,HybridCell)):
-                    currentCell.across.wordLength = self.findLength(self, currentCell.across)
-                    currentCell.across.intersections = self.findIntersections(self, currentCell.across)
-                    currentCell.across.body = self.findBody(self, currentCell.across)
-                    currentCell.down.wordLength = self.findLength(self, currentCell.down)
-                    currentCell.down.intersections = self.findIntersections(self, currentCell.down)
-                    currentCell.down.body = self.findBody(self, currentCell.down)
+                if (isinstance(currentCell,HybridCell)):
+                    currentCell.across.wordLength = self.findLength(currentCell.across)
+                    currentCell.across.body = self.findBody(currentCell.across)
+                    currentCell.across.intersections = self.findIntersections(currentCell.across)
+                    currentCell.down.wordLength = self.findLength(currentCell.down)
+                    currentCell.down.body = self.findBody(currentCell.down)
+                    currentCell.down.intersections = self.findIntersections(currentCell.down)
+                elif (isinstance(currentCell,IndexCell)):
+                    currentCell.wordLength = self.findLength(currentCell)
+                    currentCell.body = self.findBody(currentCell)
+                    currentCell.intersections = self.findIntersections(currentCell)
 
     # Helper method for createWords()
         # return - None
