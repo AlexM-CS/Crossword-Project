@@ -1,12 +1,19 @@
 import os
+import random
 
-def main():
+from sys import flags
+from Cell import LetterCell, IndexCell, BlockedCell
+from version1 import WordCell
+
+
+def convertBase():
     # Open a file in read mode
-    alph = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    alph = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+            'v', 'w', 'x', 'y', 'z']
 
     for letter in alph:
 
-        with open('Crossword Databases/'+letter+'_words_converted.txt', 'r') as file:
+        with open('Crossword Databases/' + letter + '_words_converted.txt', 'r') as file:
             content = file.read()  # Read the entire content
             words = content.split()  # Split the content into words
 
@@ -21,7 +28,8 @@ def main():
             print(f"Base directory '{base_directory}' already exists.")
 
         # List of alphabet letters
-        alph = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+        alph = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+                'v', 'w', 'x', 'y', 'z']
 
         # Create a dictionary to hold words by their starting letters
         words_by_letter = {letter: [] for letter in alph}
@@ -59,6 +67,93 @@ def main():
                 with open(file_path, 'w') as word_file:
                     word_file.write('\n'.join(words_list))  # Write all words, separated by newlines
                     print(f"File '{file_path}' created with {len(words_list)} words of length {length}.")
+
+
+
+
+def findWord(IndexCell):
+    indices = []
+    wordLength = len(IndexCell.body)
+    print(wordLength)
+    #Creates 2-d list of letters and their indexes
+    for i, val in enumerate(IndexCell.body):
+        if(isinstance(val, LetterCell)):
+            indices.append([i, val.letter])
+
+
+
+    finalWords = []
+    filePath = "Words/"
+    flag = False
+    #Cheks to see if fist letter is filled
+    if indices[0][0] == 0:
+        #Makes filepath
+        filePath+=indices[0][1].lower()+"-Words/words_"+str(wordLength)+".txt"
+        finalWords,flag = genWord(filePath, indices)
+
+    else:
+        #If first letter is not given
+        #Iterate until finds valid words
+        while not flag:
+            #Generate random starting letter
+            random_num = random.randint(1, 26)
+            random_letter = chr(random_num + 96)
+            # Makes filepath
+
+            filePath += random_letter.lower() + "-Words/words_" + str(wordLength) + ".txt"
+            finalWords, flag = genWord(filePath, indices)
+
+
+    print(finalWords)
+
+
+
+#Iterates through and finds word that fits indices specifications
+def genWord(filePath,indices):
+    finalWords = []
+    with open(filePath, 'r') as file:
+        words = file.read().splitlines()  # Split the content by newlines
+
+    for i in range(len(words)):
+
+        flag = True
+        for indexs in indices:
+
+            if words[i][indexs[0]] != indexs[1]:
+                flag = False
+        if flag:
+            finalWords.append(words[i])
+    #flag set to true if word was found
+    flag = len(finalWords) > 0
+    #Returns list of valid words and flag determining if something was found or not
+    return finalWords , flag
+
+
+
+def main():
+    c = IndexCell(0,0,True)
+
+    Cell2 = BlockedCell(1,0)
+    #Cell2.setLetter("B")
+
+    Cell3 = BlockedCell(2, 0)
+
+
+    Cell4 = BlockedCell(3, 0)
+
+
+    Cell5 = LetterCell(4, 0)
+    Cell5.setLetter("L")
+    wordlist = [ Cell2, Cell3, Cell4, Cell5 ]
+
+    c.setbody(wordlist)
+    for val in c.body:
+        print(val)
+
+
+
+    findWord(c)
+
 
 if __name__ == "__main__":
     main()
