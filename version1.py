@@ -1,325 +1,302 @@
-# Crossword Generator Project
-# Date: 9-19-2024
-# Authors: Alexander Myska, Oliver Strauss
+# 9-30-2024
+# Alexander Myska, Oliver Strauss, Brandon Knautz
 
-import copy
-from datetime import datetime
-import random
-from display import displayMap
+# This class will be used to test our code for its intended behavior
 
-class Grid:
-    # Initializes the Grid object with the following fields:
-        # length - the grid's length in the x direction
-        # height - the grid's height in the y direction
-        # gridMap - a dict containing keys of x,y pairs and values of the letters stored there (initialized to None)
-        # wordlist - a list containing the words currently on the grid
-    # Also includes an optional argument filepath, to import a pre-made grid
-    def __init__(self, rows: int, cols: int, *, filepath = None):
-        try:
-            self.length = rows
-            self.height = cols
-            self.gridMap = dict()
-            self.wordlist = list()
-            fileGrid = open(filepath, "r")
+from Cell import *
+from Grid import *
+from display import *
 
-            for i in range(0, rows):
-                line = fileGrid.readline().split(" ")
-                for j in range(0, cols):
-                    line[j] = line[j].strip()
-                    self.gridMap[100 * i + j] = line[j]
+def wait():
+    input()
 
-        except TypeError:
-            self.length = rows
-            self.height = cols
-            self.gridMap = dict()
-            self.wordlist = list()
+# Test the output of a grid toString
+def test1():
+    g = Grid(4, 4)
+    print(g)
+    # The previous line should print a grid of blank cells
+    g.addBlockedCell(0, 0)
+    g.addBlockedCell(1, 1)
+    g.addBlockedCell(2, 2)
+    g.addBlockedCell(3, 3)
+    print(g)
+    # Because of the way the grid is set up, the output should be this:
+    # * _ _ _
+    # _ * _ _
+    # _ _ * _
+    # _ _ _ *
 
-            for i in range(0, rows):
-                for j in range(0, cols):
-                    self.gridMap[100 * i + j] = "_"
-                    
-    # Overriding the string representation of the grid
-    def __str__(self):
-        returnString = "GRID:\n"
-        values = list(self.gridMap.values())
-        valueNum = 0
-        for i in range(0, self.length):
-            for j in range(0, self.height):
-                returnString += values[valueNum]
-                if (j < self.height - 1):
-                    returnString += " "
-                valueNum += 1
-            if (i < self.length - 1):
-                returnString += "\n"
-        return returnString
-    
-    # Returns the length of the grid
-    def getLength(self):
-        return self.length
-    
-    # Returns the height of the grid
-    def getHeight(self):
-        return self.height
-    
-    # Returns the dict object that represents the grid
-    def getGrid(self):
-        return self.gridMap
-    
-    # Returns a list containing the words currently on the grid
-    def getWordlist(self):
-        return self.wordlist
+# Test the output of various Cell toStrings
+def test2():
+    c = Cell(0, 0)
+    print(c)
+    c = BlockedCell(0, 0)
+    print(c)
+    c = LetterCell(0, 0)
+    print(c)
+    c = IndexCell(0, 0, True)
+    print(c)
+    c = HybridCell(0, 0)
+    print(c)
+    # The expected output should be this:
+    # C(0,0)
+    # B(0,0)
+    # L(0,0,)
+    # I(0,0,,True)
+    # H(0,0,)
 
-    # Gets the letter currently at the coordinates x, y 
-    def getLetter(self, row: int, col: int):
-        return self.gridMap[100 * row + col]
+# Test the method findLength
+def test3():
+    g = Grid(7,7)
+    g.addBlockedCell(0, 2)
+    g.addBlockedCell(1, 1)
+    g.addBlockedCell(1, 3)
+    g.addBlockedCell(1, 5)
+    g.addBlockedCell(2, 3)
+    g.addBlockedCell(2, 5)
+    g.addBlockedCell(3, 1)
+    g.addBlockedCell(3, 3)
+    g.addBlockedCell(3, 5)
+    g.addBlockedCell(4, 1)
+    g.addBlockedCell(4, 3)
+    g.addBlockedCell(5, 1)
+    g.addBlockedCell(5, 3)
+    g.addBlockedCell(5, 5)
+    g.addBlockedCell(6, 4)
+    g.addIndexCell(0, 0, True)
+    g.addIndexCell(0, 3, True)
+    g.addIndexCell(2, 0, True)
+    g.addIndexCell(1, 2, False)
+    g.addIndexCell(0, 6, False)
 
-    #Initalizes 2D array of objects depedning on output from CrossGen
-    def initGrid(self,file):
-        grid = []
-        index = 0
-        # Open the file in read mode
-        with open(file, 'r') as f:
-            # Iterate through each line with its index (i is the row index)
-            for i, line in enumerate(f):
-                gridline = []  # Create an empty list for each line
-                # Split the line into elements (space-separated or comma-separated)
-                row = line.strip().split()
-                # Iterate through each value with its index (j is the column index)
-                for j, val in enumerate(row):
-                    if val == "*":
-                        gridline.append(EmptyCell(i, j))  # Pass the indices to EmptyCell
-                    elif val == "A":
-                        gridline.append(IndexCell(i,j,"_","_",False,index))
-                        index += 1
-                    elif val == "D":
-                        gridline.append(IndexCell(i,j,"_","_",True,index))
-                        index += 1
-                    elif val == "H":
-                        gridline.append(IndexCell(i,j,"_","_",True,index))
-                        index += 1
-                        gridline.append(IndexCell(i,j,"_","_",False,index))
-                        index += 1
-                    else:
-                        gridline.append(WordCell(i,j,"_","_",))
+    print(g)
+    # The grid should look like this:
+    # A _ * A _ _ D
+    # _ * D * _ * _
+    # A _ _ * _ * _
+    # _ * _ * _ * _
+    # _ * _ * _ _ _
+    # _ * _ * _ * _
+    # _ _ _ _ * _ _
+    # (A and D will be "_" when printed)
+    print()
 
+    for i in range(0, g.length):
+        for j in range(0, g.width):
+            if (isinstance(g.grid[i][j], IndexCell)):
+                currentCell = g.grid[i][j]
+                print("Cell: '{0}' wordLength: '{1}'".format(currentCell, g.findLength(currentCell)))
 
-                grid.append(gridline)  # Add the gridline to the main grid
+    # Because of the way the grid is set up, the output should be this:
+    # Cell: 'I(0,0,,True)' wordLength: '2'
+    # Cell: 'I(0,3,,True)' wordLength: '4'
+    # Cell: 'I(0,6,,False)' wordLength: '7'
+    # Cell: 'I(1,2,,False)' wordLength: '6'
+    # Cell: 'I(2,0,,True)' wordLength: '3'
 
-        return grid
+# Test the method findBody
+def test4():
+    g = Grid(7, 7)
+    g.addBlockedCell(0, 2)
+    g.addBlockedCell(1, 1)
+    g.addBlockedCell(1, 3)
+    g.addBlockedCell(1, 5)
+    g.addBlockedCell(2, 3)
+    g.addBlockedCell(2, 5)
+    g.addBlockedCell(3, 1)
+    g.addBlockedCell(3, 3)
+    g.addBlockedCell(3, 5)
+    g.addBlockedCell(4, 1)
+    g.addBlockedCell(4, 3)
+    g.addBlockedCell(5, 1)
+    g.addBlockedCell(5, 3)
+    g.addBlockedCell(5, 5)
+    g.addBlockedCell(6, 4)
+    g.addIndexCell(0, 0, True)
+    g.addIndexCell(0, 3, True)
+    g.addIndexCell(2, 0, True)
+    g.addIndexCell(1, 2, False)
+    g.addIndexCell(0, 6, False)
 
-    # Adds a word (and by extension, its letters) to the grid, if possible
-    def addWord(self, word: str, direction: bool, beginRow: int, beginCol: int):
-        if not (word.isalpha()):
-            raise Exception("Words must be alphabetic characters only.")
-        word = word.upper()
-        if (direction): # True: the word will be DOWN
-            for i in range(0, len(word)):
-                current = self.gridMap[100 * (beginRow + i) + beginCol]
-                if (beginRow + i >= self.length):
-                    raise Exception("Words cannot fit out of bounds.")
-                elif (current != word[i] and current != "_"):
-                    raise Exception("Words cannot overwrite previous letters.")
-            
-            for i in range(0, len(word)): # If this line has been reached, the word can fit in this location
-                self.gridMap[100 * (beginRow + i) + beginCol] = word[i]
-                
-            self.wordlist.append(word)
-            
-        else: # False: the word will be ACROSS
-            for i in range(0, len(word)):
-                current = self.gridMap[100 * beginRow + beginCol + i]
-                if (beginCol + i >= self.length):
-                    raise Exception("Words cannot fit out of bounds.")
-                elif (current != word[i] and current != "_"):
-                    raise Exception("Words cannot overwrite previous letters.")
-            
-            for i in range(0, len(word)): # If this line has been reached, the word can fit in this location
-                self.gridMap[100 * beginRow + beginCol + i] = word[i]
-                
-            self.wordlist.append(word)
+    print(g)
+    # The grid should look like this:
+    # A _ * A _ _ D
+    # _ * D * _ * _
+    # A _ _ * _ * _
+    # _ * _ * _ * _
+    # _ * _ * _ _ _
+    # _ * _ * _ * _
+    # _ _ _ _ * _ _
+    # (A and D will be "_" when printed)
+    print()
 
-    # Adds a new blocked space to the grid
-    def addBlocked(self, x: int, y: int):
-        if (self.gridMap[100 * x + y] == "_"):
-            self.gridMap[100 * x + y] = "*"
+    for i in range(0, g.length):
+        for j in range(0, g.width):
+            if (isinstance(g.grid[i][j], IndexCell)):
+                currentCell = g.grid[i][j]
+                currentBody = g.findBody(currentCell)
+                for index in range(0, len(currentBody)):
+                    currentBody[index] = currentBody[index].__str__()
+                print(currentBody)
 
-    # Changes a grid space's state to empty
-    def addEmpty(self, x: int, y: int):
-        self.gridMap[110 * x + y] = "_"
+    # Because of the way the grid is set up, the output should be this:
+    # ['I(0,0,,True)','L(0,1,)']
+    # ['I(0,3,,True)','L(0,4,)','L(0,5,)','I(0,6,,False)']
+    # ['I(0,6,,False)','L(1,6,)','L(2,6,)','L(3,6,)','L(4,6,)','L(5,6,)','L(6,6,)']
+    # ['I(1,2,,False)','L(2,2,)','L(3,2,)','L(4,2,)','L(5,2,)','L(6,2,)']
+    # ['I(2,0,,True)','L(2,1,)','L(2,2,)']
 
-    # Checks to see where new words should be starting
-    def findNextOpen(self):
-        for row in range(0, self.length):
-            for col in range(0, self.height):
-                x = 0
-                y = 0
-                # First, we check for availability DOWN
-                if (self.gridMap[100 * row + col] != "*") and (col + 1 < self.length):
-                    x = 1
-                    while (col + x < self.length):
-                        if (self.gridMap[100 * row + col + x] == "_"):
-                            x += 1
-                        else:
-                            break
-                # Next, we check for availability DOWN
-                if (self.gridMap[100 * row + col] != "*") and (row + 1 < self.height):
-                    y = 1
-                    while (row + 1 < self.height):
-                        if (self.gridMap[100 * (row + y) + col] == "_"):
-                            y += 1
-                        else:
-                            break
-                # Finally, if either x or y is greater than 0, return
-                # Returns a tuple in the format (int i, int j, int x, int y)
-                    # i - target row
-                    # j - target column
-                    # x - length of the word ACROSS, or False if not available
-                    # y - length of the word DOWN, or False if not available
-                if (x > 1) or (y > 1):
-                    if (x <= 1):
-                        return (row, col, False, y)
-                    elif (y <= 1):
-                        return (row, col, x, False)
-                    return (row, col, x, y)
+# Test the method findIntersections
+def test5():
+    g = Grid(7, 7)
+    g.addBlockedCell(0, 2)
+    g.addBlockedCell(1, 1)
+    g.addBlockedCell(1, 3)
+    g.addBlockedCell(1, 5)
+    g.addBlockedCell(2, 3)
+    g.addBlockedCell(2, 5)
+    g.addBlockedCell(3, 1)
+    g.addBlockedCell(3, 3)
+    g.addBlockedCell(3, 5)
+    g.addBlockedCell(4, 1)
+    g.addBlockedCell(4, 3)
+    g.addBlockedCell(5, 1)
+    g.addBlockedCell(5, 3)
+    g.addBlockedCell(5, 5)
+    g.addBlockedCell(6, 4)
+    g.addIndexCell(0, 0, True)
+    g.addIndexCell(0, 3, True)
+    g.addIndexCell(2, 0, True)
+    g.addIndexCell(1, 2, False)
+    g.addIndexCell(0, 6, False)
 
-    # Finds the letters that must appear in a word to be placed here
-    def requiredLetters(self, direction: bool, beginRow: int, beginCol: int):
-        i = 0
-        output = list()
-        if (direction): # True: the word will be DOWN
-            while (beginRow + i < self.length and self.gridMap[100 * (beginRow + i) + beginCol] != "*"):
-                if (self.gridMap[100 * (beginRow + i) + beginCol] != "_"):
-                    output.append(i, self.gridMap[100 * (beginRow + i) + beginCol])
-                i += 1
+    print(g)
+    # The grid should look like this:
+    # A _ * A _ _ D
+    # _ * D * _ * _
+    # A _ _ * _ * _
+    # _ * _ * _ * _
+    # _ * _ * _ _ _
+    # _ * _ * _ * _
+    # _ _ _ _ * _ _
+    # (A and D will be "_" when printed)
+    print()
 
-        else: # False: the word will be ACROSS
-            while (beginCol + i < self.height and self.gridMap[100 * beginRow + beginCol + i] != "*"):
-                if (self.gridMap[100 * beginRow + beginCol + i] != "_"):
-                    output.append(i, self.gridMap[100 * beginRow + beginCol + i])
-                i += 1
+    for i in range(0, g.length):
+        for j in range(0, g.width):
+            if (isinstance(g.grid[i][j], IndexCell)):
+                currentCell = g.grid[i][j]
+                currentCell.body = g.findBody(currentCell)
+                print("Cell: '{0}' intersections: '{1}'".format(currentCell, g.findIntersections(currentCell)))
 
-        return output
+    # Because of the way the grid is set up, the output should be this:
+    # Cell: 'I(0,0,,True)' intersections: '1'
+    # Cell: 'I(0,3,,True)' intersections: '2'
+    # Cell: 'I(0,6,,False)' intersections: '3'
+    # Cell: 'I(1,2,,False)' intersections: '2'
+    # Cell: 'I(2,0,,True)' intersections: '2'
 
-class Cell:
-    # Initializes a Cell with the following fields:
-        # x - row of the grid that this cell belongs to
-        # y - column of the grid that this cell belongs to
-    def __init__(self, x: int, y: int):
-        self.x = x
-        self.y = y
+# Test the method initIndexCells()
+def test6():
+    g = Grid(5, 5)
+    g.addBlockedCell(0, 2)
+    g.addBlockedCell(1, 1)
+    g.addBlockedCell(1, 3)
+    g.addBlockedCell(3, 1)
+    g.addBlockedCell(3, 3)
+    g.addBlockedCell(4, 2)
+    g.addHybridCell(0, 0)
+    g.addIndexCell(0, 3, True)
+    g.addIndexCell(0, 4, False)
+    g.addIndexCell(1, 2, False)
+    g.addIndexCell(2, 0, True)
+    g.addIndexCell(4, 0, True)
+    g.addIndexCell(4, 3, True)
 
-    def __str__(self):
-        return "Cell ({0},{1})".format(self.x, self.y)
+    print(g)
+    # The grid should look like this:
+    # H _ * A D
+    # _ * D * _
+    # A _ _ _ _
+    # _ * _ * _
+    # A _ * A _
+    # (H, A, and D will be "_" when printed)
+    print()
 
-class EmptyCell(Cell):
-    # Parent init
-    def __init__(self, x: int, y: int):
-        super().__init__(x, y)
+    g.initIndexCells()
 
-    def __str__(self):
-        return "Cell ({0},{1})\n".format(self.x, self.y) + "TYPE: EmptyCell"
-class WordList:
-    #Creates a "wordcell" list that holds the body of the word
-    def __init__(self):
-        self.wordBody = []
+    for i in range(g.length):
+        for j in range(g.width):
+            if (isinstance(g.grid[i][j], HybridCell)):
+                currentCell = g.grid[i][j]
+                for index in range(0, len(currentCell.across.body)):
+                    currentCell.across.body[index] = currentCell.across.body[index].__str__()
+                for index in range(0, len(currentCell.down.body)):
+                    currentCell.down.body[index] = currentCell.down.body[index].__str__()
+                print("Cell: '{0}'".format(currentCell))
+                print("across: '{0}'".format(currentCell.across))
+                print("across.wordLength: '{0}'".format(currentCell.across.wordLength))
+                print("across.body: '{0}'".format(currentCell.across.body))
+                print("across.intersections: '{0}'".format(currentCell.across.intersections))
+                print("down: '{0}'".format(currentCell.down))
+                print("down.wordLength: '{0}'".format(currentCell.down.wordLength))
+                print("down.body: '{0}'".format(currentCell.down.body))
+                print("down.intersections: '{0}'".format(currentCell.down.intersections))
+                wait()
 
-    #Adds a cell to the wordbody list
-    def addCell(self, cell: Cell):
-        self.wordBody.append(cell)
+            elif (isinstance(g.grid[i][j], IndexCell)):
+                currentCell = g.grid[i][j]
+                for index in range(0, len(currentCell.body)):
+                    currentCell.body[index] = currentCell.body[index].__str__()
+                print("Cell: '{0}'".format(currentCell))
+                print("wordLength: '{0}'".format(currentCell.wordLength))
+                print("body: '{0}'".format(currentCell.body))
+                print("intersections: '{0}'".format(currentCell.intersections))
+                wait()
 
-    #returns the word of the cell
-    def __str__(self):
-        returnStr = ""
-        for word in self.wordBody:
-            returnStr += word.letter
-        return returnStr
+    # Because of the way the grid is set up, the output should be this:
 
+    # Cell: 'H(0,0,)'
+    # across 'I(0,0,,True)'
+    # across.wordLength: '2'
+    # across.body: '['H(0,0,)','L(0,1,)']'
+    # across.intersections: '1'
+    # down: 'I(0,0,,False)'
+    # down.wordLength: '5'
+    # down.body: '['H(0,0,)','L(1,0,)','I(2,0,,True)','L(3,0,)','I(4,0,,True)']'
+    # down.intersections: '3'
 
-    def getHead(self):
-        if len(self.wordBody) == 0:
-            return
-        return self.wordBody[0]
+    # Cell: 'I(0,3,,True)'
+    # wordLength: '2'
+    # body: '['I(0,3,,True)','I(0,4,,False)']'
+    # intersections: '1'
 
-class WordCell(Cell):
-    # Initializes a WordCell with the following fields:
-        # x - row of the grid that this cell belongs to
-        # y - column of the grid that this cell belongs to
-        # letter - the letter assigned to this cell
-    def __init__(self, x: int, y: int, letter: str, word: WordList):
-        super().__init__(x, y)
-        self.letter = letter
-        self.word = word
+    # Cell: 'I(0,4,,False)'
+    # wordLength: '5'
+    # body: '['I(0,4,,False)','L(1,4,)','L(2,4,)','L(3,4,)','L(4,4,)']'
+    # intersections: '3'
 
-    def __str__(self):
-        return "Cell ({0},{1})\n".format(self.x, self.y) + "TYPE: WordCell\nPROPERTIES: '{0}', '{1}'".format(self.letter, self.word)
+    # Cell: 'I(1,2,,False)'
+    # wordLength: '3'
+    # body: '['I(1,2,,False)','L(2,2,)','L(3,2,)']'
+    # intersections: '1'
 
-class IndexCell(WordCell):
-    # Parent init
-        # index - number for this cell
-        # dir - boolean that determines direction (True = DOWN, False = ACROSS)
-    def __init__(self, x: int, y: int, letter: str, word: WordList, index: int, dir: bool):
-        super().__init__(x, y, letter, word)
-        self.index = index
+    # Cell: 'I(2,0,,True)'
+    # wordLength: '5'
+    # body: '['I(2,0,,True)','L(2,1,)','L(2,2,)','L(2,3,)','L(2,4,)']'
+    # intersections: '3'
 
-        # This maybe should change in the future, if the cell has both
-        # an across and down word starting from here
-        self.dir = dir
+    # Cell: 'I(4,0,,True)'
+    # wordLength: '2'
+    # body: '['I(4,0,,True)','L(4,1,)']'
+    # intersections: '1'
 
-    # Overriding the default string representation
-    def __str__(self):
-        return "Cell ({0},{1})\n".format(self.x, self.y) + "TYPE: IndexCell\nPROPERTIES: '{0}', '{1}'".format(self.letter, self.word)
-
-class Generator:
-    # Initializes the word generator with the following fields:
-        # seed - the generator's starting seed for RNG
-        # name - a name for the generator to display when printed out
-        # data - a list of words for it to hold
-    def __init__(self, name, letter: str):
-        self.seed = datetime.now().timestamp()
-        self.name = name
-        self.data = open("../Crossword-Project/Crossword Databases/{0}_words_converted.txt".format(letter), "r").read().split(" ")
-
-    # Overriding the default string representation to show the properties of this generator
-    def __str__(self):
-        returnString = "Name:\n " + self.name.__str__() +"\nSeed:\n " + self.seed.__str__() + "\nData:\n " + self.data.__str__()
-        return returnString
-    
-    # Selects a random word from the list of data, containing the specified chars at the specified indices
-    def newWord(self, length: int, indices: list, chars: list):
-        copiedData = copy.deepcopy(self.data)
-        i = 0
-        try:
-            while (i < len(copiedData)):
-                word = copiedData[i]
-                for j in range(0, len(indices)):
-                    if (word[indices[j]] != chars[indices[j]] or len(word) != length):
-                        copiedData.remove(word)
-                        i -= 1
-                        break
-                i += 1
-        except IndexError:
-            print("ERROR OCCURRED.")
-            print(copiedData[i - 1])
-            quit()
-        
-        random.seed(self.seed)
-        i = random.randrange(0, len(copiedData))
-        return copiedData[i]
+    # Cell: 'I(4,3,,True)'
+    # wordLength: '2'
+    # body: '['I(4,3,,True)','L(4,4,)']'
 
 def main():
-    print("start\n")
+    test6()
 
-    grid = Grid(11, 11, filepath="output.txt")
-    grid.addWord("ASSASS", False, 0, 0)
-    print(grid)
-
-    #Added to test new 2D aray cell implementation
-    twoDGrid = grid.initGrid("output1.txt")
-    for row in twoDGrid:
-        for val in row:
-            print(val)
-
-    #displayMap(grid)
-
-if (__name__ == "__main__"):
+if (__name__ == '__main__'):
     main()

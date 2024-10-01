@@ -17,7 +17,7 @@ Changelog 9-29-2024, Alex Myska
         - Created a changelog to be used when many changes are made at once
         - The changelog should give a brief description of the changes made, and by who
 
-Changelog 10-1-2024, Alex Myska
+Changelog 9-30-2024, Alex Myska
     Cell.py:
         - Changed name of "length" field in IndexCell to "wordLength" to avoid confusion
     Grid.py:
@@ -26,3 +26,8 @@ Changelog 10-1-2024, Alex Myska
         - Changed syntax of past functions to work properly
     version1.py:
         - Changed the file into a test file
+
+Changelog 10-1-2024, Alex Myska
+    version1.py
+        - Added test methods
+        - Edited Grid.py and Cell.py to conform to intended behavior
