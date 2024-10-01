@@ -17,3 +17,12 @@ Changelog 9-29-2024, Alex Myska
         - Created a changelog to be used when many changes are made at once
         - The changelog should give a brief description of the changes made, and by who
 
+Changelog 10-1-2024, Alex Myska
+    Cell.py:
+        - Changed name of "length" field in IndexCell to "wordLength" to avoid confusion
+    Grid.py:
+        - Implemented findBody
+        - Implemented findIntersections
+        - Changed syntax of past functions to work properly
+    version1.py:
+        - Changed the file into a test file

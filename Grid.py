@@ -53,6 +53,7 @@ class Grid:
             # by its length and width, and filled with LetterCells.
             # This branch of __init__ iterates through length and width,
             # creating LetterCells as it goes.
+            # This should be used for testing only.
             for i in range(length):
                 gridLine = list()
                 for j in range(width):
@@ -101,20 +102,19 @@ class Grid:
     # Helper method for initIndexCells()
         # return - int length the length of this IndexCell's word
     def findLength(self, ic: IndexCell):
-        dir = ic.dir
         length = 1
-        if (dir):  # True: the word is across
-            if (ic.x + length < self.length):
-                while (ic.x + length < self.length):
-                    if not (isinstance(self.grid[ic.x + length][ic.y], BlockedCell)):
+        if (ic.dir):  # True: the word is across
+            if (ic.y + length < self.length):
+                while (ic.y + length < self.length):
+                    if not (isinstance(self.grid[ic.x][ic.y + length], BlockedCell)):
                         length += 1
                     else:
                         break
 
         else:  # False: the word is down
-            if (ic.y + length < self.width):
-                while (ic.y + length < self.width):
-                    if not (isinstance(self.grid[ic.x][ic.y + length], BlockedCell)):
+            if (ic.x + length < self.width):
+                while (ic.x + length < self.width):
+                    if not (isinstance(self.grid[ic.x + length][ic.y], BlockedCell)):
                         length += 1
                     else:
                         break
@@ -124,15 +124,46 @@ class Grid:
     # Helper method for initIndexCells()
         # return - list(LetterCell) the body of this IndexCell's word
     def findBody(self, ic: IndexCell):
-        return list()
+        body = list()
+        if (ic.dir): # True: the word is across
+            i = 0
+            while (ic.y + i < self.length):
+                if not (isinstance(self.grid[ic.x][ic.y + i], BlockedCell)):
+                    body.append(self.grid[ic.x][ic.y + i])
+                    i += 1
+                else:
+                    break
+
+        else: # False: the word is down
+            i = 0
+            while (ic.x + i < self.width):
+                if not (isinstance(self.grid[ic.x + i][ic.y], BlockedCell)):
+                    body.append(self.grid[ic.x + i][ic.y])
+                    i += 1
+                else:
+                    break
+
+        return body
 
     # Helper method for initIndexCells()
         # return - int intersections the number of intersections this IndexCell's word will have with other words
     def findIntersections(self, ic: IndexCell):
-        total = 0
+        adjacent = 0
+        for cell in ic.body:
+            if (cell.x + 1 < self.length):
+                if not (isinstance(self.grid[cell.x + 1][cell.y],BlockedCell)):
+                    adjacent += 1
+            if (cell.x - 1 >= 0):
+                if not (isinstance(self.grid[cell.x - 1][cell.y],BlockedCell)):
+                    adjacent += 1
+            if (cell.y + 1 < self.width):
+                if not (isinstance(self.grid[cell.x][cell.y + 1],BlockedCell)):
+                    adjacent += 1
+            if (cell.y - 1 >= 0):
+                if not (isinstance(self.grid[cell.x][cell.y - 1],BlockedCell)):
+                    adjacent += 1
 
-
-        return total
+        return adjacent
 
     # Fills in various fields for each of the IndexCells in the grid
     # Specifically: list(LetterCell) body, int intersections, int length
@@ -142,15 +173,15 @@ class Grid:
             for j in range(self.width):
                 currentCell = self.grid[i][j]
                 if (isinstance(currentCell,IndexCell)):
-                    currentCell.length = self.findLength(self, currentCell)
+                    currentCell.wordLength = self.findLength(self, currentCell)
                     currentCell.intersections = self.findIntersections(self, currentCell)
                     currentCell.body = self.findBody(self, currentCell)
 
                 elif (isinstance(currentCell,HybridCell)):
-                    currentCell.across.length = self.findLength(self, currentCell.across)
+                    currentCell.across.wordLength = self.findLength(self, currentCell.across)
                     currentCell.across.intersections = self.findIntersections(self, currentCell.across)
                     currentCell.across.body = self.findBody(self, currentCell.across)
-                    currentCell.down.length = self.findLength(self, currentCell.down)
+                    currentCell.down.wordLength = self.findLength(self, currentCell.down)
                     currentCell.down.intersections = self.findIntersections(self, currentCell.down)
                     currentCell.down.body = self.findBody(self, currentCell.down)
 

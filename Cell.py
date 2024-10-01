@@ -29,7 +29,7 @@ class BlockedCell(Cell):
     # Overriding the default string representation
         # return - string representation of this object
     def __str__(self):
-        return "B({0},{1})\n".format(self.x, self.y)
+        return "B({0},{1})".format(self.x, self.y)
 
 # A Cell that contains a letter and is part of a word
 class LetterCell(Cell):
@@ -45,7 +45,7 @@ class LetterCell(Cell):
     # Overriding the default string representation
         # return - string representation of this object
     def __str__(self):
-        return "L({0},{1},{2)\n".format(self.x, self.y,self.letter)
+        return "L({0},{1},{2})".format(self.x, self.y,self.letter)
 
 # A Cell that contains a letter, and is the start of a word
 class IndexCell(LetterCell):
@@ -64,13 +64,13 @@ class IndexCell(LetterCell):
         self.body = list()
         self.word = ""
         self.intersections = 0
-        self.length = 0
+        self.wordLength = 0
         self.dir = dir # Note: across = True, down = False
 
     # Overriding the default string representation
         # return - string representation of this object
     def __str__(self):
-        return "I({0},{1},{2},{3})\n".format(self.x, self.y,self.letter,self.dir)
+        return "I({0},{1},{2},{3})".format(self.x, self.y,self.letter,self.dir)
 
 # A Cell that is the beginning of two words
 class HybridCell(IndexCell):
@@ -91,4 +91,4 @@ class HybridCell(IndexCell):
     # Overriding the default string representation
         # return - string representation of this object
     def __str__(self):
-        return "H({0},{1},{2})\n".format(self.x, self.y,self.letter)
+        return "H({0},{1},{2})".format(self.x, self.y,self.letter)
