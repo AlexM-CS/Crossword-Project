@@ -294,9 +294,44 @@ def test6():
     # Cell: 'I(4,3,,True)'
     # wordLength: '2'
     # body: '['I(4,3,,True)','L(4,4,)']'
+    # intersections: '1'
 
+def test7():
+    g = Grid(5, 5)
+    g.addBlockedCell(0, 2)
+    g.addBlockedCell(1, 1)
+    g.addBlockedCell(1, 3)
+    g.addBlockedCell(3, 1)
+    g.addBlockedCell(3, 3)
+    g.addBlockedCell(4, 2)
+    g.addHybridCell(0, 0)
+    g.addIndexCell(0, 3, True)
+    g.addIndexCell(0, 4, False)
+    g.addIndexCell(1, 2, False)
+    g.addIndexCell(2, 0, True)
+    g.addIndexCell(4, 0, True)
+    g.addIndexCell(4, 3, True)
+
+    print(g)
+    # The grid should look like this:
+    # H _ * A D
+    # _ * D * _
+    # A _ _ _ _
+    # _ * _ * _
+    # A _ * A _
+    # (H, A, and D will be "_" when printed)
+    print()
+
+    g.initIndexCells()
+    sortedCells = g.sortIndexCells()
+    for i in range(len(sortedCells)):
+        sortedCells[i] = sortedCells[i].__str__()
+    print(sortedCells)
+
+    # Because of the way the grid is set up, the output should be this:
+    # ['I(0,0,,False)','I(0,4,,False)','I(2,0,,True)','I(0,0,,True)','I(0,3,,True)','I(1,2,,False)','I(4,0,,True)','I(4,3,,True)']
 def main():
-    test6()
+    test7()
 
 if (__name__ == '__main__'):
     main()

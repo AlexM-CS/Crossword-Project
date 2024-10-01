@@ -13,8 +13,7 @@ class Grid:
         # list(str) words - list of words that are included in the grid
         # list(list(Cell)) - list of lists that represents the grid
         # str filepath - file that this init will read from (reference)
-        # return - None
-    def __init__(self, length: int, width: int, filepath = None):
+    def __init__(self, length: int, width: int, filepath = None) -> None:
         self.length = length
         self.width = width
         self.words = list()
@@ -62,7 +61,7 @@ class Grid:
 
     # Overriding the default string representation
         # return - string representation of this object
-    def __str__(self):
+    def __str__(self) -> str:
         output = "GRID:\n"
         for i in range(self.length):
             for j in range(self.width):
@@ -85,23 +84,20 @@ class Grid:
         return output
 
     # Test method to be used to create arbitrary scenarios
-        # return - None
-    def addBlockedCell(self, x: int, y: int):
+    def addBlockedCell(self, x: int, y: int) -> None:
         self.grid[x][y] = BlockedCell(x, y)
 
     # Test method to be used to create arbitrary scenarios
-        # return - None
-    def addIndexCell(self, x: int, y: int, dir: bool):
+    def addIndexCell(self, x: int, y: int, dir: bool) -> None:
         self.grid[x][y] = IndexCell(x, y, dir)
 
     # Test method to be used to create arbitrary scenarios
-        # return - None
-    def addHybridCell(self, x: int, y: int):
+    def addHybridCell(self, x: int, y: int) -> None:
         self.grid[x][y] = HybridCell(x, y)
 
     # Helper method for initIndexCells()
         # return - int length the length of this IndexCell's word
-    def findLength(self, ic: IndexCell):
+    def findLength(self, ic: IndexCell) -> int:
         length = 1
         if (ic.dir):  # True: the word is across
             if (ic.y + length < self.length):
@@ -122,8 +118,8 @@ class Grid:
         return length
 
     # Helper method for initIndexCells()
-        # return - list(LetterCell) the body of this IndexCell's word
-    def findBody(self, ic: IndexCell):
+        # return - list[LetterCell] the body of this IndexCell's word
+    def findBody(self, ic: IndexCell) -> list[LetterCell]:
         body = list()
         if (ic.dir): # True: the word is across
             i = 0
@@ -147,7 +143,7 @@ class Grid:
 
     # Helper method for initIndexCells()
         # return - int intersections the number of intersections this IndexCell's word will have with other words
-    def findIntersections(self, ic: IndexCell):
+    def findIntersections(self, ic: IndexCell) -> int:
         total = 0
         for cell in ic.body:
             if (cell.x + 1 < self.length):
@@ -170,8 +166,7 @@ class Grid:
 
     # Fills in various fields for each of the IndexCells in the grid
     # Specifically: list(LetterCell) body, int intersections, int length
-        # return - None
-    def initIndexCells(self):
+    def initIndexCells(self) -> None:
         for i in range(self.length):
             for j in range(self.width):
                 currentCell = self.grid[i][j]
@@ -187,17 +182,50 @@ class Grid:
                     currentCell.body = self.findBody(currentCell)
                     currentCell.intersections = self.findIntersections(currentCell)
 
+    # Sorts the IndexCells in the array from most to least intersections
+    # If the argument "ascending" is set to True, it will be least to most intersections
+        # return - list[IndexCell] sorted list of IndexCells by intersections
+    def sortIndexCells(self, ascending : bool = False) -> list[IndexCell]:
+        cells = list()
+        for i in range(self.length):
+            for j in range(self.width):
+                currentCell = self.grid[i][j]
+                if (isinstance(currentCell, HybridCell)):
+                    cells.append(currentCell.across)
+                    cells.append(currentCell.down)
+                elif (isinstance(currentCell, IndexCell)):
+                    cells.append(currentCell)
+
+        # After gathering the IndexCells, sort the array
+        if (ascending): # True: List will be least to most intersections
+            for i in range(0, len(cells)):
+                min_index = i
+
+                for j in range(i + 1, len(cells)):
+                    if (cells[j].intersections < cells[min_index].intersections):
+                        min_index = j
+
+                (cells[i], cells[min_index]) = (cells[min_index], cells[i])
+        else: # False: List will be most to least intersections
+            for i in range(0, len(cells)):
+                max_index = i
+
+                for j in range(i + 1, len(cells)):
+                    if (cells[j].intersections > cells[max_index].intersections):
+                        max_index = j
+
+                (cells[i], cells[max_index]) = (cells[max_index], cells[i])
+
+        return cells
+
     # Helper method for createWords()
-        # return - None
-    def addWord(self):
+    def addWord(self) -> None:
         pass
 
     # Helper method for createWords()
-        # return - None
-    def addWordContains(self, required: list):
+    def addWordContains(self, required: list) -> None:
         pass
 
     # Will assign a word to each of the IndexCells given, in order
-        # return - None
-    def createWords(self, indexCells: list):
+    def createWords(self, indexCells: list) -> None:
         pass
