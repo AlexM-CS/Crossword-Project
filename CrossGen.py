@@ -223,12 +223,14 @@ def checkAndRemoveAllSize2(grid):
                 if(column < len(grid[0]) - 1):
                     if grid[row][column + 1] == "*":
                         emptySpot += 1
-                if emptySpot == 3 or ((row == 0 or row == len(grid) - 1 or column == 0 or column == len(grid[0]) - 1)
-                    and emptySpot == 2) or ((row == 0 and column == 0)
-                                            or (row == 0 and column == len(grid[0]) - 1)
-                                                or (column == 0 and row == len(grid) - 1)
-                                                    or (column == len(grid[0]) - 1 and row == len(grid) - 1)
-                                            and emptySpot == 1):
+                if (emptySpot == 3
+                        or ((row == 0 or row == len(grid) - 1 or column == 0 or column == len(grid[0]))
+                            and emptySpot == 2)
+                        or ((row == 0 and column == 0)
+                            or (row == 0 and column == len(grid[0]) - 1)
+                                or (column == 0 and row == len(grid) - 1)
+                                    or (column == len(grid[0]) - 1 and row == len(grid) - 1)
+                            and emptySpot == 1)):
                     grid[row][column] = "*"
                 else:
                     grid[row + 1][column] = "*"
@@ -248,12 +250,14 @@ def checkAndRemoveAllSize2(grid):
                 if (column > 0):
                     if grid[row][column - 1] == "*":
                         emptySpot += 1
-                if emptySpot == 3 or ((row == 0 or row == len(grid) - 1 or column == 0 or column == len(grid[0]))
-                                      and emptySpot == 2) or ((row == 0 and column == 0)
-                                                              or (row == 0 and column == len(grid[0]) - 1)
-                                                                 or (column == 0 and row == len(grid) - 1)
-                                                                    or (column == len(grid[0]) - 1 and row == len(grid) - 1)
-                                                              and emptySpot == 1):
+                if (emptySpot == 3
+                        or ((row == 0 or row == len(grid) - 1 or column == 0 or column == len(grid[0]))
+                            and emptySpot == 2)
+                        or ((row == 0 and column == 0)
+                            or (row == 0 and column == len(grid[0]) - 1)
+                                or (column == 0 and row == len(grid) - 1)
+                                    or (column == len(grid[0]) - 1 and row == len(grid) - 1)
+                            and emptySpot == 1)):
                     grid[row][column] = "*"
                 else:
                     grid[row][column + 1] = "*"
