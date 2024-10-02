@@ -28,6 +28,8 @@ Changelog 9-30-2024, Alex Myska
         - Changed the file into a test file
 
 Changelog 10-1-2024, Alex Myska
+    Grid.py:
+        - Added sortIndexCells
     version1.py
         - Added test methods
         - Edited Grid.py and Cell.py to conform to intended behavior
