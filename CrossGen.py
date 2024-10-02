@@ -194,79 +194,103 @@ def checkAndRemoveAllSize2(grid):
     for row in range(len(grid)):
         for column in range(len(grid[0])):
             hybrid = False
+            #Checks if index cell being checked is a Hybrid, if it is then the cell checks for both a down and
+            #across length 2 word
             if grid[row][column] == "H":
                 hybrid = True
             downCheck = 1
+            #Checks number of cells associated downwards (only called if index cell is down)
             if grid[row][column] == "D" or hybrid:
                 p = 1
+                #Checks cells down, if it ever hits more than 2 long, then it breaks as it is not size 2
                 while(grid[row+p][column] in ("_", "A")):
                     downCheck += 1
                     p += 1
                     if downCheck == 3 or (row + p) >= len(grid):
                         break
             acrossCheck = 1
+            #Checks number of cells associated downwards (only called if index cell is across)
             if grid[row][column] == "A" or hybrid:
                 p = 1
+                #Checks cells across, if it ever hits more than 2 long, then it breaks and moves on as it is not
+                #size 2
                 while (grid[row][column + p] in ("_","D")):
                     acrossCheck += 1
                     p += 1
                     if acrossCheck == 3 or (column + p) >= len(grid[0]):
                         break
             if downCheck == 2:
-                emptySpot = 0
-                if(row > 0):
-                    if grid[row - 1][column] == "*":
-                        emptySpot += 1
-                if(column > 0):
-                    if grid[row][column - 1] == "*":
-                        emptySpot += 1
-                if(column < len(grid[0]) - 1):
-                    if grid[row][column + 1] == "*":
-                        emptySpot += 1
-                if (emptySpot == 3
-                        or ((row == 0 or row == len(grid) - 1 or column == 0 or column == len(grid[0]))
-                            and emptySpot == 2)
-                        or ((row == 0 and column == 0)
-                            or (row == 0 and column == len(grid[0]) - 1)
-                                or (column == 0 and row == len(grid) - 1)
-                                    or (column == len(grid[0]) - 1 and row == len(grid) - 1)
-                            and emptySpot == 1)):
-                    grid[row][column] = "*"
-                else:
-                    grid[row + 1][column] = "*"
-                    if grid[row][column] == "H":
-                        grid[row][column] = "A"
-                    else:
-                        grid[row][column] = "_"
+                removeDownTwo(row, column, grid)
 
             if acrossCheck == 2:
-                emptySpot = 0
-                if (row > 0):
-                    if grid[row - 1][column] == "*":
-                        emptySpot += 1
-                if (row < len(grid) - 1):
-                    if grid[row + 1][column] == "*":
-                        emptySpot += 1
-                if (column > 0):
-                    if grid[row][column - 1] == "*":
-                        emptySpot += 1
-                if (emptySpot == 3
-                        or ((row == 0 or row == len(grid) - 1 or column == 0 or column == len(grid[0]))
-                            and emptySpot == 2)
-                        or ((row == 0 and column == 0)
-                            or (row == 0 and column == len(grid[0]) - 1)
-                                or (column == 0 and row == len(grid) - 1)
-                                    or (column == len(grid[0]) - 1 and row == len(grid) - 1)
-                            and emptySpot == 1)):
-                    grid[row][column] = "*"
-                else:
-                    grid[row][column + 1] = "*"
-                    if grid[row][column] == "H":
-                        grid[row][column] = "D"
-                    else:
-                        grid[row][column] = "_"
+                removeAcrossTwo(row, column, grid)
 
-
+#Checks each adjacent cell to see if it is a blank, if all of adjacent cells are empty then the "index" cell
+#is turned empty. If not then the non index cell is turned empty and the index cell becomes a blank cell
+def removeDownTwo(row: int, column: int, grid):
+    emptySpot = 0
+    adjacentSpot = 0
+    #Checks top bound of array
+    if (row > 0):
+        adjacentSpot += 1
+        #Checks top "neighbor"
+        if grid[row - 1][column] == "*":
+            emptySpot += 1
+    #Checks left bound of array
+    if (column > 0):
+        adjacentSpot += 1
+        #Checks left "neighbor"
+        if grid[row][column - 1] == "*":
+            emptySpot += 1
+    #Checks right bound of array
+    if (column < len(grid[0]) - 1):
+        adjacentSpot += 1
+        #Checks right "neighbor"
+        if grid[row][column + 1] == "*":
+            emptySpot += 1
+    #If each "neighbor" available is a empty spot then it turns the index cell into empty cell
+    if (adjacentSpot == emptySpot):
+        grid[row][column] = "*"
+    #Makes the cell down an empty cell
+    else:
+        grid[row + 1][column] = "*"
+        if grid[row][column] == "H":
+            grid[row][column] = "A"
+        else:
+            grid[row][column] = "_"
+#Checks each adjacent cell to see if it is a blank, if all of adjacent cells are empty then the "index" cell
+#is turned empty. If not then the non index cell is turned empty and the index cell becomes a blank cell
+def removeAcrossTwo(row: int, column: int, grid):
+    emptySpot = 0
+    adjacentSpot = 0
+    #Check top bound of array
+    if (row > 0):
+        adjacentSpot += 1
+        #Check up "neighbor" is empty
+        if grid[row - 1][column] == "*":
+            emptySpot += 1
+    #Check right bound of array
+    if (row < len(grid) - 1):
+        adjacentSpot += 1
+        #Check right "neighbor" is empty
+        if grid[row + 1][column] == "*":
+            emptySpot += 1
+    #check left bound of array
+    if (column > 0):
+        adjacentSpot += 1
+        #Check right "neighbor" is empty
+        if grid[row][column - 1] == "*":
+            emptySpot += 1
+    #If each "neighbor" available is a empty spot then it turns the index cell into empty cell
+    if (adjacentSpot == emptySpot):
+        grid[row][column] = "*"
+    # Makes the cell down an empty cell
+    else:
+        grid[row][column + 1] = "*"
+        if grid[row][column] == "H":
+            grid[row][column] = "D"
+        else:
+            grid[row][column] = "_"
 
 
 
