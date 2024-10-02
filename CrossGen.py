@@ -223,7 +223,7 @@ def checkAndRemoveAllSize2(grid):
                 if(column < len(grid[0]) - 1):
                     if grid[row][column + 1] == "*":
                         emptySpot += 1
-                if emptySpot == 3 or ((row == 0 or row == len(grid) - 1 or column == 0 or column == len(grid[0]))
+                if emptySpot == 3 or ((row == 0 or row == len(grid) - 1 or column == 0 or column == len(grid[0]) - 1)
                     and emptySpot == 2) or ((row == 0 and column == 0)
                                             or (row == 0 and column == len(grid[0]) - 1)
                                                 or (column == 0 and row == len(grid) - 1)
@@ -234,6 +234,8 @@ def checkAndRemoveAllSize2(grid):
                     grid[row + 1][column] = "*"
                     if grid[row][column] == "H":
                         grid[row][column] = "A"
+                    else:
+                        grid[row][column] = "_"
 
             if acrossCheck == 2:
                 emptySpot = 0
@@ -249,14 +251,16 @@ def checkAndRemoveAllSize2(grid):
                 if emptySpot == 3 or ((row == 0 or row == len(grid) - 1 or column == 0 or column == len(grid[0]))
                                       and emptySpot == 2) or ((row == 0 and column == 0)
                                                               or (row == 0 and column == len(grid[0]) - 1)
-                                                              or (column == 0 and row == len(grid) - 1)
-                                                              or (column == len(grid[0]) - 1 and row == len(grid) - 1)
+                                                                 or (column == 0 and row == len(grid) - 1)
+                                                                    or (column == len(grid[0]) - 1 and row == len(grid) - 1)
                                                               and emptySpot == 1):
                     grid[row][column] = "*"
                 else:
                     grid[row][column + 1] = "*"
                     if grid[row][column] == "H":
-                        grid[row][column] = "A"
+                        grid[row][column] = "D"
+                    else:
+                        grid[row][column] = "_"
 
 
 
@@ -306,8 +310,8 @@ def main():
     markAcrossAndDownTiles(othergrid)
     write_to_file('output1.txt', othergrid)
     checkAndRemoveAllSize2(othergrid)
-    write_to_file('output2.txt', othergrid)
     displayGrid(othergrid)
+    write_to_file('output2.txt', othergrid)
 
 
 
