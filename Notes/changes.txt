@@ -38,4 +38,3 @@ Changelog 10-1-2024, Alex Myska
 ChangeLog 10-3-2024
     DataBaseConvert.py
         - Implented FindWord method and (mostly) bug proofed it
-        

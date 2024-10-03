@@ -71,10 +71,15 @@ def convertBase():
 
 
 def findWord(IndexCell):
+
+    #List of lists containing an index and a possible letter
     indices = []
+
+    #Helps narrow down word search
     wordLength = len(IndexCell.body)
-    print(wordLength)
-    #Creates 2-d list of letters and their indexes
+
+
+    #Initazlises indices
     for i, val in enumerate(IndexCell.body):
         if(isinstance(val, LetterCell)):
 
@@ -89,66 +94,101 @@ def findWord(IndexCell):
         #Makes filepath
         filePath+=indices[0][1].lower()+"-Words/words_"+str(wordLength)+".txt"
         try:
-
+            print("yo")
             finalWords,flag = genWord(filePath, indices)
 
 
         except:
+
             return [], flag
 
     else:
         #If first letter is not given
         #Iterate until finds valid words
+
+        #List used to see if letter was already checked
+        usedChars = []
         while not flag:
+
             #Generate random starting letter
             random_num = random.randint(1, 26)
             random_letter = chr(random_num + 96)
-            # Makes filepath
 
+            #If check happens to every letter, return false because no words were found
+            if len(usedChars) == 26:
+                return [],False
+
+            #If letter was already used, generate new one in loop
+            if random_letter in usedChars:
+                continue
+            usedChars.append(random_letter)
+
+
+            # Makes filepath
             filePath += random_letter.lower() + "-Words/words_" + str(wordLength) + ".txt"
+
+            #Sees if its a valid file path
             try:
                 finalWords, flag = genWord(filePath, indices)
             except:
                 continue
 
-    print(filePath)
+
+    #Returns list of words and boolean determining if words were found
     return finalWords, flag
 
 
 
 #Iterates through and finds word that fits indices specifications
 def genWord(filePath,indices):
+    #List of words found
     finalWords = []
+
     with open(filePath, 'r') as file:
-        words = file.read().splitlines()  # Split the content by newlines
+        # Split the content by newlines
+        words = file.read().splitlines()
+
     for i in range(len(words)):
 
         flag = True
         for indexs in indices:
-
-            if words[i][indexs[0]] != indexs[1] and indexs[1] != '':
+            #If wordcell is blank skip checking if it matches word
+            if indexs[1] == '':
+                continue
+            #If not check if letters asllign if not word wont be added
+            if words[i][indexs[0]].lower() != indexs[1].lower():
+                print("yoo")
                 flag = False
+        #If words valid it gets added here
         if flag:
             finalWords.append(words[i])
+
     #flag set to true if word was found
     flag = len(finalWords) > 0
+
     #Returns list of valid words and flag determining if something was found or not
     return finalWords , flag
 
 
 
 def main():
+
+    #Test code for findWord
     c = IndexCell(0,0,True)
 
     Cell1 = LetterCell(2, 0)
+    Cell1.setLetter("")
 
+    Cell2 = LetterCell(3, 0)
+    Cell2.setLetter("r")
 
-    Cell4 = LetterCell(3, 0)
+    Cell3 = LetterCell(3, 0)
+    #Cell3.setLetter("v")
 
     Cell5 = LetterCell(3, 0)
    # Cell5 = LetterCell(4, 0)
     #Cell5.setLetter("N")
-    wordlist = [Cell1, Cell4, Cell5 ]
+    wordlist = [Cell1, Cell2, Cell3 , Cell5 ]
     c.setbody(wordlist)
 
     for val in c.body:
