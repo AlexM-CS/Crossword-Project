@@ -3,7 +3,6 @@ import random
 
 from sys import flags
 from Cell import LetterCell, IndexCell, BlockedCell
-from version1 import WordCell
 
 
 def convertBase():
@@ -78,18 +77,24 @@ def findWord(IndexCell):
     #Creates 2-d list of letters and their indexes
     for i, val in enumerate(IndexCell.body):
         if(isinstance(val, LetterCell)):
+
             indices.append([i, val.letter])
-
-
 
     finalWords = []
     filePath = "Words/"
     flag = False
+
     #Cheks to see if fist letter is filled
-    if indices[0][0] == 0:
+    if indices[0][1] != '' :
         #Makes filepath
         filePath+=indices[0][1].lower()+"-Words/words_"+str(wordLength)+".txt"
-        finalWords,flag = genWord(filePath, indices)
+        try:
+
+            finalWords,flag = genWord(filePath, indices)
+
+
+        except:
+            return [], flag
 
     else:
         #If first letter is not given
@@ -101,10 +106,13 @@ def findWord(IndexCell):
             # Makes filepath
 
             filePath += random_letter.lower() + "-Words/words_" + str(wordLength) + ".txt"
-            finalWords, flag = genWord(filePath, indices)
+            try:
+                finalWords, flag = genWord(filePath, indices)
+            except:
+                continue
 
-
-    print(finalWords)
+    print(filePath)
+    return finalWords, flag
 
 
 
@@ -113,13 +121,12 @@ def genWord(filePath,indices):
     finalWords = []
     with open(filePath, 'r') as file:
         words = file.read().splitlines()  # Split the content by newlines
-
     for i in range(len(words)):
 
         flag = True
         for indexs in indices:
 
-            if words[i][indexs[0]] != indexs[1]:
+            if words[i][indexs[0]] != indexs[1] and indexs[1] != '':
                 flag = False
         if flag:
             finalWords.append(words[i])
@@ -133,26 +140,25 @@ def genWord(filePath,indices):
 def main():
     c = IndexCell(0,0,True)
 
-    Cell2 = BlockedCell(1,0)
-    #Cell2.setLetter("B")
-
-    Cell3 = BlockedCell(2, 0)
+    Cell1 = LetterCell(2, 0)
 
 
-    Cell4 = BlockedCell(3, 0)
+    Cell4 = LetterCell(3, 0)
 
-
-    Cell5 = LetterCell(4, 0)
-    Cell5.setLetter("L")
-    wordlist = [ Cell2, Cell3, Cell4, Cell5 ]
-
+    Cell5 = LetterCell(3, 0)
+   # Cell5 = LetterCell(4, 0)
+    #Cell5.setLetter("N")
+    wordlist = [Cell1, Cell4, Cell5 ]
     c.setbody(wordlist)
+
     for val in c.body:
         print(val)
 
+    words,wordCheck =  findWord(c)
 
+    print(words)
+    print(wordCheck)
 
-    findWord(c)
 
 
 if __name__ == "__main__":
