@@ -16,7 +16,8 @@ class Sorter:
         pass
 
     # Checks to see if word ends in "ed"
-    def edWords(self)
+    def edWords(self):
+        pass
 
     # Checks to see if a word and its plural both appear in a list
     def pluralCheck(self):
