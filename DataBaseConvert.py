@@ -173,6 +173,9 @@ def genWord(filePath,indices):
 
 def main():
 
+    convert_githubList(35, 15, [" ", "," "'"])
+    quit()
+
     #Test code for findWord
     c = IndexCell(0,0,True)
 
@@ -199,6 +202,51 @@ def main():
     print(words)
     print(wordCheck)
 
+def notify(word: str, disallowed: str, alwaysRemove = True, alwaysModify = True):
+    if (alwaysRemove):
+        return ""
+    if (alwaysModify):
+        return modify(word, disallowed)
+    print()
+    print("Found a word '" + word + "' that contains the disallowed character '" + disallowed + "'.")
+    print("Press 1 to skip writing this word.")
+    print("Press 2 to write this word anyway.")
+    print("Press 3 to modify this word before writing.")
+    choice = input("Input: ")
+
+    while (choice != '1' and choice != '2' and choice != '3'):
+        print("Invalid input.")
+        choice = input("Input: ")
+
+    print()
+
+    if (choice == '1'):
+        return word
+    elif (choice == '2'):
+        return ""
+    elif (choice == '3'):
+        return modify(word, disallowed)
+
+def modify(word: str, disallowed: str):
+    newWord = ""
+    for letter in word:
+        if letter == disallowed:
+            continue
+        newWord += letter
+    return newWord
+
+def convert_githubList(requiredScore: int, lengthCap: int, disallowed: list):
+    database = open("githubList/crossword_wordlist.txt", "r")
+    writeToFile = open("githubList/sortedGithubList.txt", "w")
+    for line in database:
+        line = line.strip()
+        data = line.split(";")
+        if (int(data[1]) >= requiredScore and len(data[0]) <= lengthCap):
+            for char in disallowed:
+                if char in data[0]:
+                    data[0] = notify(data[0], char, False)
+            if (len(data[0]) > 0):
+                writeToFile.write(data[0].upper() + "\n")
 
 
 if __name__ == "__main__":
