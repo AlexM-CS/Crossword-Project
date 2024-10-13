@@ -157,7 +157,7 @@ def genWord(filePath,indices):
                 continue
             #If not check if letters asllign if not word wont be added
             if words[i][indexs[0]].lower() != indexs[1].lower():
-                print("yoo")
+
                 flag = False
         #If words valid it gets added here
         if flag:
@@ -180,18 +180,29 @@ def main():
     c = IndexCell(0,0,True)
 
     Cell1 = LetterCell(2, 0)
-    Cell1.setLetter("")
+    Cell1.setLetter("e")
 
     Cell2 = LetterCell(3, 0)
-    Cell2.setLetter("r")
+
 
     Cell3 = LetterCell(3, 0)
-    #Cell3.setLetter("v")
+    Cell3.setLetter("n")
 
-    Cell5 = LetterCell(3, 0)
+
+    #Cell4 = LetterCell(4, 0)
+
+    #Cell5 = LetterCell(5, 0)
+    #Cell5.setLetter("a")
+    #Cell6 = LetterCell(6, 0)
+   # Cell7 = LetterCell(7, 0)
+    #Cell8 = LetterCell(8, 0)
+    #Cell9 =LetterCell(9, 0)
+    #Cell9.setLetter("r")
+
+
    # Cell5 = LetterCell(4, 0)
     #Cell5.setLetter("N")
-    wordlist = [Cell1, Cell2, Cell3 , Cell5 ]
+    wordlist = [Cell1, Cell2, Cell3 ]
     c.setbody(wordlist)
 
     for val in c.body:

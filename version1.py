@@ -332,6 +332,9 @@ def test7():
     # ['I(0,0,,False)','I(0,4,,False)','I(2,0,,True)','I(0,0,,True)','I(0,3,,True)','I(1,2,,False)','I(4,0,,True)','I(4,3,,True)']
 
 def main():
+
+    g = Grid(5, 5)
+    displayGrid(g)
     test7()
 
 if (__name__ == '__main__'):
