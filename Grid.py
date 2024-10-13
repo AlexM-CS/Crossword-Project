@@ -13,9 +13,8 @@ class Grid:
         # list(str) words - list of words that are included in the grid
         # list(list(Cell)) - list of lists that represents the grid
         # str filepath - file that this init will read from (reference)
-    def __init__(self, length: int, width: int, filepath = None) -> None:
-        self.length = length
-        self.width = width
+    def __init__(self, size: int, filepath = None) -> None:
+        self.size = size
         self.words = list()
         self.grid = list()
 
@@ -53,9 +52,9 @@ class Grid:
             # This branch of __init__ iterates through length and width,
             # creating LetterCells as it goes.
             # This should be used for testing only.
-            for i in range(length):
+            for i in range(size):
                 gridLine = list()
-                for j in range(width):
+                for j in range(size):
                     gridLine.append(LetterCell(i, j))
                 self.grid.append(gridLine)
 
@@ -63,8 +62,8 @@ class Grid:
         # return - string representation of this object
     def __str__(self) -> str:
         output = "GRID:\n"
-        for i in range(self.length):
-            for j in range(self.width):
+        for i in range(self.size):
+            for j in range(self.size):
                 currentCell = self.grid[i][j]
                 if isinstance(currentCell, LetterCell):
                     output += "_"
@@ -77,9 +76,9 @@ class Grid:
                     output += "H"
                 else:
                     output += "*"
-                if (j + 1 < self.width):
+                if (j + 1 < self.size):
                     output += " "
-            if (i + 1 < self.length):
+            if (i + 1 < self.size):
                 output += "\n"
         return output
 
@@ -100,16 +99,16 @@ class Grid:
     def findLength(self, ic: IndexCell) -> int:
         length = 1
         if (ic.dir):  # True: the word is across
-            if (ic.y + length < self.length):
-                while (ic.y + length < self.length):
+            if (ic.y + length < self.size):
+                while (ic.y + length < self.size):
                     if not (isinstance(self.grid[ic.x][ic.y + length], BlockedCell)):
                         length += 1
                     else:
                         break
 
         else:  # False: the word is down
-            if (ic.x + length < self.width):
-                while (ic.x + length < self.width):
+            if (ic.x + length < self.size):
+                while (ic.x + length < self.size):
                     if not (isinstance(self.grid[ic.x + length][ic.y], BlockedCell)):
                         length += 1
                     else:
@@ -123,7 +122,7 @@ class Grid:
         body = list()
         if (ic.dir): # True: the word is across
             i = 0
-            while (ic.y + i < self.length):
+            while (ic.y + i < self.size):
                 if not (isinstance(self.grid[ic.x][ic.y + i], BlockedCell)):
                     body.append(self.grid[ic.x][ic.y + i])
                     i += 1
@@ -132,7 +131,7 @@ class Grid:
 
         else: # False: the word is down
             i = 0
-            while (ic.x + i < self.width):
+            while (ic.x + i < self.size):
                 if not (isinstance(self.grid[ic.x + i][ic.y], BlockedCell)):
                     body.append(self.grid[ic.x + i][ic.y])
                     i += 1
@@ -146,7 +145,7 @@ class Grid:
     def findIntersections(self, ic: IndexCell) -> int:
         total = 0
         for cell in ic.body:
-            if (cell.x + 1 < self.length):
+            if (cell.x + 1 < self.size):
                 if not (isinstance(self.grid[cell.x + 1][cell.y],BlockedCell) or (self.grid[cell.x + 1][cell.y] in ic.body)):
                     total += 1
                     continue
@@ -154,7 +153,7 @@ class Grid:
                 if not (isinstance(self.grid[cell.x - 1][cell.y],BlockedCell) or (self.grid[cell.x - 1][cell.y] in ic.body)):
                     total += 1
                     continue
-            if (cell.y + 1 < self.width):
+            if (cell.y + 1 < self.size):
                 if not (isinstance(self.grid[cell.x][cell.y + 1],BlockedCell) or (self.grid[cell.x][cell.y + 1] in ic.body)):
                     total += 1
                     continue
@@ -167,8 +166,8 @@ class Grid:
     # Fills in various fields for each of the IndexCells in the grid
     # Specifically: list(LetterCell) body, int intersections, int length
     def initIndexCells(self) -> None:
-        for i in range(self.length):
-            for j in range(self.width):
+        for i in range(self.size):
+            for j in range(self.size):
                 currentCell = self.grid[i][j]
                 if (isinstance(currentCell,HybridCell)):
                     currentCell.across.wordLength = self.findLength(currentCell.across)
@@ -187,8 +186,8 @@ class Grid:
         # return - list[IndexCell] sorted list of IndexCells by intersections
     def sortIndexCells(self, ascending : bool = False) -> list[IndexCell]:
         cells = list()
-        for i in range(self.length):
-            for j in range(self.width):
+        for i in range(self.size):
+            for j in range(self.size):
                 currentCell = self.grid[i][j]
                 if (isinstance(currentCell, HybridCell)):
                     cells.append(currentCell.across)
@@ -217,6 +216,29 @@ class Grid:
                 (cells[i], cells[max_index]) = (cells[max_index], cells[i])
 
         return cells
+
+    def getEdges(self):
+        # Top, left, right, bottom
+        output = [list(), list(), list(), list()]
+        topRow = 0
+        bottomRow = self.size - 1
+        col = 0
+        while (col < self.size):
+            if (isinstance(self.grid[topRow][col], LetterCell)):
+                output[0].append(self.grid[topRow][col])
+            if (isinstance(self.grid[bottomRow][col], LetterCell)):
+                output[3].append(self.grid[bottomRow][col])
+            col += 1
+        row = 0
+        leftCol = 0
+        rightCol = self.size - 1
+        while (row < self.size):
+            if (isinstance(self.grid[row][leftCol], LetterCell)):
+                output[1].append(self.grid[row][leftCol])
+            if (isinstance(self.grid[row][rightCol], LetterCell)):
+                output[2].append(self.grid[row][rightCol])
+            row += 1
+        return output
 
     # Helper method for createWords()
     def addWord(self) -> None:
