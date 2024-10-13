@@ -333,8 +333,6 @@ def test7():
 
 def main():
 
-    g = Grid(5, 5)
-    displayGrid(g)
     test7()
 
 if (__name__ == '__main__'):

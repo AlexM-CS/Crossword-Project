@@ -70,17 +70,17 @@ def convertBase():
 
 
 
-def findWord(IndexCell):
+def findWord(letterCells):
 
     #List of lists containing an index and a possible letter
     indices = []
 
     #Helps narrow down word search
-    wordLength = len(IndexCell.body)
+    wordLength = len(letterCells)
 
 
     #Initazlises indices
-    for i, val in enumerate(IndexCell.body):
+    for i, val in enumerate(letterCells):
         if(isinstance(val, LetterCell)):
 
             indices.append([i, val.letter])
@@ -174,19 +174,22 @@ def genWord(filePath,indices):
 def main():
 
     convert_githubList(35, 15, [" ", "," "'"])
-    quit()
+    #quit()
 
     #Test code for findWord
-    c = IndexCell(0,0,True)
+
 
     Cell1 = LetterCell(2, 0)
-    Cell1.setLetter("e")
+    Cell1.setLetter("B")
 
     Cell2 = LetterCell(3, 0)
-
+    Cell2.setLetter("o")
 
     Cell3 = LetterCell(3, 0)
-    Cell3.setLetter("n")
+
+
+
+
 
 
     #Cell4 = LetterCell(4, 0)
@@ -203,12 +206,11 @@ def main():
    # Cell5 = LetterCell(4, 0)
     #Cell5.setLetter("N")
     wordlist = [Cell1, Cell2, Cell3 ]
-    c.setbody(wordlist)
 
-    for val in c.body:
-        print(val)
 
-    words,wordCheck =  findWord(c)
+
+
+    words,wordCheck =  findWord(wordlist)
 
     print(words)
     print(wordCheck)
