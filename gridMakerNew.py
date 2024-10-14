@@ -49,14 +49,14 @@ def generateBridge(g: Grid) -> Grid:
         while not ((g.grid[0][randNum] in allEdges[bridgeSide]) and (g.grid[g.size - 1][randNum] in allEdges[opposite])):
             evenIndices.remove(randNum)
             randNum = random.choice(evenIndices)
-        for i in range(0, g.size - 1):
+        for i in range(0, g.size):
             bridge.append(g.grid[i][randNum])
 
     else: # Look at rows
         while not ((g.grid[randNum][0] in allEdges[bridgeSide]) and (g.grid[randNum][g.size - 1] in allEdges[opposite])):
             evenIndices.remove(randNum)
             randNum = random.choice(evenIndices)
-        for i in range(0, g.size - 1):
+        for i in range(0, g.size):
             bridge.append(g.grid[randNum][i])
 
     bridgeWord= getWord(bridge)
