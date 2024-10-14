@@ -6,6 +6,7 @@
 from Cell import *
 from Grid import *
 from display import *
+from gridMakerNew import *
 
 def wait():
     input()
@@ -81,8 +82,8 @@ def test3():
     # (A and D will be "_" when printed)
     print()
 
-    for i in range(0, g.length):
-        for j in range(0, g.width):
+    for i in range(0, g.size):
+        for j in range(0, g.size):
             if (isinstance(g.grid[i][j], IndexCell)):
                 currentCell = g.grid[i][j]
                 print("Cell: '{0}' wordLength: '{1}'".format(currentCell, g.findLength(currentCell)))
@@ -130,8 +131,8 @@ def test4():
     # (A and D will be "_" when printed)
     print()
 
-    for i in range(0, g.length):
-        for j in range(0, g.width):
+    for i in range(0, g.size):
+        for j in range(0, g.size):
             if (isinstance(g.grid[i][j], IndexCell)):
                 currentCell = g.grid[i][j]
                 currentBody = g.findBody(currentCell)
@@ -182,8 +183,8 @@ def test5():
     # (A and D will be "_" when printed)
     print()
 
-    for i in range(0, g.length):
-        for j in range(0, g.width):
+    for i in range(0, g.size):
+        for j in range(0, g.size):
             if (isinstance(g.grid[i][j], IndexCell)):
                 currentCell = g.grid[i][j]
                 currentCell.body = g.findBody(currentCell)
@@ -225,8 +226,8 @@ def test6():
 
     g.initIndexCells()
 
-    for i in range(g.length):
-        for j in range(g.width):
+    for i in range(g.size):
+        for j in range(g.size):
             if (isinstance(g.grid[i][j], HybridCell)):
                 currentCell = g.grid[i][j]
                 for index in range(0, len(currentCell.across.body)):
@@ -331,9 +332,28 @@ def test7():
     # Because of the way the grid is set up, the output should be this:
     # ['I(0,0,,False)','I(0,4,,False)','I(2,0,,True)','I(0,0,,True)','I(0,3,,True)','I(1,2,,False)','I(4,0,,True)','I(4,3,,True)']
 
-def main():
+# Tests getEdges
+def test8():
+    g = createEdges(9)
+    topEdge, leftEdge, rightEdge, bottomEdge = g.getEdges()
+    for i in range(len(topEdge)):
+        topEdge[i] = topEdge[i].__str__()
+    for i in range(len(leftEdge)):
+        leftEdge[i] = leftEdge[i].__str__()
+    for i in range(len(rightEdge)):
+        rightEdge[i] = rightEdge[i].__str__()
+    for i in range(len(bottomEdge)):
+        bottomEdge[i] = bottomEdge[i].__str__()
 
-    test7()
+    print(topEdge)
+    print(leftEdge)
+    print(rightEdge)
+    print(bottomEdge)
+
+    displayGrid(g)
+
+def main():
+    test8()
 
 if (__name__ == '__main__'):
     main()

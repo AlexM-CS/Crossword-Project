@@ -47,7 +47,7 @@ class LetterCell(Cell):
     def __str__(self):
         return "L({0},{1},{2})".format(self.x, self.y,self.letter)
 
-    def setLetter(self, param):
+    def setLetter(self, param: str):
         self.letter = param
 
 
@@ -92,8 +92,8 @@ class HybridCell(IndexCell):
         self.x = x
         self.y = y
         self.letter = ""
-        self.across = IndexCell(x, y, True)
-        self.down = IndexCell(x, y, False)
+        self.across = super().__init__(x, y, True)
+        self.down = super().__init__(x, y, False)
 
     # Overriding the default string representation
         # return - string representation of this object
