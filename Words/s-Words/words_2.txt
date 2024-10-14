@@ -1,4 +1,1 @@
-SH
-SI
 SO
-SU

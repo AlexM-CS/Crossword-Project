@@ -12,7 +12,7 @@ def convertBase():
 
     for letter in alph:
 
-        with open('Crossword Databases/' + letter + '_words_converted.txt', 'r') as file:
+        with open('githubList/sortedGithubList.txt', 'r') as file:
             content = file.read()  # Read the entire content
             words = content.split()  # Split the content into words
 
@@ -188,8 +188,7 @@ def main():
     Cell3 = LetterCell(3, 0)
 
 
-
-
+    convertBase()
 
 
     #Cell4 = LetterCell(4, 0)
