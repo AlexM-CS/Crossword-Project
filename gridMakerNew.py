@@ -1,9 +1,11 @@
 # 10-10-2024
 # Alexander Myska, Oliver Strauss, Brandon Knautz
+from random import Random
 
 # This class will be used to make grids, this time by looking for words first
 
 from Cell import *
+from DataBaseConvert import findWord
 from Grid import *
 from display import *
 import random
@@ -57,9 +59,12 @@ def generateBridge(g: Grid) -> Grid:
         for i in range(0, g.size - 1):
             bridge.append(g.grid[randNum][i])
 
+    bridgeWord= getWord(bridge)
+    print(bridgeWord)
     # Create a word for the bridge
     for i in range(0, len(bridge)):
-        bridge[i].setLetter("A")
+        bridge[i].setLetter(bridgeWord[i])
+
     print(bridge)
 
     displayGrid(g)
@@ -94,6 +99,11 @@ def fill(grid, size: int):
 
 def initGrid():
     pass
+
+def getWord(letterCells):
+    gotWords,found = findWord(letterCells)
+    randIndex = random.randrange(0, len(gotWords))
+    return gotWords[randIndex]
 
 def main():
     createEdges(9)

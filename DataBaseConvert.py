@@ -82,7 +82,6 @@ def findWord(letterCells):
     #Initazlises indices
     for i, val in enumerate(letterCells):
         if(isinstance(val, LetterCell)):
-
             indices.append([i, val.letter])
 
     finalWords = []
@@ -179,16 +178,10 @@ def main():
     #Test code for findWord
 
 
-    Cell1 = LetterCell(2, 0)
-    Cell1.setLetter("B")
-
-    Cell2 = LetterCell(3, 0)
-    Cell2.setLetter("o")
-
-    Cell3 = LetterCell(3, 0)
 
 
-    convertBase()
+
+   # convertBase()
 
 
     #Cell4 = LetterCell(4, 0)
@@ -204,7 +197,7 @@ def main():
 
    # Cell5 = LetterCell(4, 0)
     #Cell5.setLetter("N")
-    wordlist = [Cell1, Cell2, Cell3 ]
+    wordlist = [LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0)]
 
 
 
