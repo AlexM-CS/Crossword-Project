@@ -26,9 +26,6 @@ def convertBase():
         except FileExistsError:
             print(f"Base directory '{base_directory}' already exists.")
 
-        # List of alphabet letters
-        alph = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
-                'v', 'w', 'x', 'y', 'z']
 
         # Create a dictionary to hold words by their starting letters
         words_by_letter = {letter: [] for letter in alph}
@@ -81,8 +78,7 @@ def findWord(letterCells):
 
     #Initazlises indices
     for i, val in enumerate(letterCells):
-        if(isinstance(val, LetterCell)):
-            indices.append([i, val.letter])
+        indices.append([i, val.letter])
 
     finalWords = []
     filePath = "Words/"
@@ -93,7 +89,6 @@ def findWord(letterCells):
         #Makes filepath
         filePath+=indices[0][1].lower()+"-Words/words_"+str(wordLength)+".txt"
         try:
-            print("yo")
             finalWords,flag = genWord(filePath, indices)
 
 
