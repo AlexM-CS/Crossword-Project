@@ -30,42 +30,55 @@ def createEdges(size: int) -> Grid:
         # Loop over the edges, give them words
             # allEdges needs to be re-declared because we have since edited the edges
         allEdges = g.getEdges()
+        cellLists = list()
         for edge in allEdges:
-            for i in range(1, len(edge)):
-                a = edge[i - 1]
-                b = edge[i]
+            thisWord = list()
+            for j in range(0, len(edge)):
+                a = edge[j]
+                if (j == 0):
+                    thisWord.append(a)
+                    continue
+
+                b = edge[j - 1]
 
                 # Converts the binary return value from compare to a string
                 dist = a.compare(b)
-
-                if (a == edge[0]): # If a is the first in the list, make it an IndexCell
-                    ic = IndexCell(a.x, a.y, False)
-                    g.addIndexCell(ic)
-                    edge[i - 1] = ic
-                    edgeWord = getWord(edge)
-                    ic.setBody(edge, edgeWord)
-                    continue
 
                 if (dist > 0b0111111): # The number differs by x
                     if (dist > 0b1011111): # The number also differs by y
                         continue
                     else: # Only the x-coordinates are different
-                        if (dist > 0b1000001):  # Distance is greater than 1; there was a gap
-                            ic = IndexCell(b.x, b.y, False)
-                            g.addIndexCell(ic)
-                            edge[i] = ic
-                            edgeWord = getWord(edge)
-                            ic.setBody(edge, edgeWord)
+                        if not (dist > 0b1000001):  # Distance is not greater than 1; continue with the current list
+                            thisWord.append(a)
+                        else: # Distance was greater than 1; new word starts here
+                            cellLists.append(thisWord)
+                            thisWord = list()
+                            thisWord.append(a)
 
                 elif (dist > 0b0011111): # The number differs by y only
-                    if (dist > 0b0100001): # Distance is greater than 1; there was a gap
-                        ic = IndexCell(b.x, b.y, True)
-                        g.addIndexCell(ic)
-                        edge[i] = ic
-                        edgeWord = getWord(edge)
-                        ic.setBody(edge, edgeWord)
+                    if not (dist > 0b0100001): # Distance is not greater than 1; continue with the current list
+                        thisWord.append(a)
+                    else: # Distance was greater than 1; new word starts here
+                        cellLists.append(thisWord)
+                        thisWord = list()
+                        thisWord.append(a)
 
                 # In all other cases, the cells we compared were the same
+
+            cellLists.append(thisWord)
+
+        for thisWord in cellLists:
+            for i in range(0, len(thisWord)):
+                thisWord[i] = g.grid[thisWord[i].x][thisWord[i].y]
+
+            word = getWord(thisWord)
+            if not (isinstance(thisWord[0], IndexCell)):
+                ic = IndexCell(thisWord[0].x, thisWord[0].y)
+                g.addIndexCell(ic)
+            else:
+                ic = thisWord[0]
+            thisWord[0] = ic
+            ic.setBody(thisWord, word)
 
         return g
 
@@ -99,7 +112,7 @@ def generateBridge(g: Grid) -> Grid:
 
     bridgeWord = getWord(bridge)
 
-    ic = IndexCell(bridge[0].x, bridge[0].y, bridgeSide == 1)
+    ic = IndexCell(bridge[0].x, bridge[0].y)
     g.addIndexCell(ic)
     bridge[0] = ic
     ic.setBody(bridge, bridgeWord)

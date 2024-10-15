@@ -91,13 +91,11 @@ class IndexCell(LetterCell):
         # int length - the length of this word
         # bool dir - the direction of the word of this cell
         # return - None
-    def __init__(self, x: int, y: int, dir: bool):
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(x, y)
         self.body = list()
         self.word = ""
-        self.intersections = 0
         self.wordLength = 0
-        self.dir = dir
 
     # Overriding the default string representation
         # return - string representation of this object
