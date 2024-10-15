@@ -20,14 +20,52 @@ def createEdges(size: int) -> Grid:
         while (partitions < 2):
             randomSide = random.choice(allEdges)
             partitionIndex = random.randrange(3, size - 3)
-            c = randomSide[partitionIndex]
-            g.grid[c.x][c.y] = BlockedCell(c.x, c.y)
+            partitionCell = randomSide[partitionIndex]
+            g.addBlockedHere(partitionCell.x, partitionCell.y)
             allEdges.remove(randomSide)
             partitions += 1
 
         g = generateBridge(g)
 
         # Loop over the edges, give them words
+            # allEdges needs to be re-declared because we have since edited the edges
+        allEdges = g.getEdges()
+        for edge in allEdges:
+            for i in range(1, len(edge)):
+                a = edge[i - 1]
+                b = edge[i]
+
+                # Converts the binary return value from compare to a string
+                dist = a.compare(b)
+
+                if (a == edge[0]): # If a is the first in the list, make it an IndexCell
+                    ic = IndexCell(a.x, a.y, False)
+                    g.addIndexCell(ic)
+                    edge[i - 1] = ic
+                    edgeWord = getWord(edge)
+                    ic.setBody(edge, edgeWord)
+                    continue
+
+                if (dist > 0b0111111): # The number differs by x
+                    if (dist > 0b1011111): # The number also differs by y
+                        continue
+                    else: # Only the x-coordinates are different
+                        if (dist > 0b1000001):  # Distance is greater than 1; there was a gap
+                            ic = IndexCell(b.x, b.y, False)
+                            g.addIndexCell(ic)
+                            edge[i] = ic
+                            edgeWord = getWord(edge)
+                            ic.setBody(edge, edgeWord)
+
+                elif (dist > 0b0011111): # The number differs by y only
+                    if (dist > 0b0100001): # Distance is greater than 1; there was a gap
+                        ic = IndexCell(b.x, b.y, True)
+                        g.addIndexCell(ic)
+                        edge[i] = ic
+                        edgeWord = getWord(edge)
+                        ic.setBody(edge, edgeWord)
+
+                # In all other cases, the cells we compared were the same
 
         return g
 
@@ -59,28 +97,22 @@ def generateBridge(g: Grid) -> Grid:
         for i in range(0, g.size):
             bridge.append(g.grid[randNum][i])
 
-    bridgeWord= getWord(bridge)
-    print(bridgeWord)
-    # Create a word for the bridge
-    for i in range(0, len(bridge)):
-        bridge[i].setLetter(bridgeWord[i])
+    bridgeWord = getWord(bridge)
 
-    print(bridge)
+    ic = IndexCell(bridge[0].x, bridge[0].y, bridgeSide == 1)
+    g.addIndexCell(ic)
+    bridge[0] = ic
+    ic.setBody(bridge, bridgeWord)
 
-    displayGrid(g)
-    quit()
+    # =====================================================
+    # DEBUGGING LINES
+    # print(bridgeWord)
+    # =====================================================
 
     return g
 
-    # Generate a bridge between the disconnected parts
-
-    # Loop over the edges and the bridge, and try to give them words
-    # Check if all the edges have words now
-    # If they do, break
-
-    # Return a list of words that we will build off from
-
-def fill(grid, size: int):
+# Fills the rest of the Grid with words
+def fill(grid, size: int) -> Grid:
     # Set int wordSize = size - 2
 
     while True: # Loop until about 70% of the grid has letters
@@ -97,10 +129,12 @@ def fill(grid, size: int):
 
     pass
 
-def initGrid():
+# Method that initializes a Grid with words
+def initGrid() -> Grid:
     pass
 
-def getWord(letterCells):
+# Returns a word to be placed in a Grid
+def getWord(letterCells) -> str:
     gotWords,found = findWord(letterCells)
     randIndex = random.randrange(0, len(gotWords))
     return gotWords[randIndex]

@@ -38,7 +38,7 @@ def displayGrid(g):
     #Binds left click to closeWindow method
     window.bind("<Button-1>", closeWindow)
 
-    #Iterates through dict
+    #Iterates through Grid
     for i in range(g.size):
         for j in range(g.size):
             cell = g.grid[i][j]

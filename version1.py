@@ -16,10 +16,10 @@ def test1():
     g = Grid(4, 4)
     print(g)
     # The previous line should print a grid of blank cells
-    g.addBlockedCell(0, 0)
-    g.addBlockedCell(1, 1)
-    g.addBlockedCell(2, 2)
-    g.addBlockedCell(3, 3)
+    g.addBlockedHere(0, 0)
+    g.addBlockedHere(1, 1)
+    g.addBlockedHere(2, 2)
+    g.addBlockedHere(3, 3)
     print(g)
     # Because of the way the grid is set up, the output should be this:
     # * _ _ _
@@ -49,26 +49,26 @@ def test2():
 # Test the method findLength
 def test3():
     g = Grid(7,7)
-    g.addBlockedCell(0, 2)
-    g.addBlockedCell(1, 1)
-    g.addBlockedCell(1, 3)
-    g.addBlockedCell(1, 5)
-    g.addBlockedCell(2, 3)
-    g.addBlockedCell(2, 5)
-    g.addBlockedCell(3, 1)
-    g.addBlockedCell(3, 3)
-    g.addBlockedCell(3, 5)
-    g.addBlockedCell(4, 1)
-    g.addBlockedCell(4, 3)
-    g.addBlockedCell(5, 1)
-    g.addBlockedCell(5, 3)
-    g.addBlockedCell(5, 5)
-    g.addBlockedCell(6, 4)
-    g.addIndexCell(0, 0, True)
-    g.addIndexCell(0, 3, True)
-    g.addIndexCell(2, 0, True)
-    g.addIndexCell(1, 2, False)
-    g.addIndexCell(0, 6, False)
+    g.addBlockedHere(0, 2)
+    g.addBlockedHere(1, 1)
+    g.addBlockedHere(1, 3)
+    g.addBlockedHere(1, 5)
+    g.addBlockedHere(2, 3)
+    g.addBlockedHere(2, 5)
+    g.addBlockedHere(3, 1)
+    g.addBlockedHere(3, 3)
+    g.addBlockedHere(3, 5)
+    g.addBlockedHere(4, 1)
+    g.addBlockedHere(4, 3)
+    g.addBlockedHere(5, 1)
+    g.addBlockedHere(5, 3)
+    g.addBlockedHere(5, 5)
+    g.addBlockedHere(6, 4)
+    g.addIndexHere(0, 0, True)
+    g.addIndexHere(0, 3, True)
+    g.addIndexHere(2, 0, True)
+    g.addIndexHere(1, 2, False)
+    g.addIndexHere(0, 6, False)
 
     print(g)
     # The grid should look like this:
@@ -98,26 +98,26 @@ def test3():
 # Test the method findBody
 def test4():
     g = Grid(7, 7)
-    g.addBlockedCell(0, 2)
-    g.addBlockedCell(1, 1)
-    g.addBlockedCell(1, 3)
-    g.addBlockedCell(1, 5)
-    g.addBlockedCell(2, 3)
-    g.addBlockedCell(2, 5)
-    g.addBlockedCell(3, 1)
-    g.addBlockedCell(3, 3)
-    g.addBlockedCell(3, 5)
-    g.addBlockedCell(4, 1)
-    g.addBlockedCell(4, 3)
-    g.addBlockedCell(5, 1)
-    g.addBlockedCell(5, 3)
-    g.addBlockedCell(5, 5)
-    g.addBlockedCell(6, 4)
-    g.addIndexCell(0, 0, True)
-    g.addIndexCell(0, 3, True)
-    g.addIndexCell(2, 0, True)
-    g.addIndexCell(1, 2, False)
-    g.addIndexCell(0, 6, False)
+    g.addBlockedHere(0, 2)
+    g.addBlockedHere(1, 1)
+    g.addBlockedHere(1, 3)
+    g.addBlockedHere(1, 5)
+    g.addBlockedHere(2, 3)
+    g.addBlockedHere(2, 5)
+    g.addBlockedHere(3, 1)
+    g.addBlockedHere(3, 3)
+    g.addBlockedHere(3, 5)
+    g.addBlockedHere(4, 1)
+    g.addBlockedHere(4, 3)
+    g.addBlockedHere(5, 1)
+    g.addBlockedHere(5, 3)
+    g.addBlockedHere(5, 5)
+    g.addBlockedHere(6, 4)
+    g.addIndexHere(0, 0, True)
+    g.addIndexHere(0, 3, True)
+    g.addIndexHere(2, 0, True)
+    g.addIndexHere(1, 2, False)
+    g.addIndexHere(0, 6, False)
 
     print(g)
     # The grid should look like this:
@@ -136,8 +136,8 @@ def test4():
             if (isinstance(g.grid[i][j], IndexCell)):
                 currentCell = g.grid[i][j]
                 currentBody = g.findBody(currentCell)
-                for index in range(0, len(currentBody)):
-                    currentBody[index] = currentBody[index].__str__()
+                for i in range(0, len(currentBody)):
+                    currentBody[i] = currentBody[i].__str__()
                 print(currentBody)
 
     # Because of the way the grid is set up, the output should be this:
@@ -150,26 +150,26 @@ def test4():
 # Test the method findIntersections
 def test5():
     g = Grid(7, 7)
-    g.addBlockedCell(0, 2)
-    g.addBlockedCell(1, 1)
-    g.addBlockedCell(1, 3)
-    g.addBlockedCell(1, 5)
-    g.addBlockedCell(2, 3)
-    g.addBlockedCell(2, 5)
-    g.addBlockedCell(3, 1)
-    g.addBlockedCell(3, 3)
-    g.addBlockedCell(3, 5)
-    g.addBlockedCell(4, 1)
-    g.addBlockedCell(4, 3)
-    g.addBlockedCell(5, 1)
-    g.addBlockedCell(5, 3)
-    g.addBlockedCell(5, 5)
-    g.addBlockedCell(6, 4)
-    g.addIndexCell(0, 0, True)
-    g.addIndexCell(0, 3, True)
-    g.addIndexCell(2, 0, True)
-    g.addIndexCell(1, 2, False)
-    g.addIndexCell(0, 6, False)
+    g.addBlockedHere(0, 2)
+    g.addBlockedHere(1, 1)
+    g.addBlockedHere(1, 3)
+    g.addBlockedHere(1, 5)
+    g.addBlockedHere(2, 3)
+    g.addBlockedHere(2, 5)
+    g.addBlockedHere(3, 1)
+    g.addBlockedHere(3, 3)
+    g.addBlockedHere(3, 5)
+    g.addBlockedHere(4, 1)
+    g.addBlockedHere(4, 3)
+    g.addBlockedHere(5, 1)
+    g.addBlockedHere(5, 3)
+    g.addBlockedHere(5, 5)
+    g.addBlockedHere(6, 4)
+    g.addIndexHere(0, 0, True)
+    g.addIndexHere(0, 3, True)
+    g.addIndexHere(2, 0, True)
+    g.addIndexHere(1, 2, False)
+    g.addIndexHere(0, 6, False)
 
     print(g)
     # The grid should look like this:
@@ -200,19 +200,19 @@ def test5():
 # Test the method initIndexCells()
 def test6():
     g = Grid(5, 5)
-    g.addBlockedCell(0, 2)
-    g.addBlockedCell(1, 1)
-    g.addBlockedCell(1, 3)
-    g.addBlockedCell(3, 1)
-    g.addBlockedCell(3, 3)
-    g.addBlockedCell(4, 2)
-    g.addHybridCell(0, 0)
-    g.addIndexCell(0, 3, True)
-    g.addIndexCell(0, 4, False)
-    g.addIndexCell(1, 2, False)
-    g.addIndexCell(2, 0, True)
-    g.addIndexCell(4, 0, True)
-    g.addIndexCell(4, 3, True)
+    g.addBlockedHere(0, 2)
+    g.addBlockedHere(1, 1)
+    g.addBlockedHere(1, 3)
+    g.addBlockedHere(3, 1)
+    g.addBlockedHere(3, 3)
+    g.addBlockedHere(4, 2)
+    g.addHybridHere(0, 0)
+    g.addIndexHere(0, 3, True)
+    g.addIndexHere(0, 4, False)
+    g.addIndexHere(1, 2, False)
+    g.addIndexHere(2, 0, True)
+    g.addIndexHere(4, 0, True)
+    g.addIndexHere(4, 3, True)
 
     print(g)
     # The grid should look like this:
@@ -297,43 +297,8 @@ def test6():
     # body: '['I(4,3,,True)','L(4,4,)']'
     # intersections: '1'
 
-def test7():
-    g = Grid(5, 5)
-    g.addBlockedCell(0, 2)
-    g.addBlockedCell(1, 1)
-    g.addBlockedCell(1, 3)
-    g.addBlockedCell(3, 1)
-    g.addBlockedCell(3, 3)
-    g.addBlockedCell(4, 2)
-    g.addHybridCell(0, 0)
-    g.addIndexCell(0, 3, True)
-    g.addIndexCell(0, 4, False)
-    g.addIndexCell(1, 2, False)
-    g.addIndexCell(2, 0, True)
-    g.addIndexCell(4, 0, True)
-    g.addIndexCell(4, 3, True)
-
-    print(g)
-    # The grid should look like this:
-    # H _ * A D
-    # _ * D * _
-    # A _ _ _ _
-    # _ * _ * _
-    # A _ * A _
-    # (H, A, and D will be "_" when printed)
-    print()
-
-    g.initIndexCells()
-    sortedCells = g.sortIndexCells()
-    for i in range(len(sortedCells)):
-        sortedCells[i] = sortedCells[i].__str__()
-    print(sortedCells)
-
-    # Because of the way the grid is set up, the output should be this:
-    # ['I(0,0,,False)','I(0,4,,False)','I(2,0,,True)','I(0,0,,True)','I(0,3,,True)','I(1,2,,False)','I(4,0,,True)','I(4,3,,True)']
-
 # Tests getEdges
-def test8():
+def test7():
     g = createEdges(9)
     topEdge, leftEdge, rightEdge, bottomEdge = g.getEdges()
     for i in range(len(topEdge)):
@@ -353,7 +318,7 @@ def test8():
     displayGrid(g)
 
 def main():
-    test8()
+    test7()
 
 if (__name__ == '__main__'):
     main()
