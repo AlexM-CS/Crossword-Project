@@ -52,6 +52,7 @@ class BlockedCell(Cell):
     # Parent init
         # return - None
     def __init__(self, x: int, y: int):
+        self.letter = "*"
         super().__init__(x, y)
 
     # Overriding the default string representation
@@ -138,8 +139,8 @@ class HybridCell(IndexCell):
         self.x = x
         self.y = y
         self.letter = ""
-        self.across = super().__init__(x, y, True)
-        self.down = super().__init__(x, y, False)
+        self.across = super().__init__(x, y)
+        self.down = super().__init__(x, y)
 
     # Overriding the default string representation
         # return - string representation of this object

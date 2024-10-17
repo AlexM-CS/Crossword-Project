@@ -72,14 +72,35 @@ def createEdges(size: int) -> Grid:
             for i in range(0, len(thisWord)):
                 thisWord[i] = g.grid[thisWord[i].x][thisWord[i].y]
 
-            word = getWord(thisWord)
+            if (isinstance(thisWord[0], IndexCell)):
+                currentDir = thisWord[0].getDirection()
+                hc = HybridCell(thisWord[0].x, thisWord[0].y)
+                if (currentDir): # True: word is across
+                    hc.across = thisWord[0]
+                    word = getWord(thisWord)
+                    ic = IndexCell(thisWord[0].x, thisWord[0].y)
+                    g.addIndexCell(hc)
+                    thisWord[0] = ic
+                    ic.setBody(thisWord, word)
+                    hc.down = ic
+
+                else: # False: word is down
+                    hc.down = thisWord[0]
+                    word = getWord(thisWord)
+                    ic = IndexCell(thisWord[0].x, thisWord[0].y)
+                    g.addIndexCell(hc.across)
+                    thisWord[0] = ic
+                    ic.setBody(thisWord, word)
+                    hc.across = ic
+
+                hc.setLetter(thisWord[0].letter)
+
             if not (isinstance(thisWord[0], IndexCell)):
+                word = getWord(thisWord)
                 ic = IndexCell(thisWord[0].x, thisWord[0].y)
                 g.addIndexCell(ic)
-            else:
-                ic = thisWord[0]
-            thisWord[0] = ic
-            ic.setBody(thisWord, word)
+                thisWord[0] = ic
+                ic.setBody(thisWord, word)
 
         return g
 
@@ -131,7 +152,6 @@ def fill(grid: Grid) -> Grid:
     size = g.size
     wordSize = size - 2
     maxAllowed = 0
-    indexCellList = g.indexCells
     """
     cellsFilled = 0
     for i in range(0, size):
@@ -141,49 +161,46 @@ def fill(grid: Grid) -> Grid:
     """
     cellsNeeded = floor(size**2 * 0.50)
 
-    dupeList = indexCellList.copy()
+    dupeList = g.indexCells.copy()
 
     while (wordSize > 2): # Loop until about 70% of the grid has letters
 
-        while (len(dupeList) > 0 and maxAllowed < 2):
+        while (len(dupeList) > 0 and maxAllowed < size - wordSize - 1):
             randomIndexCell = random.choice(dupeList)
             randomBody = randomIndexCell.body
-            randomDir = not randomIndexCell.getDirection()
+            perpDir = not randomIndexCell.getDirection()
             for current in randomBody:
                 if (isinstance(current, IndexCell)):
                     continue
 
-                if (diagonalCheck(g, current, randomDir) and sizeCheck(g, current, randomDir, wordSize) and lastLetterCheck(g, current, randomDir, wordSize + 1)):
+                if (sizeCheck(g, current, perpDir, wordSize) and diagonalCheck(g, current, perpDir, wordSize) and lastLetterCheck(g, current, perpDir, wordSize)):
+                    newWord = list()
+                    if (perpDir): # True: word should go across
+                        for i in range(0, wordSize):
+                            newWord.append(g.grid[current.x][current.y + i])
 
-                    # ====================================================
-                    placeWord = getWord(randomBody)
-                    ic = IndexCell(randomBody[0].x, randomBody[0].y)
+                    else: # False: word should go down
+                        for i in range(0, wordSize):
+                            newWord.append(g.grid[current.x + i][current.y])
+
+                    placeWord = getWord(newWord)
+                    if (placeWord == ""):
+                        continue
+
+                    ic = IndexCell(newWord[0].x, newWord[0].y)
                     g.addIndexCell(ic)
-                    # print("IC added: {0}".format(ic)) # Debug line
-                    randomBody[0] = ic
-                    ic.setBody(randomBody, placeWord)
-                    # This code needs to be changed in the following ways to make it functional:
-                    # Because getWord() finds a word that works for the collection of cells
-                    #   passed into it, we cannot pass in randomBody. Instead, we need to create
-                    #   a whole new list of cells, starting at "current", and moving in the correct
-                    #   direction until the list is of size wordSize.
-                    #
-                    # IndexCell(randomBody[0].x, randomBody[0].y) should be rewritten as
-                    #   IndexCell(newList[0].x, newList[0].y), where newList is the list of
-                    #   cells that correspond to where we are trying to place the word, like
-                    #   I just talked about.
-                    #
-                    # newList[0] = ic
-                    # setBody(newList, placeWord)
-                    # ====================================================
+                    print("IC added: {0}".format(ic)) # Debug line
+                    newWord[0] = ic
+                    ic.setBody(newWord, placeWord)
 
                     maxAllowed += 1
+                    break
 
             dupeList.remove(randomIndexCell)
 
         wordSize -= 1
         maxAllowed = 0
-        dupeList = g.indexCells
+        dupeList = g.indexCells.copy()
 
         # Run diagonal check
             # Try to create a word of length wordSize, perpendicular to the bridge
@@ -199,56 +216,74 @@ def fill(grid: Grid) -> Grid:
 
 # Checks a Cell diagonal to c
     # returns true if the Cell does not have a letter, and false otherwise
-def diagonalCheck(g: Grid, c: Cell, isAcross: bool) -> bool:
+def diagonalCheck(g: Grid, c: LetterCell, isAcross: bool, wordSize: int) -> bool:
     if ((c.x + 1 < g.size) and (c.y + 1 < g.size)):  # Cell down-right from c
         other = g.grid[c.x + 1][c.y + 1]
-        if (other.letter != ""):
+        if (isinstance(other, LetterCell) and other.letter != ""):
             return False
 
     if (isAcross): # True: do check for across
         if ((c.x - 1 >= 0) and (c.y + 1< g.size)): # Cell up-right from c
             other = g.grid[c.x - 1][c.y + 1]
-            if (other.letter != ""):
+            if (isinstance(other, LetterCell) and other.letter != ""):
                 return False
     else: # False: do check for down
         if ((c.x + 1 < g.size) and (c.y - 1 >= 0)):  # Cell down-left from c
             other = g.grid[c.x + 1][c.y - 1]
-            if (other.letter != ""):
+            if (isinstance(other, LetterCell) and other.letter != ""):
                 return False
 
     return True # Return True if all other checks pass
 
 def sizeCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int)-> bool:
     if (isAcross):
-        return cell.y + wordSize < g.size
+        return cell.y + wordSize - 1< g.size
     else:
-        return cell.x + wordSize < g.size
+        return cell.x + wordSize - 1< g.size
 
 def lastLetterCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) -> bool:
     if (isAcross and cell.y + wordSize < g.size):
-        if (isinstance(g.grid[cell.x][cell.y + wordSize], BlockedCell)):
-            return True
-        return g.grid[cell.x][cell.y + wordSize].letter == ""
+        if not (g.grid[cell.x][cell.y + wordSize].letter in ["*", ""]):
+            return False
+        if not (g.grid[cell.x - 1][cell.y + wordSize - 1].letter in ["*", ""]):
+            return False
+        if not (g.grid[cell.x + 1][cell.y + wordSize - 1].letter in ["*", ""]):
+            return False
+
     elif (cell.x + wordSize < g.size):
-        if (isinstance(g.grid[cell.x + wordSize], BlockedCell)):
-            return True
-        return g.grid[cell.x + wordSize][cell.y].letter == ""
-    else:
-        return False
+        if not (g.grid[cell.x + wordSize][cell.y].letter in ["*", ""]):
+            return False
+        if not (g.grid[cell.x + wordSize - 1][cell.y + 1].letter in ["*", ""]):
+            return False
+        if not (g.grid[cell.x + wordSize - 1][cell.y - 1].letter in ["*", ""]):
+            return False
+
+    return True
+
+def finalize(g: Grid) -> Grid:
+    for i in range(0, g.size):
+        for j in range(0, g.size):
+            if (g.grid[i][j].letter == ""):
+                g.addBlockedHere(i, j)
+    return g
 
 # Method that initializes a completed Grid (words, black spaces, word list)
 def initGrid(size: int) -> Grid:
     g = createEdges(size)
     g = fill(g)
-    for i in range(size):
-        for j in range(size):
-            if (isinstance(g.grid[i][j], IndexCell)):
+    for i in range(0, size):
+        for j in range(0, size):
+            if isinstance(g.grid[i][j], HybridCell):
+                g.words.append(g.grid[i][j].across.word)
+                g.words.append(g.grid[i][j].down.word)
+            elif isinstance(g.grid[i][j], IndexCell):
                 g.words.append(g.grid[i][j].word)
+    g = finalize(g)
     return g
 
 # Returns a word to be placed in a Grid
 def getWord(letterCells) -> str:
-    gotWords,found = findWord(letterCells)
+    gotWords, found = findWord(letterCells)
     randIndex = random.randrange(0, len(gotWords))
     return gotWords[randIndex]
 
