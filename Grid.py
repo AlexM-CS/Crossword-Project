@@ -10,15 +10,15 @@ from Cell import *
 class Grid:
 
     # Initializes a Grid object with the following fields:
-        # int length - the number of rows in the grid
-        # int width - the number of columns in the grid
+        # int size - the size of the grid (size x size)
         # list(str) words - list of words that are included in the grid
-        # list(list(Cell)) - list of lists that represents the grid
+        # list(list(Cell)) grid - list of lists that represents the grid
         # str filepath - file that this init will read from (reference)
     def __init__(self, size: int, filepath = None) -> None:
         self.size = size
         self.words = list()
         self.grid = list()
+        self.indexCells = list()
 
         # Check if we are importing a pre-made Grid
         if (type(filepath) == str):
@@ -93,12 +93,14 @@ class Grid:
         self.grid[b.x][b.y] = b
 
     # Creates an IndexCell at the given coordinates
-    def addIndexHere(self, x: int, y: int, dir: bool) -> None:
-        self.grid[x][y] = IndexCell(x, y, dir)
+    def addIndexHere(self, x: int, y: int) -> None:
+        self.grid[x][y] = IndexCell(x, y)
+        self.indexCells.append(self.grid[x][y])
 
     # Adds an IndexCell to the Grid
     def addIndexCell(self, i: IndexCell) -> None:
         self.grid[i.x][i.y] = i
+        self.indexCells.append(i)
 
     # Creates a HybridCell at the given coordinates
     def addHybridHere(self, x: int, y: int) -> None:

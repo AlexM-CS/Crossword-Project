@@ -100,7 +100,7 @@ class IndexCell(LetterCell):
     # Overriding the default string representation
         # return - string representation of this object
     def __str__(self):
-        return "I({0},{1},{2},{3})".format(self.x, self.y,self.letter,self.dir)
+        return "I({0},{1},{2})".format(self.x, self.y,self.letter)
 
     # Sets the letter for this LetterCell to be param
     def setLetter(self, letter: str) -> None:
@@ -117,6 +117,13 @@ class IndexCell(LetterCell):
     def setBody(self, body: list, word: str) -> None:
         self.body = body
         self.setWord(word)
+
+    # Gets the direction of this body
+        # True if across, False if down
+    def getDirection(self) -> bool:
+        if (len(self.body) == 0):
+            return False
+        return self.body[0].compare(self.body[-1]) < 0b1000000
 
 # A Cell that is the beginning of two words
 class HybridCell(IndexCell):
