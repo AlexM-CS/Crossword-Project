@@ -1,3 +1,7 @@
+# Created: 9-30-2024
+# Last updated: 10-15-2024
+# Alexander Myska, Oliver Strauss, and Brandon Knautz
+
 import os
 import random
 

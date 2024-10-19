@@ -1,5 +1,7 @@
-# 10-10-2024
-# Alexander Myska, Oliver Strauss, Brandon Knautz
+# Created: 10-10-2024
+# Last updated: 10-19-2024
+# Alexander Myska, Oliver Strauss, and Brandon Knautz
+
 from operator import index
 from random import Random
 
@@ -139,11 +141,6 @@ def generateBridge(g: Grid) -> Grid:
     bridge[0] = ic
     ic.setBody(bridge, bridgeWord)
 
-    # =====================================================
-    # DEBUGGING LINES
-    # print(bridgeWord)
-    # =====================================================
-
     return g
 
 # Fills the rest of the Grid with words
@@ -183,13 +180,14 @@ def fill(grid: Grid) -> Grid:
                         for i in range(0, wordSize):
                             newWord.append(g.grid[current.x + i][current.y])
 
+                    # We need to add a check in case we need to make any Hybrid Cells
+
                     placeWord = getWord(newWord)
                     if (placeWord == ""):
                         continue
 
                     ic = IndexCell(newWord[0].x, newWord[0].y)
                     g.addIndexCell(ic)
-                    print("IC added: {0}".format(ic)) # Debug line
                     newWord[0] = ic
                     ic.setBody(newWord, placeWord)
 
@@ -201,16 +199,6 @@ def fill(grid: Grid) -> Grid:
         wordSize -= 1
         maxAllowed = 0
         dupeList = g.indexCells.copy()
-
-        # Run diagonal check
-            # Try to create a word of length wordSize, perpendicular to the bridge
-        # Run diagonal check
-            # Try to create a word of length wordSize, parallel to the bridge
-        # If wordSize is > 3, wordSize -= 2
-        # Minimum wordSize is 3
-
-    # After all letters are in place, any Cell without a letter becomes a BlockedCell
-    # Return the completed grid
 
     return g
 
@@ -260,6 +248,7 @@ def lastLetterCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) ->
 
     return True
 
+# Finalizes the grid by placing black spaces where no letters are placed
 def finalize(g: Grid) -> Grid:
     for i in range(0, g.size):
         for j in range(0, g.size):
@@ -269,15 +258,20 @@ def finalize(g: Grid) -> Grid:
 
 # Method that initializes a completed Grid (words, black spaces, word list)
 def initGrid(size: int) -> Grid:
+    # First, we create the edges and bridge
     g = createEdges(size)
+
+    # Second, we fill in the grid with words
     g = fill(g)
-    for i in range(0, size):
+    for i in range(0, size): # These loops make sure all the IndexCells' words are in the Grid's wordList
         for j in range(0, size):
             if isinstance(g.grid[i][j], HybridCell):
                 g.words.append(g.grid[i][j].across.word)
                 g.words.append(g.grid[i][j].down.word)
             elif isinstance(g.grid[i][j], IndexCell):
                 g.words.append(g.grid[i][j].word)
+
+    # Lastly, we finalize the grid by placing all the black spaces
     g = finalize(g)
     return g
 

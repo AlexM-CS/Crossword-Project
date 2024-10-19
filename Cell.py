@@ -1,5 +1,6 @@
-# 9-29-2024
-# Alexander Myska, Oliver Strauss, Brandon Knautz
+# Created: 9-29-2024
+# Last Updated: 10-17-2024
+# Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 from math import *
 

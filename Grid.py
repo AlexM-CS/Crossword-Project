@@ -1,5 +1,6 @@
-# 9-29-2024
-# Alexander Myska, Oliver Strauss, Brandon Knautz
+# Created: 9-29-2024
+# Last updated: 10-17-2024
+# Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file contains the grid object, which holds the Cells
 # and words that make up the puzzle.

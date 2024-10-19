@@ -1,3 +1,7 @@
+# Created: 9-20-2024
+# Last updated: 10-2-2024
+# Alexander Myska, Oliver Strauss, and Brandon Knautz
+
 import random
 from _ast import pattern
 from copy import deepcopy

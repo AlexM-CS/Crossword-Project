@@ -1,5 +1,7 @@
-# 9-30-2024 will be used to test our code for its intended behavior
-# Alexander Myska, Oliver Strauss, Brandon Knautz
+# Created: 9-19-2024
+# Last updated: 10-17-2024
+# Alexander Myska, Oliver Strauss, and Brandon Knautz
+
 import time
 
 # This class
