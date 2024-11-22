@@ -1,5 +1,5 @@
 # Created: 9-29-2024
-# Last updated: 10-17-2024
+# Last updated: 11-19-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file contains the grid object, which holds the Cells
@@ -9,7 +9,6 @@ from Cell import *
 
 # This class represents a Grid of squares with either letters and black squares
 class Grid:
-
     # Initializes a Grid object with the following fields:
         # int size - the size of the grid (size x size)
         # list(str) words - list of words that are included in the grid
@@ -49,8 +48,8 @@ class Grid:
                                 gridLine.append(HybridCell(i, j))
                             else:
                                 gridLine.append(LetterCell(i, j))
-
                         self.grid.append(gridLine)
+
             except FileNotFoundError:
                 # Handles FileNotFoundError
                 print("The file you are trying to read cannot be found.")
@@ -84,6 +83,13 @@ class Grid:
             if (i + 1 < self.size):
                 output += "\n"
         return output
+
+    # Use this method to re-create a Grid from a string
+    def __repr__(self) -> str:
+        this =  f"{self.size}"
+        for ic in self.indexCells:
+            this += f";{ic.__str__()}"
+        return this
 
     # Creates a BlockedCell at the given coordinates
     def addBlockedHere(self, x: int, y: int) -> None:
@@ -136,6 +142,18 @@ class Grid:
                 output[2].append(self.grid[row][rightCol])
             row += 1
         return output
+
+    def getNumNeighbors(self, x: int, y: int) -> int:
+        numNeighbors = 0
+        if (x - 1 >= 0 and self.grid[x - 1][y].letter != ""): # Checks the cell above this cell
+            numNeighbors += 1
+        if (x + 1 < self.size and self.grid[x + 1][y].letter != ""): # Checks the cell below this cell
+            numNeighbors += 1
+        if (y - 1 >= 0 and self.grid[x][y - 1].letter != ""): # Checks the cell to the left of this cell
+            numNeighbors += 1
+        if (y + 1 >= 0 and self.grid[x][y + 1].letter != ""): # Checks the cell to the right of this cell
+            numNeighbors += 1
+        return numNeighbors
 
     # Helper method for createWords()
     def addWord(self) -> None:

@@ -1,5 +1,5 @@
 # Created: 9-29-2024
-# Last Updated: 10-17-2024
+# Last Updated: 11-19-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 from math import *
@@ -91,7 +91,6 @@ class IndexCell(LetterCell):
         # str word - the word that this cell is the start of
         # int intersections - the number of words that intersect this word's body
         # int length - the length of this word
-        # bool dir - the direction of the word of this cell
         # return - None
     def __init__(self, x: int, y: int) -> None:
         super().__init__(x, y)
@@ -103,10 +102,6 @@ class IndexCell(LetterCell):
         # return - string representation of this object
     def __str__(self):
         return "I({0},{1},{2})".format(self.x, self.y,self.letter)
-
-    # Sets the letter for this LetterCell to be param
-    def setLetter(self, letter: str) -> None:
-        self.letter = letter
 
     # Sets the letters of the Cells in this IndexCell's body
     def setWord(self, word: str) -> None:
@@ -130,9 +125,9 @@ class IndexCell(LetterCell):
 # A Cell that is the beginning of two words
 class HybridCell(IndexCell):
     # Initializes a HybridCell with the following fields:
-        # x - row of the grid that this cell belongs to
-        # y - column of the grid that this cell belongs to
-        # letter - the letter assigned to this cell (defaults to "")
+        # int x - row of the grid that this cell belongs to
+        # int y - column of the grid that this cell belongs to
+        # str letter - the letter assigned to this cell (defaults to "")
         # IndexCell across - the sideways IndexCell that starts here
         # IndexCell down - the downward IndexCell that starts here
         # return - None

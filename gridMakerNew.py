@@ -1,5 +1,5 @@
 # Created: 10-10-2024
-# Last updated: 10-19-2024
+# Last updated: 11-19-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 from operator import index
@@ -17,18 +17,18 @@ import random
 def createEdges(size: int) -> Grid:
     while True: # This will repeat until a valid grid is created
         g = Grid(size, size)
-        partitions = 0
+        partitions = list()
         allEdges = g.getEdges()
 
-        while (partitions < 2):
+        while (len(partitions) < 2):
             randomSide = random.choice(allEdges)
             partitionIndex = random.randrange(3, size - 3)
             partitionCell = randomSide[partitionIndex]
             g.addBlockedHere(partitionCell.x, partitionCell.y)
             allEdges.remove(randomSide)
-            partitions += 1
+            partitions.append(partitionCell)
 
-        g = generateBridge(g)
+        g = generateBridge(g, partitions)
 
         # Loop over the edges, give them words
             # allEdges needs to be re-declared because we have since edited the edges
@@ -106,33 +106,113 @@ def createEdges(size: int) -> Grid:
 
         return g
 
-# Create a bridge, and give it a word
-def generateBridge(g: Grid) -> Grid:
+# New way to generate bridges that guarantees the whole grid is connected
+def generateBridge(g: Grid, partitions: list[Cell]) -> Grid:
+
+    x1 = partitions[0].x
+    y1 = partitions[0].y
+    x2 = partitions[1].x
+    y2 = partitions[1].y
+
+    validBridges = list()
+
+    if ((x1 == 0 and x2 == g.size - 1) or (x2 == 0 and x1 == g.size - 1)): # H-Split
+        # In the case of an H-Split, we should choose any row between:
+        # 2 and size - 2
+        for i in range(2, g.size - 2):
+            validBridges.append((i, True))
+
+    elif ((y1 == 0 and y2 == g.size - 1) or (y2 == 0 and y1 == g.size - 1)): # V-Split
+        # In the case of an V-Split, we should choose any column between:
+        # 2 and size - 2
+        for i in range(2, g.size - 2):
+            validBridges.append((i, False))
+
+    elif ((x1 == 0 and y2 == 0) or (x2 == 0 and y1 == 0)): # 270-L
+        # In the case of a 270-L, we can choose between the following:
+        # Rows: 2 and x2/x1
+        # Columns: 2 and y2/y1
+        if (x1 == 0):
+            for i in range(2, x2):
+                validBridges.append((i, True))
+
+            for j in range(2, y1):
+                validBridges.append((j, False))
+
+        else:
+            for i in range(2, x1):
+                validBridges.append((i, True))
+
+            for j in range(2, y2):
+                validBridges.append((j, False))
+
+    elif ((x1 == 0 and y2 == g.size - 1) or (x2 == 0 and y1 == g.size - 1)): # 180-L
+        # In the case of a 180-L, we can choose between the following:
+        # Rows: 2 and size - x1/x2 - 1
+        # Columns: y2/y1 + 1 and size - 2
+        if (x1 == 0):
+            for i in range(2, x2):
+                validBridges.append((i, True))
+
+            for j in range(y1 + 1, g.size - 2):
+                validBridges.append((j, False))
+
+        else:
+            for i in range(2, x1):
+                validBridges.append((i, True))
+
+            for j in range(y2 + 1, g.size - 2):
+                validBridges.append((j, False))
+
+    elif ((y1 == g.size - 1 and x2 == g.size - 1) or (y2 == g.size - 1 and x1 == g.size - 1)): # 90-L
+        # In the case of a 90-L, we can choose between the following:
+        # Rows: x2/x1 + 1 and size - 2
+        # Columns: y1/y2 + 1 and size - 2
+        if (y1 == g.size - 1):
+            for i in range(x1 + 1, g.size - 2):
+                validBridges.append((i, True))
+
+            for j in range(y2 + 1, g.size - 2):
+                validBridges.append((j, False))
+
+        else:
+            for i in range(x2 + 1, g.size - 2):
+                validBridges.append((i, True))
+
+            for j in range(y1 + 1, g.size - 2):
+                validBridges.append((j, False))
+
+    elif ((y1 == 0 and x2 == g.size - 1) or (y2 == 0 and x1 == g.size - 1)): # 0-L
+        # In the case of a 90-L, we can choose between the following:
+        # Rows: x2/x1 + 1 and size - 2
+        # Columns: 2 and size - y1/y2 - 1
+        if (y1 == 0):
+            for i in range(x1 + 1, g.size - 2):
+                validBridges.append((i, True))
+
+            for j in range(2, y2):
+                validBridges.append((j, False))
+
+        else:
+            for i in range(x2 + 1, g.size - 2):
+                validBridges.append((i, True))
+
+            for j in range(2, y1):
+                validBridges.append((j, False))
+
+    else: # Something unexpected happened
+        raise RuntimeError
+
+    # Loops over the list of valid bridges and chooses one that could work
+    randChoice = random.choice(validBridges)
     bridge = list()
-
-    allEdges = g.getEdges()
-    bridgeSide = random.randrange(0, 2)
-    opposite = 3 - bridgeSide
-
-    evenIndices = list()
-    for i in range(2, g.size - 2, 2):
-        evenIndices.append(i)
-
-    randNum = random.choice(evenIndices)
-
-    if (bridgeSide == 0): # Look at columns
-        while not ((g.grid[0][randNum] in allEdges[bridgeSide]) and (g.grid[g.size - 1][randNum] in allEdges[opposite])):
-            evenIndices.remove(randNum)
-            randNum = random.choice(evenIndices)
+    if (randChoice[1]): # The bridge is across
         for i in range(0, g.size):
-            bridge.append(g.grid[i][randNum])
+            bridge.append(g.grid[randChoice[0]][i])
 
-    else: # Look at rows
-        while not ((g.grid[randNum][0] in allEdges[bridgeSide]) and (g.grid[randNum][g.size - 1] in allEdges[opposite])):
-            evenIndices.remove(randNum)
-            randNum = random.choice(evenIndices)
-        for i in range(0, g.size):
-            bridge.append(g.grid[randNum][i])
+    else: # The bridge is down
+        for j in range(0, g.size):
+            bridge.append(g.grid[j][randChoice[0]])
 
     bridgeWord = getWord(bridge)
 
@@ -144,23 +224,17 @@ def generateBridge(g: Grid) -> Grid:
     return g
 
 # Fills the rest of the Grid with words
-def fill(grid: Grid) -> Grid:
+def fill(grid: Grid, last: int) -> Grid:
     g = grid
     size = g.size
     wordSize = size - 2
     maxAllowed = 0
-    """
-    cellsFilled = 0
-    for i in range(0, size):
-        for j in range(0, size):
-            if (g.grid[i][j].letter != ""):
-                cellsFilled += 1
-    """
-    cellsNeeded = floor(size**2 * 0.50)
+
+    cellsNeeded = floor(size**2 * 0.66)
 
     dupeList = g.indexCells.copy()
 
-    while (wordSize > 2): # Loop until about 70% of the grid has letters
+    while (wordSize > 2):
 
         while (len(dupeList) > 0 and maxAllowed < size - wordSize - 1):
             randomIndexCell = random.choice(dupeList)
@@ -170,7 +244,7 @@ def fill(grid: Grid) -> Grid:
                 if (isinstance(current, IndexCell)):
                     continue
 
-                if (sizeCheck(g, current, perpDir, wordSize) and diagonalCheck(g, current, perpDir, wordSize) and lastLetterCheck(g, current, perpDir, wordSize)):
+                if (sizeCheck(g, current, perpDir, wordSize) and diagonalCheck(g, current, perpDir) and lastLetterCheck(g, current, perpDir, wordSize) and occupiedCheck(g, current, perpDir, wordSize)):
                     newWord = list()
                     if (perpDir): # True: word should go across
                         for i in range(0, wordSize):
@@ -180,10 +254,14 @@ def fill(grid: Grid) -> Grid:
                         for i in range(0, wordSize):
                             newWord.append(g.grid[current.x + i][current.y])
 
-                    # We need to add a check in case we need to make any Hybrid Cells
+                    allowed = True
+                    for cell in newWord:
+                       if (g.getNumNeighbors(cell.x, cell.y) > 2):
+                           allowed = False
 
+                    # We need to add a check in case we need to make any Hybrid Cells
                     placeWord = getWord(newWord)
-                    if (placeWord == ""):
+                    if (placeWord == "" or not allowed):
                         continue
 
                     ic = IndexCell(newWord[0].x, newWord[0].y)
@@ -196,15 +274,28 @@ def fill(grid: Grid) -> Grid:
 
             dupeList.remove(randomIndexCell)
 
-        wordSize -= 1
+        if (wordSize > 2):
+            wordSize -= 1
+
         maxAllowed = 0
         dupeList = g.indexCells.copy()
+
+    cellsFilled = 0
+    for i in range(0, size):
+        for j in range(0, size):
+            if (g.grid[i][j].letter != ""):
+                cellsFilled += 1
+
+    if (cellsFilled < cellsNeeded):
+        if (cellsFilled == last):
+            raise RuntimeError
+        g = fill(g, cellsFilled)
 
     return g
 
 # Checks a Cell diagonal to c
     # returns true if the Cell does not have a letter, and false otherwise
-def diagonalCheck(g: Grid, c: LetterCell, isAcross: bool, wordSize: int) -> bool:
+def diagonalCheck(g: Grid, c: LetterCell, isAcross: bool) -> bool:
     if ((c.x + 1 < g.size) and (c.y + 1 < g.size)):  # Cell down-right from c
         other = g.grid[c.x + 1][c.y + 1]
         if (isinstance(other, LetterCell) and other.letter != ""):
@@ -225,9 +316,9 @@ def diagonalCheck(g: Grid, c: LetterCell, isAcross: bool, wordSize: int) -> bool
 
 def sizeCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int)-> bool:
     if (isAcross):
-        return cell.y + wordSize - 1< g.size
+        return cell.y + wordSize - 1 < g.size
     else:
-        return cell.x + wordSize - 1< g.size
+        return cell.x + wordSize - 1 < g.size
 
 def lastLetterCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) -> bool:
     if (isAcross and cell.y + wordSize < g.size):
@@ -248,6 +339,20 @@ def lastLetterCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) ->
 
     return True
 
+def occupiedCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) -> bool:
+    currentCell = cell
+
+    if (isAcross):
+        for i in range(1, wordSize):
+            if (g.grid[currentCell.x][currentCell.y + i - 1].letter != "" and g.grid[currentCell.x][currentCell.y + i].letter != ""):
+                return False
+    else:
+        for i in range(1, wordSize):
+            if (g.grid[currentCell.x + i - 1][currentCell.y].letter != "" and g.grid[currentCell.x + i][currentCell.y].letter != ""):
+                return False
+
+    return True
+
 # Finalizes the grid by placing black spaces where no letters are placed
 def finalize(g: Grid) -> Grid:
     for i in range(0, g.size):
@@ -262,7 +367,7 @@ def initGrid(size: int) -> Grid:
     g = createEdges(size)
 
     # Second, we fill in the grid with words
-    g = fill(g)
+    g = fill(g, 0)
     for i in range(0, size): # These loops make sure all the IndexCells' words are in the Grid's wordList
         for j in range(0, size):
             if isinstance(g.grid[i][j], HybridCell):

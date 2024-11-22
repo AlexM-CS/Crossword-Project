@@ -33,3 +33,11 @@ def displayGrid(g):
             label.grid(row=i, column=j)
 
     window.mainloop()
+
+    index = {
+        "x" : 0,
+        "y" : 1,
+        "dir" : True,
+        "word" : "ASS",
+        "hint" : "Rear end"
+    }

@@ -1,5 +1,5 @@
 # Created: 9-20-2024
-# Last updated: 10-2-2024
+# Last updated: 11-18-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 import random
@@ -9,8 +9,7 @@ from random import Random
 
 #from pygame.examples import grid
 
-from display import displayMap, displayGrid
-
+from display import displayGrid
 
 #Initalizes seed grid
 def makeSeedGrid():
@@ -25,12 +24,10 @@ def makeSeedGrid():
             pattern.append(row2)
     return pattern
 
-
 #Prints each row of given grid
 def printGrid(grid):
     for row in grid:
         print(row)
-
 
 #Helper method to check vertical axis of grid
 def check_value_vertical(matrix, value, index):
@@ -70,10 +67,6 @@ def updateEdges(grid):
     grid[randCoordinate][len(grid)-1] = "*"
 
     return grid
-
-
-
-
 
 #Takes  grid and adds initial blank tiles
 def addBlanks(grid):
@@ -142,14 +135,7 @@ def addBlanks(grid):
                 wordNum+=1
     '''
 
-
-
-
-
-
     return newGrid
-
-
 
 def markAcrossAndDownTiles(grid):
     for row in range(len(grid)):
@@ -262,6 +248,7 @@ def removeDownTwo(row: int, column: int, grid):
             grid[row][column] = "A"
         else:
             grid[row][column] = "_"
+
 #Checks each adjacent cell to see if it is a blank, if all of adjacent cells are empty then the "index" cell
 #is turned empty. If not then the non index cell is turned empty and the index cell becomes a blank cell
 def removeAcrossTwo(row: int, column: int, grid):
@@ -296,8 +283,6 @@ def removeAcrossTwo(row: int, column: int, grid):
         else:
             grid[row][column] = "_"
 
-
-
 #class representive of each blank word spot in the crossword generation
 class WordBlank:
     def __init__(self, wordNum: int):
@@ -311,7 +296,6 @@ class WordBlank:
         return spot in self.coordinates
     def decreaseWordNum(self):
         self.wordNum-=1
-
 
 #Takes grid and writes it to a file 
 def write_to_file(filename: object, grid: object) -> object:
@@ -327,9 +311,6 @@ def write_to_file(filename: object, grid: object) -> object:
 
     # Example usage
 
-
-
-
 def main():
     seedGrid = makeSeedGrid()
     printGrid(seedGrid)
@@ -344,15 +325,6 @@ def main():
     checkAndRemoveAllSize2(othergrid)
     displayGrid(othergrid)
     write_to_file('output2.txt', othergrid)
-
-
-
-
-
-
-
-
-
 
 if (__name__ == "__main__"):
     main()
