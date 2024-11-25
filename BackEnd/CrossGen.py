@@ -1,3 +1,5 @@
+#sockets
+
 # Created: 9-20-2024
 # Last updated: 11-18-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
@@ -317,14 +319,14 @@ def main():
 
     newGrid = addBlanks(seedGrid)
     printGrid(newGrid)
-    write_to_file('output.txt', newGrid)
+    write_to_file('../output.txt', newGrid)
 
     othergrid = deepcopy(newGrid)
     markAcrossAndDownTiles(othergrid)
-    write_to_file('output1.txt', othergrid)
+    write_to_file('../output1.txt', othergrid)
     checkAndRemoveAllSize2(othergrid)
     displayGrid(othergrid)
-    write_to_file('output2.txt', othergrid)
+    write_to_file('../output2.txt', othergrid)
 
 if (__name__ == "__main__"):
     main()

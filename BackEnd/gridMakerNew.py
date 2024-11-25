@@ -2,15 +2,17 @@
 # Last updated: 11-19-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
-from operator import index
-from random import Random
+from typing import Any
+from xmlrpc.client import Binary
+
+from fitz_new.mupdf import pdf_to_int64
+from flask import json
 
 # This class will be used to make grids, this time by looking for words first
 
-from Cell import *
-from DataBaseConvert import findWord
-from Grid import *
-from display import *
+from BackEnd.DataBaseConvert import findWord
+from BackEnd.Grid import Grid
+from BackEnd.display import *
 import random
 
 # Creates edges and a bridge for a grid, and returns the Grid
@@ -362,7 +364,7 @@ def finalize(g: Grid) -> Grid:
     return g
 
 # Method that initializes a completed Grid (words, black spaces, word list)
-def initGrid(size: int) -> Grid:
+def initGrid(size: int) -> tuple[Grid, Any]:
     # First, we create the edges and bridge
     g = createEdges(size)
 
@@ -378,7 +380,37 @@ def initGrid(size: int) -> Grid:
 
     # Lastly, we finalize the grid by placing all the black spaces
     g = finalize(g)
-    return g
+
+    #Converts list of IndexCells to Dictionary of IndexCells
+    newIndexes = convertIndexList(g.indexCells)
+
+    #newIndexes = g.indexCells
+    return g,newIndexes
+
+
+
+#Creates dict of IndexCells
+def convertIndexList(indexs):
+    twoDIndexList = []
+
+    for i in range(len(indexs)):
+        celly = indexs[i]
+        if isinstance(celly, HybridCell):
+            cellData2 = [celly.x,celly.y,celly.down.word]
+            twoDIndexList.append(cellData2)
+        else:
+            cellData = [celly.x, celly.y, celly.word]
+            twoDIndexList.append(cellData)
+
+    json_data = {
+        "grid_data": [
+            {"row": row, "column": column, "word": word}
+            for row, column, word in twoDIndexList
+        ]
+    }
+
+    return json_data
+
 
 # Returns a word to be placed in a Grid
 def getWord(letterCells) -> str:

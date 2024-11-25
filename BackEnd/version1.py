@@ -4,14 +4,14 @@
 
 import time
 
-from Cell import *
-from Grid import *
-from display import *
-from gridMakerNew import *
+from BackEnd.gridMakerNew import *
 
 # Tests getEdges
 def test7():
-    g = initGrid(9)
+    g,indexCells = initGrid(9)
+
+    print(indexCells)
+
     return g
 
 def test8():
@@ -20,6 +20,23 @@ def test8():
             g = createEdges(9)
         except:
             continue
+
+
+#Special version of main() to get needed data for frontEnd
+def returnMain(size):
+    crashes = 0
+    while True:
+        try:
+            g, indexCells = initGrid(size)
+            break
+        except:
+            crashes += 1
+            print("Error: {0}".format(crashes))
+    return g,indexCells
+
+
+
+
 
 def main():
     crashes = 0
@@ -31,7 +48,7 @@ def main():
             print("Time to find a working grid: " + str(round(endTime - startTime, 5)))
             print(g.words)
             displayGrid(g)
-        except:
+        except :
             crashes += 1
             print("Error: {0}".format(crashes))
 

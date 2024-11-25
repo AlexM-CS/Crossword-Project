@@ -5,7 +5,7 @@
 # This file contains the grid object, which holds the Cells
 # and words that make up the puzzle.
 
-from Cell import *
+from BackEnd.Cell import *
 
 # This class represents a Grid of squares with either letters and black squares
 class Grid:

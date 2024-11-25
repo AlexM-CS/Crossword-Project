@@ -6,7 +6,8 @@ import os
 import random
 
 from sys import flags
-from Cell import LetterCell, IndexCell, BlockedCell
+from BackEnd import Cell
+from BackEnd.Cell import LetterCell, IndexCell, BlockedCell
 
 
 def convertBase():
@@ -16,7 +17,7 @@ def convertBase():
 
     for letter in alph:
 
-        with open('githubList/sortedGithubList.txt', 'r') as file:
+        with open('../githubList/sortedGithubList.txt', 'r') as file:
             content = file.read()  # Read the entire content
             words = content.split()  # Split the content into words
 
@@ -85,7 +86,7 @@ def findWord(letterCells):
         indices.append([i, val.letter])
 
     finalWords = []
-    filePath = "Words/"
+    filePath = "../Words/"
     flag = False
 
     #Cheks to see if fist letter is filled
@@ -240,8 +241,8 @@ def modify(word: str, disallowed: str):
     return newWord
 
 def convert_githubList(requiredScore: int, lengthCap: int, disallowed: list):
-    database = open("githubList/crossword_wordlist.txt", "r")
-    writeToFile = open("githubList/sortedGithubList.txt", "w")
+    database = open("../githubList/crossword_wordlist.txt", "r")
+    writeToFile = open("../githubList/sortedGithubList.txt", "w")
     for line in database:
         line = line.strip()
         data = line.split(";")

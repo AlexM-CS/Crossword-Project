@@ -3,7 +3,9 @@
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 import tkinter as tk
-from Cell import *
+from threading import Thread
+
+from BackEnd.Cell import *
 
 # Method used to close the main window
 def closeWindow(event):
@@ -33,6 +35,8 @@ def displayGrid(g):
             label.grid(row=i, column=j)
 
     window.mainloop()
+
+
 
     index = {
         "x" : 0,

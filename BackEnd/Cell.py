@@ -98,10 +98,11 @@ class IndexCell(LetterCell):
         self.word = ""
         self.wordLength = 0
 
+
     # Overriding the default string representation
         # return - string representation of this object
     def __str__(self):
-        return "I({0},{1},{2})".format(self.x, self.y,self.letter)
+        return "I({0},{1},{2},{3})".format(self.x, self.y,self.letter,self.word)
 
     # Sets the letters of the Cells in this IndexCell's body
     def setWord(self, word: str) -> None:
@@ -120,6 +121,7 @@ class IndexCell(LetterCell):
     def getDirection(self) -> bool:
         if (len(self.body) == 0):
             return False
+
         return self.body[0].compare(self.body[-1]) < 0b1000000
 
 # A Cell that is the beginning of two words
