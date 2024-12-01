@@ -19,6 +19,7 @@ class Grid:
         self.words = list()
         self.grid = list()
         self.indexCells = list()
+        self.blockedCells = list()
 
         # Check if we are importing a pre-made Grid
         if (type(filepath) == str):

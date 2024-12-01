@@ -2,7 +2,7 @@
 # Last updated: 11-19-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
-from typing import Any
+from typing import Any, Tuple, Dict, List
 from xmlrpc.client import Binary
 
 from fitz_new.mupdf import pdf_to_int64
@@ -18,6 +18,7 @@ import random
 # Creates edges and a bridge for a grid, and returns the Grid
 def createEdges(size: int) -> Grid:
     while True: # This will repeat until a valid grid is created
+        global blockedCells
         g = Grid(size, size)
         partitions = list()
         allEdges = g.getEdges()
@@ -27,6 +28,7 @@ def createEdges(size: int) -> Grid:
             partitionIndex = random.randrange(3, size - 3)
             partitionCell = randomSide[partitionIndex]
             g.addBlockedHere(partitionCell.x, partitionCell.y)
+            g.blockedCells.append([partitionCell.x,partitionCell.y])
             allEdges.remove(randomSide)
             partitions.append(partitionCell)
 
@@ -356,15 +358,19 @@ def occupiedCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) -> b
     return True
 
 # Finalizes the grid by placing black spaces where no letters are placed
+#also returns array of blocked cells to be used in front end
 def finalize(g: Grid) -> Grid:
+
     for i in range(0, g.size):
         for j in range(0, g.size):
             if (g.grid[i][j].letter == ""):
+                g.blockedCells.append([i, j])
                 g.addBlockedHere(i, j)
     return g
 
 # Method that initializes a completed Grid (words, black spaces, word list)
-def initGrid(size: int) -> tuple[Grid, Any]:
+
+def initGrid(size: int) -> tuple[Any, dict[str, list[dict[str, Any]]], list[str]]:
     # First, we create the edges and bridge
     g = createEdges(size)
 
@@ -384,8 +390,18 @@ def initGrid(size: int) -> tuple[Grid, Any]:
     #Converts list of IndexCells to Dictionary of IndexCells
     newIndexes = convertIndexList(g.indexCells)
 
+    hints = generateDummyHints(g)
+
     #newIndexes = g.indexCells
-    return g,newIndexes
+    return g,newIndexes,hints
+
+
+def generateDummyHints(grid):
+    hints = []
+    letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    for i in range(len(grid.indexCells)):
+        hints.append(("Hint_" + letters[i].upper()))
+    return hints
 
 
 

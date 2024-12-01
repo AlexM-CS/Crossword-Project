@@ -35,7 +35,6 @@ def process_grid_with_direction(grid_json,grid):
             indexCells.append(celly.down)
 
     for i in range(len(indexCells)):
-        print(indexCells[i])
         for j in range(len(grid_json)):
             if indexCells[i].word ==grid_json[j]['word']:
                 grid_json[j]["direction"] = indexCells[i].getDirection()
@@ -50,6 +49,10 @@ def sortIndexs(grid_json):
     return sorted_grid
 
 
+def addHints(jsonIndex, hints):
+    for i in range(len(hints)):
+        jsonIndex[i]["hint"] = hints[i]
+    return jsonIndex
 
 
 #Sets up folder for HTML tabs
@@ -74,21 +77,26 @@ def grid9():
     #Make grid
 
     #Runs all backend and collects needed data
-    grid, jsonGrid = returnMain(9)
+    grid, jsonGrid ,hints = returnMain(9)
 
     jsonGrid = jsonGrid['grid_data']
     #Gives indexCells used in js file a direction
-    jsonGrid2 = process_grid_with_direction(jsonGrid,grid)
+
+    jsonGrid = process_grid_with_direction(jsonGrid,grid)
+
 
     #Sorts indexCells
-    jsonGrid3 = sortIndexs(jsonGrid2)
+    jsonGrid = sortIndexs(jsonGrid)
+    jsonGrid = addHints(jsonGrid, hints)
+
 
     print(grid)
 
-    print(jsonGrid3)
+    print(jsonGrid)
+    print(grid.blockedCells)
 
     #Runs hmtl file with a dictionary of indexCells
-    return render_template("grid9.html", jsonIndex=jsonGrid3)
+    return render_template("grid9.html", jsonIndex=jsonGrid, hints=hints,blockedCells=grid.blockedCells)
 
 #Page to run game of grid size 11
 @app.route('/grid11')

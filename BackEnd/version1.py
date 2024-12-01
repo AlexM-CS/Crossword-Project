@@ -27,12 +27,12 @@ def returnMain(size):
     crashes = 0
     while True:
         try:
-            g, indexCells = initGrid(size)
+            g, indexCells,hints = initGrid(size)
             break
         except:
             crashes += 1
             print("Error: {0}".format(crashes))
-    return g,indexCells
+    return g,indexCells,hints
 
 
 
