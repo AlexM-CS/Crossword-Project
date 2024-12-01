@@ -5,7 +5,7 @@ from openai import OpenAI
 from dotenv import load_dotenv, find_dotenv
 from pyexpat.errors import messages
 
-import PromptsTest
+import InputedPrompt
 
 #load env file
 
@@ -18,8 +18,8 @@ max_tokens = 100
 topic = "baberuth,berm,dorks"
 
 def get_hints(topics: [str]):
-    system_message = PromptsTest.system_message
-    prompt = PromptsTest.generate_Prompt(topics)
+    system_message = InputedPrompt.system_message
+    prompt = InputedPrompt.generate_Prompt(topics)
     messages = [
         {"role": "system", "content": system_message},
         {"role": "user", "content": prompt}
