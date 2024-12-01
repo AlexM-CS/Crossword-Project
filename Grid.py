@@ -143,26 +143,37 @@ class Grid:
             row += 1
         return output
 
-    def getNumNeighbors(self, x: int, y: int) -> int:
-        numNeighbors = 0
+    def getNumAdjacents(self, x: int, y: int) -> int:
+        numAdjacents = 0
         if (x - 1 >= 0 and self.grid[x - 1][y].letter != ""): # Checks the cell above this cell
-            numNeighbors += 1
+            numAdjacents += 1
         if (x + 1 < self.size and self.grid[x + 1][y].letter != ""): # Checks the cell below this cell
-            numNeighbors += 1
+            numAdjacents += 1
         if (y - 1 >= 0 and self.grid[x][y - 1].letter != ""): # Checks the cell to the left of this cell
-            numNeighbors += 1
+            numAdjacents += 1
         if (y + 1 >= 0 and self.grid[x][y + 1].letter != ""): # Checks the cell to the right of this cell
-            numNeighbors += 1
-        return numNeighbors
+            numAdjacents += 1
+        return numAdjacents
 
-    # Helper method for createWords()
-    def addWord(self) -> None:
-        pass
-
-    # Helper method for createWords()
-    def addWordContains(self, required: list) -> None:
-        pass
-
-    # Will assign a word to each of the IndexCells given, in order
-    def createWords(self, indexCells: list) -> None:
-        pass
+    def checkForBlocks(self) -> None:
+        # We don't need to check the edges, since they will be filled to
+        # near-capacity anyway, and "word blocks" can only occur in the middle.
+        for i in range(1, self.size - 1):
+            for j in range(1, self.size - 1):
+                # Check if the current cell has a letter
+                if (self.grid[i][j].letter != ""):
+                    # If so, count the number of "neighbors" it has
+                    # that also have letters.
+                    numNeighbors = 0
+                    numNeighbors += self.getNumAdjacents(i, j)
+                    if (numNeighbors > 2):
+                        if (self.grid[i - 1][j - 1].letter != ""): # Up-left neighbor
+                            numNeighbors += 1
+                        if (self.grid[i - 1][j + 1].letter != ""): # Up-right neighbor
+                            numNeighbors += 1
+                        if (self.grid[i + 1][j - 1].letter != ""): # Down-left neighbor
+                            numNeighbors += 1
+                        if (self.grid[i + 1][j + 1].letter != ""): # Down-right neighbor
+                            numNeighbors += 1
+                        if (numNeighbors > 4):
+                            raise RuntimeError()
