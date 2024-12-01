@@ -5,7 +5,6 @@ import sys
 from typing import Any, Tuple, Dict, List
 from xmlrpc.client import Binary
 
-from fitz_new.mupdf import pdf_to_int64
 from flask import json
 from OpenAITest import *
 

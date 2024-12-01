@@ -8,6 +8,6 @@ def generate_Prompt(topic):
      {topic}
      , making each cryptic/simple. 
      Keep each hint to a single line, with only the hints being returned. Separate each hint by the word
-     "___"
+     "___". After finding a hint for the last word, do not add a "___"
      Do not include number of letters in the word.""".format(topic=topic)
     return prompt
