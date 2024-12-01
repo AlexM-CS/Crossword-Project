@@ -15,9 +15,26 @@ client = OpenAI()
 model = "gpt-4o"
 temperature = 0.3
 max_tokens = 100
-topic = "baberuth"
-# prompts
+topic = "baberuth,berm,dorks"
 
+def get_hints(topics: [str]):
+    system_message = PromptsTest.system_message
+    prompt = PromptsTest.generate_Prompt(topics)
+    messages = [
+        {"role": "system", "content": system_message},
+        {"role": "user", "content": prompt}
+    ]
+    completion = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        temperature=temperature,
+        max_tokens=max_tokens
+    )
+    hints =  completion.choices[0].message.content
+    return hints.split("___")
+
+# prompts
+'''
 system_message = PromptsTest.system_message
 prompt = PromptsTest.generate_Prompt(topic)
 
@@ -25,7 +42,7 @@ messages = [
     {"role": "system", "content": system_message},
     {"role": "user", "content": prompt}
 ]
-
+'''
 def get_hint():
     completion = client.chat.completions.create(
         model = model,
@@ -36,18 +53,21 @@ def get_hint():
     return completion.choices[0].message.content
 
 def main():
-    print("API Key:", os.environ.get("OPENAI_API_KEY"))
+    '''print("API Key:", os.environ.get("OPENAI_API_KEY"))
     openai.api_key = os.environ.get("OPENAI_API_KEY")
     try:
         response = client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": "Hello, OpenAI!"}]
         )
+        print(1234)
         print(response.choices[0].message["content"])
     except Exception as e:
-        print("Error:", e)
-    #returner = get_hint()
-    #print(returner)
+        print("Error:", e)'''
+    returner = get_hints(["baberuth", "berm", "dorks"])
+    print(returner)
+
+
 
 if __name__ == "__main__":
     main()
