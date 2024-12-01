@@ -82,6 +82,7 @@ def createEdges(size: int) -> Grid:
                     word = getWord(thisWord)
                     ic = IndexCell(thisWord[0].x, thisWord[0].y)
                     g.addIndexCell(hc)
+                    g.words.append(word)
                     thisWord[0] = ic
                     ic.setBody(thisWord, word)
                     hc.down = ic
@@ -91,6 +92,7 @@ def createEdges(size: int) -> Grid:
                     word = getWord(thisWord)
                     ic = IndexCell(thisWord[0].x, thisWord[0].y)
                     g.addIndexCell(hc.across)
+                    g.words.append(word)
                     thisWord[0] = ic
                     ic.setBody(thisWord, word)
                     hc.across = ic
@@ -101,6 +103,7 @@ def createEdges(size: int) -> Grid:
                 word = getWord(thisWord)
                 ic = IndexCell(thisWord[0].x, thisWord[0].y)
                 g.addIndexCell(ic)
+                g.words.append(word)
                 thisWord[0] = ic
                 ic.setBody(thisWord, word)
 
@@ -218,6 +221,7 @@ def generateBridge(g: Grid, partitions: list[Cell]) -> Grid:
 
     ic = IndexCell(bridge[0].x, bridge[0].y)
     g.addIndexCell(ic)
+    g.words.append(bridgeWord)
     bridge[0] = ic
     ic.setBody(bridge, bridgeWord)
 
@@ -256,7 +260,7 @@ def fill(grid: Grid, last: int) -> Grid:
 
                     allowed = True
                     for cell in newWord:
-                       if (g.getNumNeighbors(cell.x, cell.y) > 2):
+                       if (g.getNumAdjacents(cell.x, cell.y) > 2):
                            allowed = False
 
                     # We need to add a check in case we need to make any Hybrid Cells
@@ -266,6 +270,7 @@ def fill(grid: Grid, last: int) -> Grid:
 
                     ic = IndexCell(newWord[0].x, newWord[0].y)
                     g.addIndexCell(ic)
+                    g.words.append(placeWord)
                     newWord[0] = ic
                     ic.setBody(newWord, placeWord)
 
@@ -341,7 +346,6 @@ def lastLetterCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) ->
 
 def occupiedCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) -> bool:
     currentCell = cell
-
     if (isAcross):
         for i in range(1, wordSize):
             if (g.grid[currentCell.x][currentCell.y + i - 1].letter != "" and g.grid[currentCell.x][currentCell.y + i].letter != ""):
@@ -355,6 +359,7 @@ def occupiedCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) -> b
 
 # Finalizes the grid by placing black spaces where no letters are placed
 def finalize(g: Grid) -> Grid:
+    # First, add all the black spaces to the grid
     for i in range(0, g.size):
         for j in range(0, g.size):
             if (g.grid[i][j].letter == ""):
@@ -362,20 +367,14 @@ def finalize(g: Grid) -> Grid:
     return g
 
 # Method that initializes a completed Grid (words, black spaces, word list)
+# May also throw errors when "word blocks" are created
 def initGrid(size: int) -> Grid:
     # First, we create the edges and bridge
     g = createEdges(size)
-
     # Second, we fill in the grid with words
     g = fill(g, 0)
-    for i in range(0, size): # These loops make sure all the IndexCells' words are in the Grid's wordList
-        for j in range(0, size):
-            if isinstance(g.grid[i][j], HybridCell):
-                g.words.append(g.grid[i][j].across.word)
-                g.words.append(g.grid[i][j].down.word)
-            elif isinstance(g.grid[i][j], IndexCell):
-                g.words.append(g.grid[i][j].word)
-
+    # Third, make sure no word blacks were created. If there were, an error is thrown
+    g.checkForBlocks()
     # Lastly, we finalize the grid by placing all the black spaces
     g = finalize(g)
     return g
