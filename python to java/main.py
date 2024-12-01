@@ -102,20 +102,56 @@ def grid9():
 #Page to run game of grid size 11
 @app.route('/grid11')
 def grid11():
-    #Make grid
+    global myInt
+    # Make grid
+
+    # Runs all backend and collects needed data
+    grid, jsonGrid, hints = returnMain(11)
+
+    jsonGrid = jsonGrid['grid_data']
+    # Gives indexCells used in js file a direction
+
+    jsonGrid = process_grid_with_direction(jsonGrid, grid)
+
+    # Sorts indexCells
+    jsonGrid = sortotherIndexs(jsonGrid)
+    jsonGrid = addHints(jsonGrid, hints)
+
+    print(grid)
+
+    print(jsonGrid)
+    print(grid.blockedCells)
+
+    # Runs hmtl file with a dictionary of indexCells
+    return render_template("grid11.html", jsonIndex=jsonGrid, hints=hints, blockedCells=grid.blockedCells)
 
 
-    #Pass in griddddd
-    return render_template("grid11.html", myInt=myInt)
 
 #Page to run game of grid size 12
 @app.route('/grid13')
 def grid13():
-    #Make grid
-    #Pass in griddddd
-    return render_template("grid13.html")
+    global myInt
+    # Make grid
 
+    # Runs all backend and collects needed data
+    grid, jsonGrid, hints = returnMain(13)
 
+    jsonGrid = jsonGrid['grid_data']
+    # Gives indexCells used in js file a direction
+
+    jsonGrid = process_grid_with_direction(jsonGrid, grid)
+
+    # Sorts indexCells
+    jsonGrid = sortotherIndexs(jsonGrid)
+    jsonGrid = addHints(jsonGrid, hints)
+
+    print(grid)
+
+    print(jsonGrid)
+    print(grid.blockedCells)
+
+    # Runs hmtl file with a dictionary of indexCells
+    return render_template("grid13.html", jsonIndex=jsonGrid, hints=hints, blockedCells=grid.blockedCells)
 
 
 app.run(host='127.0.0.1', port=7000, debug=True)
