@@ -14,7 +14,7 @@ _ = load_dotenv(find_dotenv())
 client = OpenAI()
 model = "gpt-4o"
 temperature = 0.3
-max_tokens = 100
+max_tokens = 1000
 topic = "baberuth,berm,dorks"
 
 def get_hints(topics: [str]):
