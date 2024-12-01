@@ -44,12 +44,13 @@ def process_grid_with_direction(grid_json,grid):
 
 
 #Sorts through the list of index cells and sorts them based on row then col
-def sortIndexs(grid_json):
+def sortotherIndexs(grid_json):
     sorted_grid = sorted(grid_json, key=lambda x: (x["row"], x["column"]))
     return sorted_grid
 
 
 def addHints(jsonIndex, hints):
+    print(hints)
     for i in range(len(hints)):
         jsonIndex[i]["hint"] = hints[i]
     return jsonIndex
@@ -86,7 +87,7 @@ def grid9():
 
 
     #Sorts indexCells
-    jsonGrid = sortIndexs(jsonGrid)
+    jsonGrid = sortotherIndexs(jsonGrid)
     jsonGrid = addHints(jsonGrid, hints)
 
 
