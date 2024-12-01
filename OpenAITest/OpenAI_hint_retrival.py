@@ -14,7 +14,7 @@ _ = load_dotenv(find_dotenv())
 client = OpenAI()
 model = "gpt-4o"
 temperature = 0.3
-max_tokens = 100
+max_tokens = 2000
 topic = "baberuth,berm,dorks"
 
 def get_hints(topics: [str]):
@@ -31,7 +31,7 @@ def get_hints(topics: [str]):
         max_tokens=max_tokens
     )
     hints =  completion.choices[0].message.content
-    return hints.split("___")
+    return hints.split("Ɇ")
 
 # prompts
 '''
