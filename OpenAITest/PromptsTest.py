@@ -4,9 +4,10 @@ system_message = """
     """
 
 def generate_Prompt(topic):
-    prompt = """Generate a crossword hint for
+    prompt = """Generate a crossword hint for following separated by commas
      {topic}
-     , making it cryptic/simple. 
-     Keep the response a single line, with only the hint being returned. 
+     , making each cryptic/simple. 
+     Keep each hint to a single line, with only the hints being returned. Separate each hint by the word
+     "___"
      Do not include number of letters in the word.""".format(topic=topic)
     return prompt
