@@ -11,13 +11,13 @@ from gridMakerNew import *
 
 # Tests getEdges
 def test7():
-    g = initGrid(9)
+    g = initGrid(11)
     return g
 
 def test8():
     while True:
         try:
-            g = createEdges(9)
+            g = createEdges(11)
         except:
             continue
 
