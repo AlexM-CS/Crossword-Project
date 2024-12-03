@@ -401,11 +401,13 @@ function onHintClick(hintText, hintDict) {
     clearHighlights(hintDict)
     highlightTilesHint(hintDict, hintText, color)
     highlightHintBox(hintText)
-    console.log(hintDict)
+
     clearCurrent()
     currentTile = tiles[hintDict[hintText][0]][hintDict[hintText][1]]
+    direction = hintDict[hintText][3]
     highLightCurrent()
     currentTile.focus();
+
 
 
     // Add your logic here, e.g., highlight grid tiles or show details
