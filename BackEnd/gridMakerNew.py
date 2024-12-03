@@ -2,6 +2,7 @@
 # Last updated: 11-19-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 import sys
+from random import Random
 from typing import Any, Tuple, Dict, List
 from xmlrpc.client import Binary
 
@@ -405,7 +406,8 @@ def initGrid(size: int) -> tuple[Any, dict[str, list[dict[str, Any]]], list[str]
     print(sortedCells)
 
 
-    hints = genHints(sortedCells)
+    #hints = genHints(sortedCells)
+    hints = generateDummyHints(sortedCells)
 
     # newIndexes = g.indexCells
     return g, newIndexes, hints
@@ -415,6 +417,17 @@ def sortIndexes(indexCells):
     print(indexCells)
     cellies =  sorted(indexCells, key=lambda cell: (cell.x, cell.y))
     return cellies
+
+
+
+def generateDummyHints(indexCells):
+    hints = []
+    letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q',"r","s","t","u","v","w","x","y","z"]
+    for cell in indexCells:
+        randlet = random.choice(letters)
+        hints.append(("Hint_" + randlet))
+        letters.remove(randlet)
+    return hints
 
 def genHints(indexCells):
     words = []

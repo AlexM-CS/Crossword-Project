@@ -13,14 +13,16 @@ function checkBounds(row,col){
     }
     return false;
 }
-function clearHighlights(hintDict) {
+function clearHighlights(hintDict,ignoreReds) {
     let color = '#e0e0e0'
     for (let hint in hintDict) {
-        highlightTilesHint(hintDict, hint, color); // Reset color for each hint
+        highlightTilesHint(hintDict, hint, color,ignoreReds); // Reset color for each hint
     }
+    highLightCurrent()
 }
 
-function highlightTilesHint(hintDict, hint, color) {
+
+function highlightTilesHint(hintDict, hint, color,ignoreReds) {
 
     let hintList = hintDict[hint]
 
@@ -30,16 +32,20 @@ function highlightTilesHint(hintDict, hint, color) {
     for (let j = 0; j < word.length; j++) {
         if (direction) {
             if (tiles[row][col + j] !== currentTile) {
+                if(ignoreReds || tiles[row][col+j].style.backgroundColor !== "red") {
 
-                tiles[row][col + j].style.backgroundColor = color;
+                    tiles[row][col + j].style.backgroundColor = color;
+                }
 
 
             }
 
         } else {
             if (tiles[row + j][col] !== currentTile) {
+                 if(ignoreReds || tiles[row+j][col].style.backgroundColor !== "red" ) {
 
-                tiles[row + j][col].style.backgroundColor = color;
+                     tiles[row + j][col].style.backgroundColor = color;
+                 }
             }
         }
     }
@@ -148,6 +154,8 @@ function onTileClick(event, xyDict, hintDict) {
 
 
     highLightCurrent()
+     console.log(xyDict)
+    console.log(hintDict)
 
 
 }
@@ -357,6 +365,8 @@ function handleTextInput(event) {
     //console.log(hint)
     highlightTilesHint(hintDict, hint, color)
     checkIfWon()
+    console.log(xyDict)
+    console.log(hintDict)
 
 
     //}
@@ -494,29 +504,21 @@ function onRevealClick() {
         }
     }
 }
-
 function onAutoCheckClick() {
-    console.log("Autocheck button clicked!");
-    const letterDict = createRealWordDict(data)
-    //console.log(data)
-   // console.log(letterDict)
+    if (document.getElementById('autocheckButton').style.backgroundColor === "lightblue") {
+        document.getElementById('autocheckButton').style.backgroundColor = '#007BFF'
+        clearHighlights(hintDict, true)
+    } else {
+        document.getElementById('autocheckButton').style.backgroundColor = "lightblue"
+        const letterDict = createRealWordDict(data)
 
-
-    for (let i = 0; i < tiles.length; i++) { // Loop through rows
-        for (let j = 0; j < tiles[i].length; j++) { // Loop through columns
-            const key = `${i},${j}`; // Form the key for the current tile
-            if( tiles[i][j].textContent !== letterDict[key] && tiles[i][j].textContent !== "" && tiles[i][j].style.backgroundColor !=="black" ) {
-                tiles[i][j].style.backgroundColor="red" // Set the letter if it exists in the dictionary
+        for (let i = 0; i < tiles.length; i++) { // Loop through rows
+            for (let j = 0; j < tiles[i].length; j++) { // Loop through columns
+                const key = `${i},${j}`; // Form the key for the current tile
+                if (tiles[i][j].textContent !== letterDict[key] && tiles[i][j].textContent !== "" && tiles[i][j].style.backgroundColor !== "black") {
+                    tiles[i][j].style.backgroundColor = "red" // Set the letter if it exists in the dictionary
+                }
             }
         }
     }
-    // Add your Autocheck logic here
-    // For example:
-    // - Validate the grid
-    // - Check answers
 }
-
-
-
-
-

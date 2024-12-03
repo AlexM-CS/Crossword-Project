@@ -51,6 +51,8 @@ def sortotherIndexs(grid_json):
 
 def addHints(jsonIndex, hints):
     print(hints)
+    print(len(hints))
+    print(len(jsonIndex))
     for i in range(len(hints)):
         jsonIndex[i]["hint"] = hints[i]
     return jsonIndex
