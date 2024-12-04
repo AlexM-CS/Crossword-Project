@@ -9,6 +9,22 @@ from Grid import *
 from display import *
 from gridMakerNew import *
 
+# Tests the success rate of full grids
+def test9():
+    numGrids = 0
+    success = 0
+    while True:
+        try:
+            g = initGrid(11)
+            print(g.words)
+            displayGrid(g)
+            success += 1
+        except:
+            continue
+        finally:
+            numGrids += 1
+            print(f"Success Rate: {success} / {numGrids}")
+
 # Tests getEdges
 def test7():
     g = initGrid(9)
@@ -22,18 +38,7 @@ def test8():
             continue
 
 def main():
-    crashes = 0
-    while True:
-        try:
-            startTime = time.time()
-            g = test7()
-            endTime = time.time()
-            print("Time to find a working grid: " + str(round(endTime - startTime, 5)))
-            print(g.words)
-            displayGrid(g)
-        except:
-            crashes += 1
-            print("Error: {0}".format(crashes))
+    test9()
 
 if (__name__ == '__main__'):
     main()
