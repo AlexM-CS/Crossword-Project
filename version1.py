@@ -11,7 +11,7 @@ from gridMakerNew import *
 
 # Tests getEdges
 def test7():
-    g = initGrid(11)
+    g = initGrid(9)
     return g
 
 def test8():

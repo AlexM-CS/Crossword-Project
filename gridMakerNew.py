@@ -248,7 +248,7 @@ def fill(grid: Grid, last: int) -> Grid:
                 if (isinstance(current, IndexCell)):
                     continue
 
-                if (sizeCheck(g, current, perpDir, wordSize) and diagonalCheck(g, current, perpDir) and lastLetterCheck(g, current, perpDir, wordSize) and occupiedCheck(g, current, perpDir, wordSize)):
+                if (sizeCheck(g, current, perpDir, wordSize) and diagonalCheck(g, current, perpDir) and lastLetterCheck(g, current, perpDir, wordSize) and occupiedCheck(g, current, perpDir, wordSize) and perpendicularCheck(g, current, perpDir, wordSize)):
                     newWord = list()
                     if (perpDir): # True: word should go across
                         for i in range(0, wordSize):
@@ -357,6 +357,27 @@ def occupiedCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) -> b
 
     return True
 
+def perpendicularCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) -> bool:
+    body = list()
+    for i in range(0, wordSize):
+        if (isAcross):
+            body.append(g.grid[cell.x][cell.y + i])
+        else:
+            body.append(g.grid[cell.x + i][cell.y])
+
+    if (isAcross):
+        for eachCell in body:
+            if ((g.grid[eachCell.x + 1][eachCell.y].letter != "" and g.grid[eachCell.x - 1][eachCell.y].letter == "")
+                or (g.grid[eachCell.x - 1][eachCell.y].letter != "" and g.grid[eachCell.x + 1][eachCell.y].letter == "")):
+                return False
+    else:
+        for eachCell in body:
+            if ((g.grid[eachCell.x][eachCell.y + 1].letter != "" and g.grid[eachCell.x][eachCell.y - 1].letter == "")
+                or (g.grid[eachCell.x][eachCell.y - 1].letter != "" and g.grid[eachCell.x][eachCell.y + 1].letter == "")):
+                return False
+
+    return True
+
 # Finalizes the grid by placing black spaces where no letters are placed
 def finalize(g: Grid) -> Grid:
     # First, add all the black spaces to the grid
@@ -374,7 +395,7 @@ def initGrid(size: int) -> Grid:
     # Second, we fill in the grid with words
     g = fill(g, 0)
     # Third, make sure no word blacks were created. If there were, an error is thrown
-    g.checkForBlocks()
+    # g.checkForBlocks()
     # Lastly, we finalize the grid by placing all the black spaces
     g = finalize(g)
     return g
