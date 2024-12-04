@@ -347,7 +347,7 @@ function handleArrowKey(userChar, row, col) {
      // Check if `xyDict` has a hint for the new position
     const newKey = `${newRow},${newCol}`;
     let keyList = xyDict[newKey]
-    console.log(newRow , newCol)
+
     // Check if the new position is within bounds
     if (!isValidTile(newRow, newCol)) {
         const hintIndex = direction ? 0 : 1;
@@ -358,7 +358,6 @@ function handleArrowKey(userChar, row, col) {
 
     // Update the current tile
     moveTile(row, col, userChar === "ArrowRight" || userChar === "ArrowDown");
-
 
 
 
@@ -379,45 +378,7 @@ function handleArrowKey(userChar, row, col) {
     highLightCurrent();
 
 }
-/**
-function handleArrowKey(userChar,row,col){
-   console.log("im heya")
-    console.log(xyDict)
 
-  console.log( xyDict[`${row},${col}`][0])
-    //xyDict[row][col]
-    clearHighlights()
-
-    if(userChar === "ArrowLeft"){
-        direction = true
-        moveTile(row,col,false)
-
-        highlightTilesHint(xyDict[`${row},${col-1}`][0],"lightblue",false)
-
-    }
-    else if(userChar === "ArrowRight"){
-        direction = true
-        moveTile(row,col,true)
-        highlightTilesHint(xyDict[`${row},${col+1}`][0],"lightblue",false)
-
-    }
-    else if(userChar === "ArrowUp"){
-        direction = false
-        moveTile(row,col,false)
-        highlightTilesHint(xyDict[`${row-1},${col}`][1],"lightblue",false)
-
-    }
-    else {
-        direction = false
-        moveTile(row,col,true)
-        highlightTilesHint(xyDict[`${row+1},${col}`][1],"lightblue",false)
-
-    }
-
-
-    highLightCurrent()
-}
-**/
 
 function handleTextInput(event) {
     const row = parseInt(currentTile.getAttribute('data-row')); // Extract row index
