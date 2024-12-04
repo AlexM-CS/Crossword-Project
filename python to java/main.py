@@ -99,7 +99,7 @@ def grid9():
     print(grid.blockedCells)
 
     #Runs hmtl file with a dictionary of indexCells
-    return render_template("grid9.html", jsonIndex=jsonGrid, hints=hints,blockedCells=grid.blockedCells)
+    return render_template("grid9.html", jsonIndex=jsonGrid, hints=hints,blockedTiles=grid.blockedCells)
 
 #Page to run game of grid size 11
 @app.route('/grid11')
