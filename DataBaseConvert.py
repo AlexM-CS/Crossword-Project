@@ -72,13 +72,11 @@ def convertBase():
 
 
 def findWord(letterCells):
-
     #List of lists containing an index and a possible letter
     indices = []
 
     #Helps narrow down word search
     wordLength = len(letterCells)
-
 
     #Initazlises indices
     for i, val in enumerate(letterCells):
@@ -88,7 +86,7 @@ def findWord(letterCells):
     filePath = "Words/"
     flag = False
 
-    #Cheks to see if fist letter is filled
+    #Cheks to see if first letter is filled
     if indices[0][1] != '' :
         #Makes filepath
         filePath+=indices[0][1].lower()+"-Words/words_"+str(wordLength)+".txt"

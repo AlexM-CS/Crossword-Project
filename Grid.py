@@ -151,7 +151,7 @@ class Grid:
             numAdjacents += 1
         if (y - 1 >= 0 and self.grid[x][y - 1].letter != ""): # Checks the cell to the left of this cell
             numAdjacents += 1
-        if (y + 1 >= 0 and self.grid[x][y + 1].letter != ""): # Checks the cell to the right of this cell
+        if (y + 1 < self.size and self.grid[x][y + 1].letter != ""): # Checks the cell to the right of this cell
             numAdjacents += 1
         return numAdjacents
 
