@@ -1,110 +1,154 @@
 # Created: 9-29-2024
-# Last Updated: 11-19-2024
+# Last Updated: 12-5-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
-
-from math import *
 
 # This file contains the Cell classes that will be used as the
 # body for the Grid.
 
-# A Parent Cell class to be used as a base for the other Cells
+from math import *
+
 class Cell:
-    # Initializes a Cell with the following fields:
-        # int x - row of the grid that this cell belongs to
-        # int y - column of the grid that this cell belongs to
-        # return - None
-    def __init__(self, x: int, y: int):
+    """
+    A Parent Cell class to be used as a base for the other Cell Types.
+
+    Fields:
+    int x - the Cell's x-coordinate
+    int y - the Cell's y-coordinate
+    str name - "C" for normal Cells
+    """
+    x = None
+    y = None
+    name = "C"
+
+    def __init__(self, x: int, y: int) -> None:
+        """
+        Initializes a Cell.
+        @param x: row of the grid that this cell belongs to
+        @param y: column of the grid that this cell belongs to
+        @return None
+        """
         self.x = x
         self.y = y
 
-    # Overriding the default string representation
-        # return - string representation of this object
-    def __str__(self):
-        return "C({0},{1})".format(self.x, self.y)
+    def __repr__(self) -> str:
+        """
+        String representation of this Cell
+        @return string representation of this Cell
+        """
+        return f"{self.name}({self.x},{self.y})"
 
-    # Compares this Cell's position to other's position (NOTE: only supports grids of size 21 or smaller.)
-        # returns a binary number describing the difference in position, or False if other is not a Cell
-        # first two bits (right to left) represent the direction of the difference in position
-        # last five bits (right to left) represent the magnitude of difference in position
-    def compare(self, other):
-        if (isinstance(other, Cell)):
+    def compare(self, other) -> int:
+        """
+        Compares this Cell's position to another's position.
+        @param other: the Cell to compare with
+        @return: binary int that represents the distance
+        """
+        dif_x = abs(self.x - other.x)
+        dif_y = abs(self.y - other.y)
 
-            dif_x = abs(self.x - other.x)
-            dif_y = abs(self.y - other.y)
+        if (dif_x > 0 and dif_y > 0): # Word differs by x and y
+            output = 0b1100000
+        elif (dif_x > 0): # Word differs only by x
+            output = 0b1000000
+        elif (dif_y > 0): # Word differs only by y
+            output = 0b0100000
+        else: # The two cells have the same coordinates
+            return 0b0000000
 
-            if (dif_x > 0 and dif_y > 0): # Word differs by x and y
-                output = 0b1100000
-            elif (dif_x > 0): # Word differs only by x
-                output = 0b1000000
-            elif (dif_y > 0): # Word differs only by y
-                output = 0b0100000
-            else: # The two cells have the same coordinates
-                return 0b0000000
+        # The last 5 bits are the magnitude of the distance
+        totalDist = floor(sqrt(dif_x**2 + dif_y**2))
+        output ^= totalDist
 
-            totalDist = floor(sqrt(dif_x**2 + dif_y**2))
-            output ^= totalDist
+        return output
 
-            return output
-
-        return False
-
-# A Cell that cannot contain letters, displayed as black or "*"
 class BlockedCell(Cell):
-    # Parent init
-        # return - None
-    def __init__(self, x: int, y: int):
-        self.letter = "*"
+    """
+    A Cell that cannot contain letters, displayed as black or "*".
+
+    Fields:
+    str name - "B" for Blocked Cells
+    """
+    name = "B"
+    letter = "*"
+
+    def __init__(self, x: int, y: int) -> None:
+        """
+        Initializes a BlockedCell.
+        @return None
+        """
         super().__init__(x, y)
 
-    # Overriding the default string representation
-        # return - string representation of this object
-    def __str__(self):
-        return "B({0},{1})".format(self.x, self.y)
+    def __repr__(self) -> str:
+        """
+        String representation of this BlockedCell.
+        @return: a string representation of this BlockedCell.
+        """
+        return super().__repr__()
 
-# A Cell that contains a letter and is part of a word
 class LetterCell(Cell):
-    # Initializes a LetterCell with the following fields:
-        # int x - row of the grid that this cell belongs to
-        # int y - column of the grid that this cell belongs t0
-        # str letter - the letter assigned to this cell (defaults to "")
-        # return - None
+    """
+    A LetterCell contains a letter and is part of a word.
+
+    Fields:
+    str name - "L" for LetterCells
+    str letter - the letter held by this LetterCell
+    """
+    name = "L"
+    letter = None
+
     def __init__(self, x: int, y: int) -> None:
+        """
+        Initializes a LetterCell.
+        """
         super().__init__(x, y)
         self.letter = ""
 
-    # Overriding the default string representation
-        # return - string representation of this object
-    def __str__(self) -> str:
-        return "L({0},{1},{2})".format(self.x, self.y,self.letter)
+    def __repr__(self) -> str:
+        """
+        String representation of this LetterCell.
+        @return: string representation of this LetterCell.
+        """
+        return f"{self.name}({self.x},{self.y},{self.letter})"
 
     # Sets the letter for this LetterCell to be param
     def setLetter(self, param: str) -> None:
+        """
+        Sets the letter held by this LetterCell
+        @param param: the letter to be held by this LetterCell
+        @return: None
+        """
         self.letter = param
 
-# A Cell that contains a letter, and is the start of a word
 class IndexCell(LetterCell):
-    # Initializes an IndexCell with the following fields:
-        # int x - row of the grid that this cell belongs to
-        # int y - column of the grid that this cell belongs to
-        # str letter - the letter assigned to this cell (defaults to "")
-        # list(LetterCell) body - contains the cells that hold the letters for this word
-        # str word - the word that this cell is the start of
-        # int intersections - the number of words that intersect this word's body
-        # int length - the length of this word
-        # return - None
+    """
+    A Cell that contains a letter and is the beginning of a word.
+
+    Fields:
+    str name - "I" for IndexCells
+    list[Cell] body - the "body" of this IndexCell
+    int wordLength - the length of this IndexCell's word
+    """
+    name = "I"
+    body = None
+    word = None
+    wordLength = None
+
     def __init__(self, x: int, y: int) -> None:
+        """
+        Initializes an IndexCell.
+        """
         super().__init__(x, y)
         self.body = list()
         self.word = ""
         self.wordLength = 0
 
-    # Overriding the default string representation
-        # return - string representation of this object
-    def __str__(self):
-        return "I({0},{1},{2})".format(self.x, self.y,self.letter)
-
     # Sets the letters of the Cells in this IndexCell's body
     def setWord(self, word: str) -> None:
+        """
+        Sets the letters in this IndexCell's body.
+        @param word:
+        @return:
+        """
         self.word = word
         self.wordLength = len(word)
         for i in range(0, len(word)):
@@ -124,14 +168,18 @@ class IndexCell(LetterCell):
 
 # A Cell that is the beginning of two words
 class HybridCell(IndexCell):
-    # Initializes a HybridCell with the following fields:
-        # int x - row of the grid that this cell belongs to
-        # int y - column of the grid that this cell belongs to
-        # str letter - the letter assigned to this cell (defaults to "")
-        # IndexCell across - the sideways IndexCell that starts here
-        # IndexCell down - the downward IndexCell that starts here
-        # return - None
-    def __init__(self, x: int, y: int):
+    """
+    HybridCells are Cells where two different words start,
+    one across and one down.
+
+    Fields:
+    str name - "H" for HybridCells
+    IndexCell across - the across IndexCell that starts here
+    IndexCell down - the down IndexCell that starts here
+    """
+    name = "H"
+
+    def __init__(self, x: int, y: int) -> None:
         self.x = x
         self.y = y
         self.letter = ""

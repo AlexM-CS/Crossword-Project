@@ -1,12 +1,9 @@
 # Created: 9-19-2024
-# Last updated: 11-19-2024
+# Last updated: 12-5-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
-import time
+# This file is used for testing only.
 
-from Cell import *
-from Grid import *
-from display import *
 from gridMakerNew import *
 
 # Tests the success rate of full grids
@@ -15,16 +12,29 @@ def test9():
     success = 0
     while True:
         try:
-            g = initGrid(9)
+            g = initGrid(11)
             print(g.words)
-            print(g)
-            input()
+            displayGrid(g)
             success += 1
-        except:
+        except RuntimeError as e:
+            print(e)
+            continue
+        except ValueError as e:
+            print(e)
             continue
         finally:
             numGrids += 1
             print(f"Success Rate: {success} / {numGrids}")
+
+# Tests the success rate of full grids
+def test10():
+    numGrids = 0
+    success = 0
+    while True:
+        g = initGrid(11)
+        print(g)
+        print(g.words)
+        input()
 
 # Tests getEdges
 def test7():
@@ -39,7 +49,7 @@ def test8():
             continue
 
 def main():
-    test9()
+    test10()
 
 if (__name__ == '__main__'):
     main()

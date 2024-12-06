@@ -248,7 +248,7 @@ def fill(grid: Grid, last: int) -> Grid:
                 if (isinstance(current, IndexCell)):
                     continue
 
-                if (sizeCheck(g, current, perpDir, wordSize) and diagonalCheck(g, current, perpDir) and lastLetterCheck(g, current, perpDir, wordSize) and occupiedCheck(g, current, perpDir, wordSize) and perpendicularCheck(g, current, perpDir, wordSize)):
+                if (sizeCheck(g, current, perpDir, wordSize) and diagonalCheck(g, current, perpDir) and occupiedCheck(g, current, perpDir, wordSize) and lastLetterCheck(g, current, perpDir, wordSize) and perpendicularCheck(g, current, perpDir, wordSize)):
                     newWord = list()
                     if (perpDir): # True: word should go across
                         for i in range(0, wordSize):
@@ -293,7 +293,7 @@ def fill(grid: Grid, last: int) -> Grid:
 
     if (cellsFilled < cellsNeeded):
         if (cellsFilled == last):
-            raise RuntimeError
+            raise RuntimeError("No new Cells created.")
         g = fill(g, cellsFilled)
 
     return g
@@ -327,6 +327,7 @@ def sizeCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int)-> bool:
 
 def lastLetterCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) -> bool:
     if (isAcross and cell.y + wordSize < g.size):
+
         if not (g.grid[cell.x][cell.y + wordSize].letter in ["*", ""]):
             return False
         if not (g.grid[cell.x - 1][cell.y + wordSize - 1].letter in ["*", ""]):
@@ -394,8 +395,6 @@ def initGrid(size: int) -> Grid:
     g = createEdges(size)
     # Second, we fill in the grid with words
     g = fill(g, 0)
-    # Third, make sure no word blacks were created. If there were, an error is thrown
-    # g.checkForBlocks()
     # Lastly, we finalize the grid by placing all the black spaces
     g = finalize(g)
     return g
@@ -403,8 +402,11 @@ def initGrid(size: int) -> Grid:
 # Returns a word to be placed in a Grid
 def getWord(letterCells) -> str:
     gotWords, found = findWord(letterCells)
-    randIndex = random.randrange(0, len(gotWords))
-    return gotWords[randIndex]
+    if (found):
+        randIndex = random.randrange(0, len(gotWords))
+        return gotWords[randIndex]
+    else:
+        return ""
 
 def main():
     initGrid(9)
