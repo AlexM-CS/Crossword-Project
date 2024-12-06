@@ -1,5 +1,5 @@
 # Created: 9-29-2024
-# Last updated: 11-19-2024
+# Last updated: 12-5-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file contains the grid object, which holds the Cells
@@ -9,67 +9,43 @@ from Cell import *
 
 # This class represents a Grid of squares with either letters and black squares
 class Grid:
-    # Initializes a Grid object with the following fields:
-        # int size - the size of the grid (size x size)
-        # list(str) words - list of words that are included in the grid
-        # list(list(Cell)) grid - list of lists that represents the grid
-        # str filepath - file that this init will read from (reference)
-    def __init__(self, size: int, filepath = None) -> None:
+    """
+    A grid representation of the crossword, holds the words, the actual grid, and the index cells for each word
+
+    Fields:
+
+    size - the size of the grid (size x size)
+    words - list of words that are included in the grid
+    grid - list of lists that represents the grid
+    """
+    size = None
+    words = None
+    indexCells = None
+
+    def __init__(self, size: int) -> None:
+        """
+        Initializes a grid of length and width "size"
+        @param size: size of the grid
+        """
         self.size = size
         self.words = list()
         self.grid = list()
         self.indexCells = list()
 
-        # Check if we are importing a pre-made Grid
-        if (type(filepath) == str):
 
-            # ==============================================
-            #        We should revisit this method
-            # ==============================================
+        #Goes through and creates each cell as a letter cell with no letter attached
+        for i in range(size):
+            gridLine = list()
+            for j in range(size):
+                gridLine.append(LetterCell(i, j))
+            self.grid.append(gridLine)
 
-            # When the filepath is a string, the grid will be defined using a
-            # specific file as a reference.
-            # This branch of __init__ iterates through the given file and
-            # creates Cells as it goes.
-            self.filepath = filepath
-            try:
-                with open(filepath, 'r') as f:
-                    for i, line in enumerate(f):
-                        gridLine = list()
-                        row = line.strip().split()
-                        for j, val in enumerate(row):
-                            if val == "*":
-                                gridLine.append(BlockedCell(i, j))
-                            elif val == "A":
-                                gridLine.append(IndexCell(i, j, True))
-                            elif val == "D":
-                                gridLine.append(IndexCell(i, j, False))
-                            elif val == "H":
-                                gridLine.append(HybridCell(i, j))
-                            else:
-                                gridLine.append(LetterCell(i, j))
-                        self.grid.append(gridLine)
 
-            except FileNotFoundError:
-                # Handles FileNotFoundError
-                print("The file you are trying to read cannot be found.")
-                print("Quitting...")
-
-        else:
-            # When the filepath is not a string, the grid will be defined
-            # by its length and width, and filled with LetterCells.
-            # This branch of __init__ iterates through length and width,
-            # creating LetterCells as it goes.
-            # This should be used for testing only.
-            for i in range(size):
-                gridLine = list()
-                for j in range(size):
-                    gridLine.append(LetterCell(i, j))
-                self.grid.append(gridLine)
-
-    # Overriding the default string representation
-        # return - string representation of this object
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
+        """
+        a string representation of the grid
+        @return a string representation of the grid
+        """
         output = "GRID:\n"
         for i in range(self.size):
             for j in range(self.size):
@@ -84,20 +60,14 @@ class Grid:
                 output += "\n"
         return output
 
-    # Use this method to re-create a Grid from a string
-    def __repr__(self) -> str:
-        this =  f"{self.size}"
-        for ic in self.indexCells:
-            this += f";{ic.__str__()}"
-        return this
-
     # Creates a BlockedCell at the given coordinates
     def addBlockedHere(self, x: int, y: int) -> None:
+        """
+        Creates a BlockedCell at the given coordinates
+        @param x: x coordinate of where the blocked cell is wanting to be added
+        @param y: y coordinate of where the blocked cell is wanting to be added
+        """
         self.grid[x][y] = BlockedCell(x, y)
-
-    # Adds a BlockedCell to the Grid
-    def addBlockedCell(self, b: BlockedCell) -> None:
-        self.grid[b.x][b.y] = b
 
     # Creates an IndexCell at the given coordinates
     def addIndexHere(self, x: int, y: int) -> None:
@@ -154,26 +124,3 @@ class Grid:
         if (y + 1 >= 0 and self.grid[x][y + 1].letter != ""): # Checks the cell to the right of this cell
             numAdjacents += 1
         return numAdjacents
-
-    def checkForBlocks(self) -> None:
-        # We don't need to check the edges, since they will be filled to
-        # near-capacity anyway, and "word blocks" can only occur in the middle.
-        for i in range(1, self.size - 1):
-            for j in range(1, self.size - 1):
-                # Check if the current cell has a letter
-                if (self.grid[i][j].letter != ""):
-                    # If so, count the number of "neighbors" it has
-                    # that also have letters.
-                    numNeighbors = 0
-                    numNeighbors += self.getNumAdjacents(i, j)
-                    if (numNeighbors > 2):
-                        if (self.grid[i - 1][j - 1].letter != ""): # Up-left neighbor
-                            numNeighbors += 1
-                        if (self.grid[i - 1][j + 1].letter != ""): # Up-right neighbor
-                            numNeighbors += 1
-                        if (self.grid[i + 1][j - 1].letter != ""): # Down-left neighbor
-                            numNeighbors += 1
-                        if (self.grid[i + 1][j + 1].letter != ""): # Down-right neighbor
-                            numNeighbors += 1
-                        if (numNeighbors > 4):
-                            raise RuntimeError()

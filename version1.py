@@ -15,9 +15,10 @@ def test9():
     success = 0
     while True:
         try:
-            g = initGrid(11)
+            g = initGrid(9)
             print(g.words)
-            displayGrid(g)
+            print(g)
+            input()
             success += 1
         except:
             continue
