@@ -49,7 +49,7 @@ def test8():
             continue
 
 def main():
-    test10()
+    test9()
 
 if (__name__ == '__main__'):
     main()

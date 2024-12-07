@@ -1,7 +1,7 @@
 # Created: 10-10-2024
 # Last updated: 11-19-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
-
+import copy
 from operator import index
 from random import Random
 
@@ -14,104 +14,111 @@ from display import *
 import random
 
 # Creates edges and a bridge for a grid, and returns the Grid
-def createEdges(size: int) -> Grid:
-    while True: # This will repeat until a valid grid is created
-        g = Grid(size, size)
-        partitions = list()
-        allEdges = g.getEdges()
+def createEdges(original : Grid) -> Grid:
 
-        while (len(partitions) < 2):
-            randomSide = random.choice(allEdges)
-            partitionIndex = random.randrange(3, size - 3)
-            partitionCell = randomSide[partitionIndex]
-            g.addBlockedHere(partitionCell.x, partitionCell.y)
-            allEdges.remove(randomSide)
-            partitions.append(partitionCell)
+    temp = copy.deepcopy(original)
 
-        g = generateBridge(g, partitions)
+    # Loop over the edges, give them words
+        # allEdges needs to be re-declared because we have since edited the edges
+    allEdges = temp.getEdges()
+    cellLists = list()
+    for edge in allEdges:
+        thisWord = list()
+        for j in range(0, len(edge)):
+            a = edge[j]
+            if (j == 0):
+                thisWord.append(a)
+                continue
 
-        # Loop over the edges, give them words
-            # allEdges needs to be re-declared because we have since edited the edges
-        allEdges = g.getEdges()
-        cellLists = list()
-        for edge in allEdges:
-            thisWord = list()
-            for j in range(0, len(edge)):
-                a = edge[j]
-                if (j == 0):
-                    thisWord.append(a)
+            b = edge[j - 1]
+
+            # Converts the binary return value from compare to a string
+            dist = a.compare(b)
+
+            if (dist > 0b0111111): # The number differs by x
+                if (dist > 0b1011111): # The number also differs by y
                     continue
-
-                b = edge[j - 1]
-
-                # Converts the binary return value from compare to a string
-                dist = a.compare(b)
-
-                if (dist > 0b0111111): # The number differs by x
-                    if (dist > 0b1011111): # The number also differs by y
-                        continue
-                    else: # Only the x-coordinates are different
-                        if not (dist > 0b1000001):  # Distance is not greater than 1; continue with the current list
-                            thisWord.append(a)
-                        else: # Distance was greater than 1; new word starts here
-                            cellLists.append(thisWord)
-                            thisWord = list()
-                            thisWord.append(a)
-
-                elif (dist > 0b0011111): # The number differs by y only
-                    if not (dist > 0b0100001): # Distance is not greater than 1; continue with the current list
+                else: # Only the x-coordinates are different
+                    if not (dist > 0b1000001):  # Distance is not greater than 1; continue with the current list
                         thisWord.append(a)
                     else: # Distance was greater than 1; new word starts here
                         cellLists.append(thisWord)
                         thisWord = list()
                         thisWord.append(a)
 
-                # In all other cases, the cells we compared were the same
+            elif (dist > 0b0011111): # The number differs by y only
+                if not (dist > 0b0100001): # Distance is not greater than 1; continue with the current list
+                    thisWord.append(a)
+                else: # Distance was greater than 1; new word starts here
+                    cellLists.append(thisWord)
+                    thisWord = list()
+                    thisWord.append(a)
 
-            cellLists.append(thisWord)
+            # In all other cases, the cells we compared were the same
 
-        for thisWord in cellLists:
-            for i in range(0, len(thisWord)):
-                thisWord[i] = g.grid[thisWord[i].x][thisWord[i].y]
+        cellLists.append(thisWord)
 
-            if (isinstance(thisWord[0], IndexCell)):
-                currentDir = thisWord[0].getDirection()
-                hc = HybridCell(thisWord[0].x, thisWord[0].y)
-                if (currentDir): # True: word is across
-                    hc.across = thisWord[0]
-                    word = getWord(thisWord)
-                    ic = IndexCell(thisWord[0].x, thisWord[0].y)
-                    g.addIndexCell(hc)
-                    g.words.append(word)
-                    thisWord[0] = ic
-                    ic.setBody(thisWord, word)
-                    hc.down = ic
+    for thisWord in cellLists:
+        for i in range(0, len(thisWord)):
+            thisWord[i] = temp.grid[thisWord[i].x][thisWord[i].y]
 
-                else: # False: word is down
-                    hc.down = thisWord[0]
-                    word = getWord(thisWord)
-                    ic = IndexCell(thisWord[0].x, thisWord[0].y)
-                    g.addIndexCell(hc.across)
-                    g.words.append(word)
-                    thisWord[0] = ic
-                    ic.setBody(thisWord, word)
-                    hc.across = ic
+        if (isinstance(thisWord[0], IndexCell)):
+            currentDir = thisWord[0].getDirection()
+            hc = HybridCell(thisWord[0].x, thisWord[0].y)
+            if (currentDir): # True: word is across
+                hc.across = thisWord[0]
 
-                hc.setLetter(thisWord[0].letter)
-
-            if not (isinstance(thisWord[0], IndexCell)):
                 word = getWord(thisWord)
+                if(word == ""):
+                    print("edges not filled")
+                    raise AttributeError
                 ic = IndexCell(thisWord[0].x, thisWord[0].y)
-                g.addIndexCell(ic)
-                g.words.append(word)
+                temp.addIndexCell(hc)
+                temp.words.append(word)
                 thisWord[0] = ic
                 ic.setBody(thisWord, word)
+                hc.down = ic
 
-        return g
+            else: # False: word is down
+                hc.down = thisWord[0]
+                word = getWord(thisWord)
+                if (word == ""):
+                    print("edges not filled")
+                    raise AttributeError
+                ic = IndexCell(thisWord[0].x, thisWord[0].y)
+                temp.addIndexCell(hc)
+                temp.words.append(word)
+                thisWord[0] = ic
+                ic.setBody(thisWord, word)
+                hc.across = ic
+
+            hc.setLetter(thisWord[0].letter)
+
+        if not (isinstance(thisWord[0], IndexCell)):
+            word = getWord(thisWord)
+            if (word == ""):
+                print("edges not filled")
+                raise AttributeError
+            ic = IndexCell(thisWord[0].x, thisWord[0].y)
+            temp.addIndexCell(ic)
+            temp.words.append(word)
+            thisWord[0] = ic
+            ic.setBody(thisWord, word)
+    return temp
 
 # New way to generate bridges that guarantees the whole grid is connected
-def generateBridge(g: Grid, partitions: list[Cell]) -> Grid:
+def generateBridge(size: int) -> Grid:
+    g = Grid(size)
+    partitions = list()
+    allEdges = g.getEdges()
 
+    while (len(partitions) < 2):
+        randomSide = random.choice(allEdges)
+        partitionIndex = random.randrange(3, size - 3)
+        partitionCell = randomSide[partitionIndex]
+        g.addBlockedHere(partitionCell.x, partitionCell.y)
+        allEdges.remove(randomSide)
+        partitions.append(partitionCell)
     x1 = partitions[0].x
     y1 = partitions[0].y
     x2 = partitions[1].x
@@ -335,7 +342,7 @@ def lastLetterCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) ->
         if not (g.grid[cell.x + 1][cell.y + wordSize - 1].letter in ["*", ""]):
             return False
 
-    elif (cell.x + wordSize < g.size):
+    elif (not isAcross and cell.x + wordSize < g.size):
         if not (g.grid[cell.x + wordSize][cell.y].letter in ["*", ""]):
             return False
         if not (g.grid[cell.x + wordSize - 1][cell.y + 1].letter in ["*", ""]):
@@ -392,11 +399,23 @@ def finalize(g: Grid) -> Grid:
 # May also throw errors when "word blocks" are created
 def initGrid(size: int) -> Grid:
     # First, we create the edges and bridge
-    g = createEdges(size)
+    g = generateBridge(size)
+    failedBridgeLimit = 40
+    while True:
+        try:
+            g = createEdges(g)
+            break
+        except:
+            failedBridgeLimit -= 1
+            if(failedBridgeLimit < 0):
+                failedBridgeLimit = 40
+                g = generateBridge(size)
+            continue
     # Second, we fill in the grid with words
-    g = fill(g, 0)
+    fill(g, 0)
     # Lastly, we finalize the grid by placing all the black spaces
-    g = finalize(g)
+    finalize(g)
+
     return g
 
 # Returns a word to be placed in a Grid

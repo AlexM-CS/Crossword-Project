@@ -124,3 +124,5 @@ class Grid:
         if (y + 1 < self.size and self.grid[x][y + 1].letter != ""): # Checks the cell to the right of this cell
             numAdjacents += 1
         return numAdjacents
+
+
