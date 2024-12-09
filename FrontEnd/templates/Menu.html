@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crossword Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 1.2em;
+            color: #555;
+        }
+        .menu {
+            margin-top: 20px;
+        }
+        .menu a {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007BFF;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .menu a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Crossword Game</h1>
+    <p>
+        Welcome to a procedurally generated crossword puzzle powered by Python and the ChatGPT API,
+        created by Alex Myska, Oliver Strauss, and Brandon Knautz.
+    </p>
+    <div class="menu">
+        <h2>Choose Your Game Size</h2>
+        <a href="/grid9">Play 9x9</a>
+        <a href="/grid11">Play 11x11</a>
+        <a href="/grid13">Play 13x13</a>
+    </div>
+</body>
+</html>
