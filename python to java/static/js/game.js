@@ -333,6 +333,7 @@ function checkIfWon(){
             }
         }
     }
+    document.getElementById('winMenu').style.display = 'block'; // Show the win menu
     console.log("won")
 
 }
@@ -517,7 +518,6 @@ function handleTextInput(event) {
     }
     else if((!inBounds(row+1,col) &&  !direction ) ){
         direction = true
-        console.log("yes swappy but down to across")
 
     }
 
@@ -529,9 +529,7 @@ function handleTextInput(event) {
     }
 
     let [newRow, newCol, jumpIdx] = handleBlackTileJump(userChar,row,col)
-    console.log(newRow,newCol,jumpIdx)
 
-    console.log(jumpIdx)
     moveTile(row,col,true,jumpIdx)
 
 
@@ -610,27 +608,6 @@ function createBlockTiles() {
     }
 }
 
-function createIndexCellNumbers(jsonData) {
-    for (let j = 0; j < jsonData.length; j++) {
-        const number = document.createElement('span');
-        number.classList.add('tile-number');
-        number.textContent = j + 1; // Set the index number
-
-        const row = jsonData[j].row;
-        const col = jsonData[j].column;
-
-        // Only append the number if there's no existing .tile-number span
-        if (!tiles[row][col].querySelector('.tile-number')) {
-            tiles[row][col].appendChild(number);
-        }
-
-        // Make the tile content editable only for the appropriate tiles
-        tiles[row][col].setAttribute('contenteditable', 'true');  // Make this editable tile
-
-        // Optional: Adjust if you need to treat the tile differently based on its content
-        tiles[row][col].addEventListener("click", (event) => onTileClick(event, xyDict));
-    }
-}
 
 //Builds "Hint Menu" by taking in across and down hints separately
 let acrossHintsList = document.querySelector('#acrossHints');
@@ -650,8 +627,10 @@ downHints.forEach((hint) => {
     listItem.textContent = hint;
     downHintsList.appendChild(listItem);
 });
-//console.log(xyDict)
-//console.log(hints)
+
+function restartPage(){
+     location.reload();
+}
 
 
 //createIndexCellNumbers(data)
@@ -659,6 +638,14 @@ createBlockTiles()
 
 document.getElementById('autocheckButton').addEventListener('click', onAutoCheckClick);
 document.getElementById('revealButton').addEventListener('click', onRevealClick);
+document.getElementById('restartButton').addEventListener('click', restartPage)
+
+document.getElementById("startGameButton").addEventListener("click", () => {
+    document.getElementById("startScreen").classList.add("hidden");
+});
+    // Reload the page
+
+
 
 function onRevealClick() {
     const letterDict = createRealWordDict(data)

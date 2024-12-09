@@ -91,7 +91,7 @@ def menu():
 #Page to run game of grid size 9
 @app.route('/grid9')
 def grid9():
-    size = 9
+    size = 7
     #Runs all backend and collects needed data
 
     grid, jsonGrid ,hints = runBackend(size)

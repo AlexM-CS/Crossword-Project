@@ -111,40 +111,88 @@ button:hover {
 #hints li {
   margin-bottom: 5px;
 }
-
-
-
-
-
-.tile[contenteditable="true"] {
-    text-align: center; /* Center the text horizontally */
-    vertical-align: middle; /* Center the text vertically */
-  height: 50px;
-  background-color: #e0e0e0;
-  border: 1px solid #bdbdbd;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.overlayScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it overlays everything */
 }
 
-.tile[contenteditable="true"]:empty {
-    color: #ccc; /* Color for empty tiles (hinting to the user to type) */
+#menuContent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px;
 }
 
-.tile-number {
-    position: absolute;
-    top: 5px;  /* Adjust the position as needed */
-    left: 5px; /* Adjust the position as needed */
-    font-size: 12px; /* Make the number smaller */
-    font-weight: bold;
-    color: black; /* You can adjust the color if needed */
+#menuContent h1 {
+    margin-bottom: 10px;
 }
+
+#menuContent ul {
+    text-align: left;
+    margin: 20px 0;
+    padding: 0 20px;
+}
+
+#menuContent button,
+#menuContent a.button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none; /* Removes underline for links */
+    text-align: center; /* Centers text */
+    display: inline-block; /* Ensures consistent block behavior */
+}
+
+#menuContent button:hover,
+#menuContent a.button:hover {
+    background-color: #0056b3;
+}
+.hidden {
+    display: none;
+}
+
+
+
+
+
+
+
   </style>
 </head>
 <body>
 
-<h1 id="huh"></h1>
+<div id="startScreen" class="overlayScreen">
+    <div id="menuContent">
+        <h1>How to Play</h1>
+        <p>Welcome to the game! Here are some tips to play:</p>
+        <ul>
+            <li>Fill in the grid by following the hints.</li>
+            <li>Click on any white tile to navigate to it.</li>
+            <li>You can also use the arrow keys to navigate the grid</li>
+            <li>Press Space to swap the direction of typing</li>
+            <li>Use the AutoCheck button to validate your progress.</li>
+            <li>Reveal the entire grid using the Reveal button if you're stuck.</li>
+            <li>Have fun :3</li>
+        </ul>
+        <button id="startGameButton">Start Game</button>
+    </div>
+</div>
+
 <div id="buttonContainer">
     <button id="autocheckButton">AutoCheck</button>
     <button id="revealButton">Reveal Grid</button>
@@ -172,6 +220,11 @@ button:hover {
 <div id="myGrid">
     <!-- Dynamic grid rows and tiles go here -->
 
+</div>
+<div id="endScreen" class="overlayScreen hidden">
+    <h1>Congratulations, You Won!</h1>
+    <button id="restartButton">Restart</button>
+    <a href="/menu" class="button" id="menuBackButton">Return to Menu</a>
 </div>
 
 <script>

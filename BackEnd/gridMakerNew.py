@@ -406,7 +406,7 @@ def initGrid(size: int) -> tuple[Any, dict[str, list[dict[str, Any]]], list[str]
     print(sortedCells)
 
 
-    #hints = genHints(sortedCells)
+   #hints = genHints(sortedCells)
     hints = generateDummyHints(sortedCells)
 
     # newIndexes = g.indexCells
