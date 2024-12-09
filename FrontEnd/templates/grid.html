@@ -144,8 +144,7 @@ button:hover {
     padding: 0 20px;
 }
 
-#menuContent button,
-#menuContent a.button {
+#menuContent button{
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
@@ -164,6 +163,43 @@ button:hover {
 }
 .hidden {
     display: none;
+}
+
+#endScreen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    z-index: 1000;
+    padding: 20px;
+}
+
+#endScreen h1 {
+    color: white;
+    margin-bottom: 20px;
+    font-size: 36px;
+}
+
+#endScreen button,
+#endScreen a {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    border: none;
+}
+
+#endScreen button:hover,
+#endScreen a:hover {
+    background-color: #0056b3;
+}
+.hidden {
+            display: none !important;
 }
 
 
@@ -185,8 +221,8 @@ button:hover {
             <li>Click on any white tile to navigate to it.</li>
             <li>You can also use the arrow keys to navigate the grid</li>
             <li>Press Space to swap the direction of typing</li>
-            <li>Use the AutoCheck button to validate your progress.</li>
-            <li>Reveal the entire grid using the Reveal button if you're stuck.</li>
+            <li>Toggle on the AutoCheck button to validate your progress.</li>
+            <li>Reveal a specific tile with Reveal Tile button or the entire grid using the Reveal Grid button if you're stuck.</li>
             <li>Have fun :3</li>
         </ul>
         <button id="startGameButton">Start Game</button>
@@ -196,6 +232,7 @@ button:hover {
 <div id="buttonContainer">
     <button id="autocheckButton">AutoCheck</button>
     <button id="revealButton">Reveal Grid</button>
+    <button id="revealTileButton">Reveal Tile</button>
 </div>
 
 

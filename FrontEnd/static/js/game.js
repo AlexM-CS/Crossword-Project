@@ -6,6 +6,7 @@ let direction = true
 let currentTile;
 let winCon
 
+document.getElementById("endScreen").classList.add("hidden");
 
 /**Checks to see if row,col pair is in the grid or not
  *
@@ -333,7 +334,8 @@ function checkIfWon(){
             }
         }
     }
-    document.getElementById('winMenu').style.display = 'block'; // Show the win menu
+    document.getElementById("endScreen").classList.remove("hidden");
+ // Show the win menu
     console.log("won")
 
 }
@@ -480,6 +482,7 @@ function handleTextInput(event) {
         event.preventDefault(); // Prevent default backspace behavior
         currentTile.textContent = ""; // Clear the current tile
         moveTile(row, col, false,1); // Moves Current Tile to previous tile
+        clearHighlights()
         highlightTilesHint( hint, color) //Highlights appropriate Tile
         return;
     }
@@ -639,6 +642,7 @@ createBlockTiles()
 document.getElementById('autocheckButton').addEventListener('click', onAutoCheckClick);
 document.getElementById('revealButton').addEventListener('click', onRevealClick);
 document.getElementById('restartButton').addEventListener('click', restartPage)
+document.getElementById('revealTileButton').addEventListener('click', onTileCheckClick)
 
 document.getElementById("startGameButton").addEventListener("click", () => {
     document.getElementById("startScreen").classList.add("hidden");
@@ -646,9 +650,9 @@ document.getElementById("startGameButton").addEventListener("click", () => {
     // Reload the page
 
 
-
+const letterDict = createRealWordDict(data)
 function onRevealClick() {
-    const letterDict = createRealWordDict(data)
+
 
     for (let i = 0; i < tiles.length; i++) { // Loop through rows
         for (let j = 0; j < tiles[i].length; j++) { // Loop through columns
@@ -661,7 +665,7 @@ function onRevealClick() {
 function onAutoCheckClick() {
     if (document.getElementById('autocheckButton').style.backgroundColor === "lightblue") {
         document.getElementById('autocheckButton').style.backgroundColor = '#007BFF'
-        clearHighlights( true)
+        clearHighlights(true)
     } else {
         document.getElementById('autocheckButton').style.backgroundColor = "lightblue"
         const letterDict = createRealWordDict(data)
@@ -672,7 +676,21 @@ function onAutoCheckClick() {
                 if (tiles[i][j].textContent !== letterDict[key] && tiles[i][j].textContent !== "" && tiles[i][j].style.backgroundColor !== "black") {
                     tiles[i][j].style.backgroundColor = "red" // Set the letter if it exists in the dictionary
                 }
+                else{
+                    tiles[i][j].style.color = "Blue"
+                }
             }
         }
     }
 }
+
+    function onTileCheckClick(){
+        const row = parseInt(currentTile.getAttribute('data-row')); // Extract row index
+        const col = parseInt(currentTile.getAttribute('data-col')); // Extract column index
+        const key = `${row},${col}`;
+        console.log(letterDict[key])
+        tiles[row][col].textContent = letterDict[key]
+        tiles[row][col].style.color = "Blue"
+
+    }
+
