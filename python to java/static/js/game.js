@@ -23,6 +23,11 @@ function isValidTile(row,col){
     return false;
 }
 
+function inBounds(row,col){
+     return row >= 0 && row < tiles.length && col >= 0 && col < tiles[row].length;
+
+}
+
 /**
  * Resets current tile color to default
  */
@@ -61,17 +66,17 @@ function clearHighlights(ignoreReds) {
 
 
 function highlightTilesHint(hint, color,ignoreReds) {
-    console.log(hint)
+
     let hintList = hintDict[hint]
     //console.log(hintDict)
     //console.log(hint)
    //console.log(hintList)
 
-    let [row, col, word, direction] = hintList; // Destructure the hint data
+    let [row, col, word, dir] = hintList; // Destructure the hint data
 
 
     for (let j = 0; j < word.length; j++) {
-        if (direction) {
+        if (dir) {
             if (tiles[row][col + j] !== currentTile) {
                 if(ignoreReds || tiles[row][col+j].style.backgroundColor !== "red") {
 
@@ -238,7 +243,7 @@ function highLightCurrent() {
 
     }
 }
-function moveTile(row,col,prevOrNext){
+function moveTile(row,col,prevOrNext,jump){
     clearCurrent()
 
     row = parseInt(row);
@@ -246,29 +251,50 @@ function moveTile(row,col,prevOrNext){
     //Sets current tile to move to previous or next tile
     let move
     if(prevOrNext){
-        move = 1
+        move = jump
     }else{
-        move =-1
+        move = (jump)*-1
     }
-    console.log(move)
+
 
     // Sets current tile to next tile depending on direction
     if (direction) {
-        console.log(row)
-        console.log(col)
-        console.log(isValidTile(row,col+move))
-        if (isValidTile(row,col+move)  && tiles[row][col +move].style.backgroundColor !== "black") {
-            console.log("dsdsdsds")
+
+        if (isValidTile(row,col+move)) {
             currentTile = tiles[row][col + move];
         }
+
     } else {
-        if (isValidTile(row+move,col)  && tiles[row+move][col].style.backgroundColor !== "black") {
+        if (isValidTile(row+move,col) ) {
             currentTile = tiles[row + move][col];
 
         }
+
     }
+
     highLightCurrent();
     currentTile.focus();
+}
+
+
+
+function areAllAdjacentTilesInvalid(row, col) {
+    const directions = [
+        [-1, 0], // Up
+        [1, 0],  // Down
+        [0, -1], // Left
+        [0, 1],  // Right
+    ];
+
+    for (let [rowOffset, colOffset] of directions) {
+        const newRow = row + rowOffset;
+        const newCol = col + colOffset;
+
+        if (inBounds(newRow, newCol) && tiles[newRow][newCol].style.backgroundColor !== "black") {
+            return false; // Found a valid adjacent tile
+        }
+    }
+    return true; // All adjacent tiles are invalid
 }
 
 
@@ -276,21 +302,21 @@ function handleDirectionSwap(row,col){
     if(direction){
         if((!isValidTile(row+1,col) || tiles[row+1][col].style.backgroundColor === "black") && (!isValidTile(row-1,col) || tiles[row-1][col].style.backgroundColor === "black" )){
             console.log("invaalid place to swap across dir")
-            return;
+            return true;
         }
         else {
             direction = !direction
-            return;
+            return false;
         }
     }
     else{
          if(( !isValidTile(row,col+1)  || tiles[row][col+1].style.backgroundColor === "black")  && (!isValidTile(row,col-1) || tiles[row][col-1].style.backgroundColor === "black" )){
             console.log("invaalid place to swap down dir")
-             return;
+             return true ;
         }
         else {
             direction = !direction
-            return;
+            return false ;
         }
     }
 }
@@ -324,7 +350,40 @@ function handleSpace(event,row,col,color){
     highlightTilesHint( hint, color)
     highlightHintBox(hint)
 }
+
+
+function handleBlackTileJump(userChar, row, col) {
+    let jumpIndx = 0;
+    console.log(userChar)
+    while (true) {
+         jumpIndx++;
+        if (userChar === "ArrowRight") {
+            col++;
+        } else if (userChar === "ArrowLeft") {
+            col--;
+        } else if (userChar === "ArrowUp") {
+            row--;
+        } else if (userChar === "ArrowDown") {
+            row++;
+        }
+
+
+        // Check bounds after each move
+        if (!inBounds(row, col)) {
+            return [-1,-1,-1];
+        }
+         if (isValidTile(row, col)) {
+
+            break; // Exit the loop if a valid tile is found
+        }
+    }
+
+    return [row, col, jumpIndx ];
+}
+
 function handleArrowKey(userChar, row, col) {
+    console.log(direction)
+    console.log(xyDict)
     clearHighlights(); // Clear previous highlights
 
     let newRow = row;
@@ -350,14 +409,33 @@ function handleArrowKey(userChar, row, col) {
 
     // Check if the new position is within bounds
     if (!isValidTile(newRow, newCol)) {
-        const hintIndex = direction ? 0 : 1;
-        highlightTilesHint(xyDict[`${row},${col}`][hintIndex],"lightblue")
-        console.error("New position out of bounds:", newRow, newCol);
+
+        let hintIndex = direction ? 0 : 1;
+        let  [updatedRow, updatedCol, jumpIndx] = handleBlackTileJump(userChar, newRow,newCol)
+        if(updatedRow < 0){
+            return;
+        }
+        if(xyDict[`${updatedRow},${updatedCol}`].length === 1){
+            hintIndex = 0
+        }
+
+            moveTile(row,col,userChar === "ArrowRight" || userChar === "ArrowDown",jumpIndx)
+            handleDirectionSwap(newRow,newCol)
+            console.log(xyDict[`${updatedRow},${updatedCol}`][hintIndex])
+            highlightTilesHint(xyDict[`${updatedRow},${updatedCol}`][hintIndex],"lightblue")
+            //if(areAllAdjacentTilesInvalid(new))
+            highLightCurrent();
+
+        //}
+
+        console.log(hintIndex)
+        console.log(xyDict[`${updatedRow},${updatedCol}`])
+
         return; // Exit early to prevent errors
     }
 
     // Update the current tile
-    moveTile(row, col, userChar === "ArrowRight" || userChar === "ArrowDown");
+    moveTile(row, col, userChar === "ArrowRight" || userChar === "ArrowDown",1);
 
 
 
@@ -367,7 +445,6 @@ function handleArrowKey(userChar, row, col) {
     }
     else if (xyDict[newKey]) {
         const hintIndex = direction ? 0 : 1;
-
 
         highlightTilesHint(keyList[hintIndex], "lightblue");
     } else {
@@ -385,7 +462,7 @@ function handleTextInput(event) {
     const col = parseInt(currentTile.getAttribute('data-col')); // Extract column index
     let color = 'lightblue'
     let hint
-    const userChar = event.key
+    let userChar = event.key
 
     if (direction ||  xyDict[`${row},${col}`].length === 1) {
         hint = xyDict[`${row},${col}`][0]
@@ -401,13 +478,13 @@ function handleTextInput(event) {
     else if(userChar === "Backspace") {
         event.preventDefault(); // Prevent default backspace behavior
         currentTile.textContent = ""; // Clear the current tile
-        moveTile(row, col, false); // Moves Current Tile to previous tile
+        moveTile(row, col, false,1); // Moves Current Tile to previous tile
         highlightTilesHint( hint, color) //Highlights appropriate Tile
         return;
     }
     else if( /^Arrow(Up|Down|Left|Right)$/.test(userChar)){
         handleArrowKey(userChar,row,col)
-
+        return;
     }
 
 
@@ -424,26 +501,48 @@ function handleTextInput(event) {
 
 
 
+
     currentTile = tiles[row][col]
 
     clearHighlights(hintDict);
 
 
     if (currentTile.textContent.length === 1) {
-        currentTile.textContent = event.key.toUpperCase();
+        currentTile.textContent = userChar.toUpperCase();
        event.preventDefault();
     }
 
+    if(!inBounds(row,col+1) && direction  ){
+        direction = false
+    }
+    else if((!inBounds(row+1,col) &&  !direction ) ){
+        direction = true
+        console.log("yes swappy but down to across")
 
-    moveTile(row,col,true)
+    }
+
+    if(direction ){
+        userChar = "ArrowRight"
+    }
+    else {
+        userChar = "ArrowDown"
+    }
+
+    let [newRow, newCol, jumpIdx] = handleBlackTileJump(userChar,row,col)
+    console.log(newRow,newCol,jumpIdx)
+
+    console.log(jumpIdx)
+    moveTile(row,col,true,jumpIdx)
+
+
+
 
     highlightHintBox(hint)
 
     highlightTilesHint(hint, color)
+
     checkIfWon()
 
-   // console.log(xyDict)
-   /// console.log(hintDict)
 
 }
 
