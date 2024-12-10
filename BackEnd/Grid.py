@@ -5,7 +5,7 @@
 # This file contains the grid object, which holds the Cells
 # and words that make up the puzzle.
 
-from Cell import *
+from BackEnd.Cell import *
 
 # This class represents a Grid of squares with either letters and black squares
 class Grid:
@@ -31,6 +31,7 @@ class Grid:
         self.words = list()
         self.grid = list()
         self.indexCells = list()
+        self.blockedCells = list()
 
 
         #Goes through and creates each cell as a letter cell with no letter attached

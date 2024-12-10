@@ -2,16 +2,15 @@
 # Last updated: 11-19-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 import copy
-from operator import index
-from random import Random
+import random
+
+from BackEnd.DataBaseConvert import findWord
+from BackEnd.Grid import *
+from OpenAITest.OpenAIAPITest import get_hints
+
 
 # This class will be used to make grids, this time by looking for words first
 
-from Cell import *
-from DataBaseConvert import findWord
-from Grid import *
-from display import *
-import random
 
 # Creates edges and a bridge for a grid, and returns the Grid
 def createEdges(original : Grid) -> Grid:
@@ -117,6 +116,8 @@ def generateBridge(size: int) -> Grid:
         partitionIndex = random.randrange(3, size - 3)
         partitionCell = randomSide[partitionIndex]
         g.addBlockedHere(partitionCell.x, partitionCell.y)
+        g.blockedCells.append([partitionCell.x, partitionCell.y])
+
         allEdges.remove(randomSide)
         partitions.append(partitionCell)
     x1 = partitions[0].x
@@ -393,6 +394,8 @@ def finalize(g: Grid) -> Grid:
         for j in range(0, g.size):
             if (g.grid[i][j].letter == ""):
                 g.addBlockedHere(i, j)
+                g.blockedCells.append([i, j])
+
     return g
 
 # Method that initializes a completed Grid (words, black spaces, word list)
@@ -416,8 +419,82 @@ def initGrid(size: int) -> Grid:
     # Lastly, we finalize the grid by placing all the black spaces
     finalize(g)
 
-    return g
+    newIndexes = convertIndexList(g.indexCells)
+    sortedCells = sortIndexes(g.indexCells)
+    print(sortedCells)
 
+    hints = genHints(sortedCells)
+    #hints = generateDummyHints(sortedCells)
+
+    # newIndexes = g.indexCells
+    return g, newIndexes, hints
+
+
+def sortIndexes(indexCells):
+    print(indexCells)
+    cellies =  sorted(indexCells, key=lambda cell: (cell.x, cell.y))
+    return cellies
+
+
+
+def generateDummyHints(indexCells):
+    hints = []
+    letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q',"r","s","t","u","v","w","x","y","z"]
+    for cell in indexCells:
+        randlet = random.choice(letters)
+        hints.append(("Hint_" + randlet))
+        letters.remove(randlet)
+    return hints
+
+def genHints(indexCells):
+    words = []
+    for cell in indexCells:
+        if (isinstance(cell, HybridCell)):
+
+            if cell.across.word not in words:
+                words.append(cell.across.word)
+            if cell.down.word not in words:
+                words.append(cell.down.word)
+        else:
+            if cell.word not in words:
+                words.append(cell.word)
+
+    print(words)
+    print(len(words))
+    hints = get_hints(words)
+    print(hints)
+    print(len(hints))
+    return hints
+
+
+# hints = []
+# letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+# for i in range(len(grid.indexCells)):
+#   hints.append(("Hint_" + letters[i].upper()))
+# return hints
+
+
+# Creates dict of IndexCells
+def convertIndexList(indexs):
+    twoDIndexList = []
+
+    for i in range(len(indexs)):
+        celly = indexs[i]
+        if isinstance(celly, HybridCell):
+            cellData2 = [celly.x, celly.y, celly.down.word]
+            twoDIndexList.append(cellData2)
+        else:
+            cellData = [celly.x, celly.y, celly.word]
+            twoDIndexList.append(cellData)
+
+    json_data = {
+        "grid_data": [
+            {"row": row, "column": column, "word": word}
+            for row, column, word in twoDIndexList
+        ]
+    }
+
+    return json_data
 # Returns a word to be placed in a Grid
 def getWord(letterCells) -> str:
     gotWords, found = findWord(letterCells)

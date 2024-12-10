@@ -15,13 +15,12 @@ import requests
 import BackEnd
 import BackEnd.Cell
 
-import BackEnd.gridMakerNew
+
 import BackEnd.Grid
 from BackEnd.Cell import HybridCell
-from BackEnd.display import displayGrid
-from BackEnd.gridMakerNew import initGrid
+
 from BackEnd import display
-from BackEnd.version1 import returnMain
+from BackEnd.testing import returnMain
 
 
 def process_grid_with_direction(grid_json,grid):
@@ -87,6 +86,13 @@ def menu():
 
     return render_template("Menu.html")
 
+
+@app.route('/about')#END OF URL htttps/somthing/poop
+def about():
+   # backend.tester.printTest()
+    #create grid
+
+    return render_template("about.html")
 
 #Page to run game of grid size 9
 @app.route('/grid9')

@@ -3,7 +3,7 @@
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 import tkinter as tk
-from Cell import *
+
 
 # Method used to close the main window
 def closeWindow(event):

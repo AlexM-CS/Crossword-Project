@@ -693,4 +693,3 @@ function onAutoCheckClick() {
         tiles[row][col].style.color = "Blue"
 
     }
-
