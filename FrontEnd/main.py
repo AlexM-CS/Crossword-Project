@@ -88,6 +88,12 @@ def menu():
     return render_template("Menu.html")
 
 
+@app.route('/about')#END OF URL htttps/somthing/poop
+def about():
+   # backend.tester.printTest()
+    #create grid
+
+    return render_template("about.html")
 #Page to run game of grid size 9
 @app.route('/grid9')
 def grid9():
