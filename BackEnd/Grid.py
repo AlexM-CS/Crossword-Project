@@ -41,6 +41,43 @@ class Grid:
                 gridLine.append(LetterCell(i, j))
             self.grid.append(gridLine)
 
+    def convert(self):
+        indexList = list()
+
+        for i in range(0, len(self.indexCells)):
+            cell = self.indexCells[i]
+            if (isinstance(cell, HybridCell)):
+                cellData2 = [cell.x, cell.y, cell.down.word]
+                indexList.append(cellData2)
+            else:
+                cellData = [cell.x, cell.y, cell.word]
+                indexList.append(cellData)
+
+        jsonData = {
+            "grid_data": [
+                {"row": row, "column": column, "word": word}
+                for row, column, word in indexList
+            ]
+        }
+
+        jsonData = jsonData['grid_data']
+
+        for i in range(len(indexList)):
+            cell = indexList[i]
+            if isinstance(cell, HybridCell):
+                indexList.append(cell.down)
+
+        print(jsonData)
+
+        for i in range(0, len(self.indexCells)):
+            for j in range(0, len(jsonData)):
+                if (self.indexCells[i].word == jsonData[j]['word']):
+                    jsonData[j]["direction"] = self.indexCells[i].getDirection()
+
+        # Sorts the index cells in jsonData by position
+        jsonData = sorted(jsonData, key=lambda x: (x["row"], x["column"]))
+
+        return jsonData
 
     def __repr__(self) -> str:
         """
@@ -125,5 +162,3 @@ class Grid:
         if (y + 1 < self.size and self.grid[x][y + 1].letter != ""): # Checks the cell to the right of this cell
             numAdjacents += 1
         return numAdjacents
-
-

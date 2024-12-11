@@ -5,7 +5,7 @@ from openai import OpenAI
 from dotenv import load_dotenv, find_dotenv
 from pyexpat.errors import messages
 
-from OpenAITest import PromptsTest
+from BackEnd.OpenAITest import PromptsTest
 
 #import PromptsTest
 

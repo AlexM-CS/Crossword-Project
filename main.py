@@ -3,6 +3,7 @@ from time import perf_counter
 
 from flask import Flask, render_template, json
 import requests
+from BackEnd.backendMain import run
 
 # import sys
 # import os
@@ -12,16 +13,10 @@ import requests
 #WordBackend.run()
 
 #print(backend.Grid(9, 9))
-import BackEnd
-import BackEnd.Cell
 
-
-import BackEnd.Grid
 from BackEnd.Cell import HybridCell
 
-from BackEnd import display
 from BackEnd.testing import returnMain
-
 
 def process_grid_with_direction(grid_json,grid):
     """
@@ -76,7 +71,7 @@ def runBackend(size):
     return grid,jsonGrid,hints
 
 #Sets up folder for HTML tabs
-app = Flask(__name__, template_folder='templates',static_folder='static')
+app = Flask(__name__, template_folder='FrontEnd/templates',static_folder='FrontEnd/static')
 
 
 @app.route('/menu')#END OF URL htttps/somthing/poop
@@ -100,7 +95,8 @@ def grid9():
     size = 7
     #Runs all backend and collects needed data
 
-    grid, jsonGrid ,hints = runBackend(size)
+    grid, jsonGrid, hints = run(size)
+    # grid, jsonGrid ,hints = runBackend(size)
 
 
     #Runs hmtl file with a dictionary of indexCells
@@ -113,6 +109,7 @@ def grid11():
     # Runs all backend and collects needed data
 
     grid, jsonGrid, hints = runBackend(size)
+
     # Runs hmtl file with a dictionary of indexCells
     return render_template("grid.html", size = size,jsonIndex=jsonGrid, hints=hints, blockedTiles=grid.blockedCells)
 
@@ -130,8 +127,4 @@ def grid13():
     # Runs hmtl file with a dictionary of indexCells
     return render_template("grid.html", size = size,jsonIndex=jsonGrid, hints=hints, blockedTiles=grid.blockedCells)
 
-
-
-
-app.run(host='127.0.0.1', port=5000, debug=True)
-
+app.run(host='127.0.0.1', port=7000, debug=True)

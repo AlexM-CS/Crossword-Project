@@ -5,7 +5,7 @@
 # This file is used for testing only.
 
 from BackEnd.gridMakerNew import *
-
+from BackEnd.display import *
 
 #Special version of main() to get needed data for frontEnd
 def returnMain(size):
@@ -63,7 +63,7 @@ def test8():
             continue
 
 def main():
-    test9()
+    test10()
 
 if (__name__ == '__main__'):
     main()

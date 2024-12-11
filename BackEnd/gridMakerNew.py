@@ -6,11 +6,10 @@ import random
 
 from BackEnd.DataBaseConvert import findWord
 from BackEnd.Grid import *
-from OpenAITest.OpenAIAPITest import get_hints
-
+from BackEnd.Cell import *
+from BackEnd.OpenAITest.OpenAIAPITest import get_hints
 
 # This class will be used to make grids, this time by looking for words first
-
 
 # Creates edges and a bridge for a grid, and returns the Grid
 def createEdges(original : Grid) -> Grid:
@@ -68,8 +67,8 @@ def createEdges(original : Grid) -> Grid:
                 hc.across = thisWord[0]
 
                 word = getWord(thisWord)
-                if(word == ""):
-                    print("edges not filled")
+                if (word == ""):
+                    print("Line 71")
                     raise AttributeError
                 ic = IndexCell(thisWord[0].x, thisWord[0].y)
                 temp.addIndexCell(hc)
@@ -82,7 +81,7 @@ def createEdges(original : Grid) -> Grid:
                 hc.down = thisWord[0]
                 word = getWord(thisWord)
                 if (word == ""):
-                    print("edges not filled")
+                    print("Line 84")
                     raise AttributeError
                 ic = IndexCell(thisWord[0].x, thisWord[0].y)
                 temp.addIndexCell(hc)
@@ -94,15 +93,17 @@ def createEdges(original : Grid) -> Grid:
             hc.setLetter(thisWord[0].letter)
 
         if not (isinstance(thisWord[0], IndexCell)):
+            print(thisWord)
             word = getWord(thisWord)
             if (word == ""):
-                print("edges not filled")
+                print(f"'{word}'")
                 raise AttributeError
             ic = IndexCell(thisWord[0].x, thisWord[0].y)
             temp.addIndexCell(ic)
             temp.words.append(word)
             thisWord[0] = ic
             ic.setBody(thisWord, word)
+
     return temp
 
 # New way to generate bridges that guarantees the whole grid is connected
@@ -120,6 +121,7 @@ def generateBridge(size: int) -> Grid:
 
         allEdges.remove(randomSide)
         partitions.append(partitionCell)
+
     x1 = partitions[0].x
     y1 = partitions[0].y
     x2 = partitions[1].x
@@ -408,27 +410,19 @@ def initGrid(size: int) -> Grid:
         try:
             g = createEdges(g)
             break
-        except:
+        except AttributeError:
             failedBridgeLimit -= 1
-            if(failedBridgeLimit < 0):
+            if (failedBridgeLimit < 0):
                 failedBridgeLimit = 40
                 g = generateBridge(size)
             continue
+
     # Second, we fill in the grid with words
     fill(g, 0)
     # Lastly, we finalize the grid by placing all the black spaces
     finalize(g)
 
-    newIndexes = convertIndexList(g.indexCells)
-    sortedCells = sortIndexes(g.indexCells)
-    print(sortedCells)
-
-    hints = genHints(sortedCells)
-    #hints = generateDummyHints(sortedCells)
-
-    # newIndexes = g.indexCells
-    return g, newIndexes, hints
-
+    return g
 
 def sortIndexes(indexCells):
     print(indexCells)
