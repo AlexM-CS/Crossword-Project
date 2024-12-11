@@ -2,20 +2,24 @@
 # Last updated: 10-15-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
+# This file handles all file access and writing done by the project.
+
 import os
 import random
 
 from BackEnd.Cell import LetterCell
 
-
-def convertBase():
-    # Open a file in read mode
+def convertBase() -> None:
+    """
+    Credit: Oliver Strauss
+    Was used to convert a raw database (githubList) into a structured file directory (Words)
+    @return: None
+    """
     alph = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
             'v', 'w', 'x', 'y', 'z']
 
     for letter in alph:
-
-        with open('../githubList/sortedGithubList.txt', 'r') as file:
+        with open("../githubList/sortedGithubList.txt", "r") as file:
             content = file.read()  # Read the entire content
             words = content.split()  # Split the content into words
 
@@ -29,9 +33,8 @@ def convertBase():
         except FileExistsError:
             print(f"Base directory '{base_directory}' already exists.")
 
-
         # Create a dictionary to hold words by their starting letters
-        words_by_letter = {letter: [] for letter in alph}
+        words_by_letter = {letter : [] for letter in alph}
 
         # Organize words by their starting letters
         for word in words:
@@ -67,10 +70,12 @@ def convertBase():
                     word_file.write('\n'.join(words_list))  # Write all words, separated by newlines
                     print(f"File '{file_path}' created with {len(words_list)} words of length {length}.")
 
-
-
-
 def findWord(letterCells):
+    """
+    Credit: Oliver Strauss
+    @param letterCells:
+    @return:
+    """
     #List of lists containing an index and a possible letter
     indices = []
 
@@ -82,7 +87,7 @@ def findWord(letterCells):
         indices.append([i, val.letter])
 
     finalWords = []
-    filePath = "../Words/"
+    filePath = "Words/"
     flag = False
 
     #Cheks to see if first letter is filled
@@ -132,8 +137,6 @@ def findWord(letterCells):
     #Returns list of words and boolean determining if words were found
     return finalWords, flag
 
-
-
 #Iterates through and finds word that fits indices specifications
 def genWord(filePath,indices):
     #List of words found
@@ -164,8 +167,6 @@ def genWord(filePath,indices):
     #Returns list of valid words and flag determining if something was found or not
     return finalWords , flag
 
-
-
 def main():
 
     convert_githubList(35, 15, [" ", "," "'"])
@@ -194,9 +195,6 @@ def main():
    # Cell5 = LetterCell(4, 0)
     #Cell5.setLetter("N")
     wordlist = [LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0)]
-
-
-
 
     words,wordCheck =  findWord(wordlist)
 
