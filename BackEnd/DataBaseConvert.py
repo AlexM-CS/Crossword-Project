@@ -93,8 +93,8 @@ def findWord(letterCells):
             finalWords,flag = genWord(filePath, indices)
 
 
-        except:
-
+        except FileNotFoundError:
+            print("file not found")
             return [], flag
 
     else:
