@@ -1,5 +1,5 @@
 # Created: 9-29-2024
-# Last Updated: 12-5-2024
+# Last Updated: 12-11-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file contains the Cell classes that will be used as the
@@ -78,13 +78,6 @@ class BlockedCell(Cell):
         """
         super().__init__(x, y)
 
-    def __repr__(self) -> str:
-        """
-        String representation of this BlockedCell.
-        @return: a string representation of this BlockedCell.
-        """
-        return super().__repr__()
-
 class LetterCell(Cell):
     """
     A LetterCell contains a letter and is part of a word.
@@ -142,7 +135,6 @@ class IndexCell(LetterCell):
         self.word = ""
         self.wordLength = 0
 
-    # Sets the letters of the Cells in this IndexCell's body
     def setWord(self, word: str) -> None:
         """
         Sets the letters in this IndexCell's body.
@@ -154,19 +146,27 @@ class IndexCell(LetterCell):
         for i in range(0, len(word)):
             self.body[i].setLetter(self.word[i])
 
-    # Sets the body of this IndexCell to be a list of LetterCells
     def setBody(self, body: list, word: str) -> None:
+        """
+        Sets the body of this IndexCell to be a list of LetterCells
+        @param body:
+        @param word:
+        @return:
+        """
         self.body = body
         self.setWord(word)
 
     # Gets the direction of this body
         # True if across, False if down
     def getDirection(self) -> bool:
+        """
+        Gets the direction of this IndexCell's body. True means across, False means down.
+        @return: the direction of this IndexCell's body.
+        """
         if (len(self.body) == 0):
             return False
         return self.body[0].compare(self.body[-1]) < 0b1000000
 
-# A Cell that is the beginning of two words
 class HybridCell(IndexCell):
     """
     HybridCells are Cells where two different words start,
@@ -185,8 +185,3 @@ class HybridCell(IndexCell):
         self.letter = ""
         self.across = super().__init__(x, y)
         self.down = super().__init__(x, y)
-
-    # Overriding the default string representation
-        # return - string representation of this object
-    def __str__(self):
-        return "H({0},{1},{2})".format(self.x, self.y,self.letter)

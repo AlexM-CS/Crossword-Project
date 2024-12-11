@@ -1,15 +1,11 @@
 # Created: 9-20-2024
-# Last updated: 11-18-2024
+# Last updated: 12-11-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 import random
-from _ast import pattern
 from copy import deepcopy
-from random import Random
 
-#from pygame.examples import grid
-
-from display import displayGrid
+from BackEnd.display import displayGrid
 
 #Initalizes seed grid
 def makeSeedGrid():
@@ -317,14 +313,14 @@ def main():
 
     newGrid = addBlanks(seedGrid)
     printGrid(newGrid)
-    write_to_file('../Notes/Scrapped Ideas/output.txt', newGrid)
+    write_to_file('output.txt', newGrid)
 
     othergrid = deepcopy(newGrid)
     markAcrossAndDownTiles(othergrid)
-    write_to_file('../Notes/Scrapped Ideas/output1.txt', othergrid)
+    write_to_file('output1.txt', othergrid)
     checkAndRemoveAllSize2(othergrid)
     displayGrid(othergrid)
-    write_to_file('../Notes/Scrapped Ideas/output2.txt', othergrid)
+    write_to_file('output2.txt', othergrid)
 
 if (__name__ == "__main__"):
     main()

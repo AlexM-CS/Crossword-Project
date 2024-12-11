@@ -17,7 +17,6 @@ def createEdges(original : Grid) -> Grid:
     temp = copy.deepcopy(original)
 
     # Loop over the edges, give them words
-        # allEdges needs to be re-declared because we have since edited the edges
     allEdges = temp.getEdges()
     cellLists = list()
     for edge in allEdges:
@@ -409,6 +408,9 @@ def initGrid(size: int) -> Grid:
     while True:
         try:
             g = createEdges(g)
+
+            # Second, we fill in the grid with words
+            fill(g, 0)
             break
         except AttributeError:
             failedBridgeLimit -= 1
@@ -416,9 +418,11 @@ def initGrid(size: int) -> Grid:
                 failedBridgeLimit = 40
                 g = generateBridge(size)
             continue
+        except RuntimeError:
+            failedBridgeLimit = 40
+            g = generateBridge(size)
+            continue
 
-    # Second, we fill in the grid with words
-    fill(g, 0)
     # Lastly, we finalize the grid by placing all the black spaces
     finalize(g)
 
@@ -453,44 +457,15 @@ def genHints(indexCells):
             if cell.word not in words:
                 words.append(cell.word)
 
-    print(words)
-    print(len(words))
     hints = get_hints(words)
-    print(hints)
-    print(len(hints))
     return hints
 
-
-# hints = []
-# letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-# for i in range(len(grid.indexCells)):
-#   hints.append(("Hint_" + letters[i].upper()))
-# return hints
-
-
-# Creates dict of IndexCells
-def convertIndexList(indexs):
-    twoDIndexList = []
-
-    for i in range(len(indexs)):
-        celly = indexs[i]
-        if isinstance(celly, HybridCell):
-            cellData2 = [celly.x, celly.y, celly.down.word]
-            twoDIndexList.append(cellData2)
-        else:
-            cellData = [celly.x, celly.y, celly.word]
-            twoDIndexList.append(cellData)
-
-    json_data = {
-        "grid_data": [
-            {"row": row, "column": column, "word": word}
-            for row, column, word in twoDIndexList
-        ]
-    }
-
-    return json_data
-# Returns a word to be placed in a Grid
 def getWord(letterCells) -> str:
+    """
+    Credit: Alexander Myska
+    @param letterCells: a list of LetterCells to find a word for
+    @return: the word to place here, "" if no word is found
+    """
     gotWords, found = findWord(letterCells)
     if (found):
         randIndex = random.randrange(0, len(gotWords))
@@ -499,7 +474,8 @@ def getWord(letterCells) -> str:
         return ""
 
 def main():
-    initGrid(9)
+    g = initGrid(9)
+    print(g)
 
 if __name__ == "__main__":
     main()
