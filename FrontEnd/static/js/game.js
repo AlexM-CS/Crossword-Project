@@ -396,9 +396,11 @@ function handleArrowKey(userChar, row, col) {
     if (userChar === "ArrowLeft") {
         direction = true;
         newCol = col - 1;
+
     } else if (userChar === "ArrowRight") {
         direction = true;
         newCol = col + 1;
+
     } else if (userChar === "ArrowUp") {
         direction = false;
         newRow = row - 1;
@@ -406,8 +408,15 @@ function handleArrowKey(userChar, row, col) {
         direction = false;
         newRow = row + 1;
     }
+    if(!inBounds(newRow,newCol)){
+        console.log("gothca bitch")
+            return;
+    }
+    console.log(newRow , newCol)
+    console.log(xyDict)
      // Check if `xyDict` has a hint for the new position
     const newKey = `${newRow},${newCol}`;
+    console.log(newKey)
     let keyList = xyDict[newKey]
 
     // Check if the new position is within bounds

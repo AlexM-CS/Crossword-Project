@@ -32,6 +32,8 @@ button {
     align-self: center;
 }
 
+
+
 button:hover {
     background-color: #0056b3;
 }
@@ -72,14 +74,7 @@ button:hover {
   font-size: 10px;
   color: #555;
 }
-.tile-number {
-    position: absolute;
-    top: 2px; /* Adjust as needed */
-    right: 2px; /* Adjust as needed */
-    font-size: 10px; /* Small size for decoration */
-    color: black;
-    pointer-events: none; /* Prevent interference */
-}
+
 .tile-content {
     position: relative;
     width: 100%;
@@ -152,9 +147,9 @@ button:hover {
     color: white;
     border: none;
     border-radius: 5px;
-    text-decoration: none; /* Removes underline for links */
-    text-align: center; /* Centers text */
-    display: inline-block; /* Ensures consistent block behavior */
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
 }
 
 #menuContent button:hover,
@@ -233,6 +228,8 @@ button:hover {
     <button id="autocheckButton">AutoCheck</button>
     <button id="revealButton">Reveal Grid</button>
     <button id="revealTileButton">Reveal Tile</button>
+    <button href="/menu"  id="gridBackButton">Return to Menu</button>
+
 </div>
 
 
@@ -262,7 +259,11 @@ button:hover {
     <h1>Congratulations, You Won!</h1>
     <button id="restartButton">Restart</button>
     <a href="/menu" class="button" id="menuBackButton">Return to Menu</a>
+
 </div>
+
+
+
 
 <script>
     const size = {{ size }};
