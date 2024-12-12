@@ -33,7 +33,6 @@ class Grid:
         self.indexCells = list()
         self.blockedCells = list()
 
-
         #Goes through and creates each cell as a letter cell with no letter attached
         for i in range(size):
             gridLine = list()
@@ -162,3 +161,31 @@ class Grid:
         if (y + 1 < self.size and self.grid[x][y + 1].letter != ""): # Checks the cell to the right of this cell
             numAdjacents += 1
         return numAdjacents
+
+class CustomGrid(Grid):
+    """
+    Grids are an object representation of the crossword. Holds the grid, the words, and Index Cells.
+    CustomGrids take in a 2D list to create themselves instead of being procedurally generated.
+    This version of Grids is only used for debugging and testing.
+    """
+    def __init__(self, size : int, grid : list[list[str]]) -> None:
+        """ Initializes a CustomGrid. """
+        super().__init__(size)
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                self.grid[i][j].letter = grid[i][j]
+
+def main() -> Grid:
+    cells = [
+        ["*", "*", "*", "*", "*"],
+        ["A", "B", "O", "U", "T"],
+        ["*", "*", "*", "*", "*"],
+        ["*", "U", "S", "!", "*"],
+        ["*", "*", "*", "*", "*"],
+    ]
+    g = CustomGrid(5, cells)
+    print(g)
+    return g
+
+if __name__ == "__main__":
+    main()
