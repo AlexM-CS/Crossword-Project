@@ -42,7 +42,7 @@ class Grid:
 
     def convert(self):
         indexList = list()
-
+        print(self.indexCells)
         for i in range(0, len(self.indexCells)):
             cell = self.indexCells[i]
             if (isinstance(cell, HybridCell)):
@@ -60,18 +60,24 @@ class Grid:
         }
 
         jsonData = jsonData['grid_data']
-
+        print(jsonData)
+        print(indexList)
         for i in range(len(indexList)):
             cell = indexList[i]
             if isinstance(cell, HybridCell):
+
                 indexList.append(cell.down)
 
         print(jsonData)
 
         for i in range(0, len(self.indexCells)):
             for j in range(0, len(jsonData)):
-                if (self.indexCells[i].word == jsonData[j]['word']):
+                if self.indexCells[i].word == jsonData[j]['word']:
+
                     jsonData[j]["direction"] = self.indexCells[i].getDirection()
+                    if (isinstance(self.indexCells[i], HybridCell)):
+                        j+=1
+                        jsonData["direction"] = self.indexCells[i].down.getDirection()
 
         # Sorts the index cells in jsonData by position
         jsonData = sorted(jsonData, key=lambda x: (x["row"], x["column"]))
