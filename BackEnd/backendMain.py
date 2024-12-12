@@ -26,15 +26,29 @@ def run(size: int, debug : bool = False):
                    "u", "v", "w", "x", "y", "z"]
         for cell in g.indexCells:
             randlet = random.choice(letters)
-            hints.append(("Hint_" + randlet))
+            if (isinstance(cell, HybridCell)):
+                hints.append(("Hint_" + randlet))
+
+                letters.remove(randlet)
+                randlet = random.choice(letters)
+                hints.append(("Hint_" + randlet))
+            else:
+                hints.append(("Hint_" + randlet))
+
             letters.remove(randlet)
 
     else:
         # Generate the hints for the list of sorted IndexCells
         sortedCells = sorted(g.indexCells, key=lambda cell: (cell.x, cell.y))
         words = list()
+
+
         for cell in sortedCells:
-            words.append(cell.word)
+            if(isinstance(cell, HybridCell)):
+                words.append(cell.down.word)
+                words.append(cell.across.word)
+            else:
+                words.append(cell.word)
         hints = get_hints(words)
 
     # Add hints to each of the words in jsonGrid
