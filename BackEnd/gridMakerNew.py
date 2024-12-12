@@ -55,6 +55,7 @@ def createEdges(original : Grid) -> Grid:
 
         cellLists.append(thisWord)
 
+    cellLists = sorted(cellLists, key=len, reverse=True)
     for thisWord in cellLists:
         for i in range(0, len(thisWord)):
             thisWord[i] = temp.grid[thisWord[i].x][thisWord[i].y]
