@@ -6,7 +6,7 @@
 # body for the Grid.
 
 # External imports:
-from math import *
+import random
 
 class Cell:
     """
@@ -143,7 +143,7 @@ class IndexCell(LetterCell):
         @return: the direction of this IndexCell's body.
         """
         if (len(self.body) == 0):
-            return False
+            raise ValueError("This IndexCell's body is undefined")
 
         first = self.body[0]
         last = self.body[-1]
@@ -151,7 +151,7 @@ class IndexCell(LetterCell):
         if (first.x < last.x): # The Cell's x-coordinates differ
             return False
         elif (first.y < last.y): # The Cell's y-coordinates differ
-            return False
+            return True
         else: # This IndexCell's body is only one Cell; raise an exception
             raise ValueError("This IndexCell's body is only one Cell")
 
@@ -175,3 +175,12 @@ class HybridCell(IndexCell):
         self.letter = ""
         self.across = super().__init__(x, y, letter)
         self.down = super().__init__(x, y, letter)
+
+    def getDirection(self) -> bool:
+        """
+        Returns the direction of one of its IndexCells, randomly
+        @return: True if across, False if down
+        """
+        choices = [self.across, self.down]
+        cell = random.choice(choices)
+        return cell.getDirection()
