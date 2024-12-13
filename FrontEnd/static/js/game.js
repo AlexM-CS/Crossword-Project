@@ -21,7 +21,9 @@ document.getElementById("endScreen").classList.add("hidden");
  * @returns {boolean} true if the tile is valid, false otherwise
  */
 function isValidTile(row, col){
+    console.log("before",row,col)
      if (inBounds(row, col)) {
+         console.log("after" , row,col)
         if (tiles[row][col].style.backgroundColor !== "black"){
             return true;
         }
@@ -38,7 +40,7 @@ function isValidTile(row, col){
  * @returns {boolean} true if (row, col) is in bounds, false otherwise
  */
 function inBounds(row, col){
-     return row >= 0 && row < tiles.length && col >= 0 && col < tiles[row].length;
+     return row >= 0 && row < size && col >= 0 && col < size;
 }
 
 /**
@@ -99,12 +101,7 @@ function highlightTilesHint(hint, color,ignoreReds) {
 
     let [row, col, word, dir] = hintList; // Destructure the hint data
     console.log(hintList)
-     const woop = parseInt(currentTile.getAttribute('data-row')); // Extract row index
-    const otherwoo = parseInt(currentTile.getAttribute('data-col')); // Extract column index
-    console.log(woop,otherwoo)
-    console.log(tiles)
-    console.log(tiles[row][col])
-    console.log(currentTile)
+
 
     for (let j = 0; j < word.length; j++) {
         if (dir) {
@@ -200,6 +197,9 @@ function onTileClick(event, xyDict) {
     if (currentTile.style.backgroundColor === "black"){
         return
     }
+    console.log("woppoy")
+    console.log(row,col)
+    handleDirectionSwap(row,col)
     clearCurrent()
     clearHighlights()
 
@@ -252,12 +252,12 @@ grid.append(fragment)
  */
 function highLightCurrent() {
 
-    if (currentTile && currentTile.style.backgroundColor !== 'black' && currentTile.getAttribute('contenteditable') !== 'false') {
+   // if (currentTile && currentTile.style.backgroundColor !== 'black' && currentTile.getAttribute('contenteditable') !== 'false') {
         currentTile.style.backgroundColor = 'yellow';
 
-    } else {
-        console.error('currentTile is blocked or undefined.');
-    }
+   // } else {
+     //   console.error('currentTile is blocked or undefined.');
+    //}
 }
 
 /**
@@ -286,6 +286,8 @@ function moveTile(row,col,prevOrNext,jump){
 
         if (isValidTile(row,col+move)) {
             currentTile = tiles[row][col + move];
+            console.log("yo righ there")
+            console.log(row, col+move)
         }
 
     } else {
@@ -293,6 +295,9 @@ function moveTile(row,col,prevOrNext,jump){
             currentTile = tiles[row + move][col];
         }
     }
+    console.log("yo righ there")
+    console.log(row+move, col)
+     console.log(row, col+move)
     highLightCurrent();
     currentTile.focus();
 }
@@ -331,24 +336,23 @@ function areAllAdjacentTilesInvalid(row, col) {
  * @returns {boolean}
  */
 function handleDirectionSwap(row,col){
-    if(direction){
-        if((!isValidTile(row+1,col) || tiles[row+1][col].style.backgroundColor === "black") && (!isValidTile(row-1,col) || tiles[row-1][col].style.backgroundColor === "black" )){
-            console.log("invaalid place to swap across dir")
-            return true;
+     row = parseInt(row)
+     col = parseInt(col)
+   // if(direction){
+        if( !isValidTile((row+1),col)  && !isValidTile((row-1),col)) {
+
+           direction = true
         }
-        else {
-            direction = !direction
-            return false;
-        }
-    } else {
-         if ((!isValidTile(row,col+1) || tiles[row][col+1].style.backgroundColor === "black") && (!isValidTile(row,col-1) || tiles[row][col-1].style.backgroundColor === "black" )){
+
+  //  } else {
+         if ((!isValidTile(row,col+1) ) && (!isValidTile(row,col-1) )){
              console.log("invaalid place to swap down dir")
-             return true;
-        } else {
-            direction = !direction
-            return false;
-        }
-    }
+             direction =  false
+        } //else {
+            //direction = !direction
+           // return false;
+       // }
+   // }
 }
 
 /**
@@ -382,6 +386,7 @@ function checkIfWon(){
  */
 function handleSpace(event,row,col,color){
     event.preventDefault();
+    direction = !direction
     handleDirectionSwap(row,col)
     let hint;
     if (direction || xyDict[`${row},${col}`].length === 1) {
@@ -460,8 +465,25 @@ function handleArrowKey(userChar, row, col) {
         newRow = row + 1;
     }
     if(!inBounds(newRow,newCol)){
+        console.log(row,col)
+        const hint = xyDict[`${row},${col}`];
+        let pluginHint
+        if(hint.length > 1){
+            if(direction){
+                pluginHint = hint[0]
+
+            }
+            else {
+                pluginHint = hint[1]
+            }
+        }
+        else {
+            pluginHint = hint[0]
+        }
+
+        highlightTilesHint(pluginHint,"lightblue",false)
         console.log("gothca bitch")
-            return;
+        return;
     }
     console.log(newRow , newCol)
     console.log(xyDict)
@@ -480,11 +502,11 @@ function handleArrowKey(userChar, row, col) {
         if (xyDict[`${updatedRow},${updatedCol}`].length === 1){
             hintIndex = 0
         }
-            moveTile(row,col,userChar === "ArrowRight" || userChar === "ArrowDown",jumpIndx)
+            moveTile(newRow,newCol,userChar === "ArrowRight" || userChar === "ArrowDown",jumpIndx)
             handleDirectionSwap(newRow,newCol)
-            console.log(xyDict[`${updatedRow},${updatedCol}`][hintIndex])
+
             highlightTilesHint(xyDict[`${updatedRow},${updatedCol}`][hintIndex],"lightblue")
-            highLightCurrent();
+           // highLightCurrent();
 
         console.log(hintIndex)
         console.log(xyDict[`${updatedRow},${updatedCol}`])
@@ -572,7 +594,7 @@ function handleTextInput(event) {
     let [newRow, newCol, jumpIdx] = handleBlackTileJump(userChar,row,col)
     moveTile(row,col,true,jumpIdx)
     highlightHintBox(hint)
-    highlightTilesHint(hint, color)
+    highlightTilesHint(xyDict[`${newRow},${newCol}`], color)
     checkIfWon()
 }
 
@@ -739,6 +761,7 @@ function onTileCheckClick(){
     const col = parseInt(currentTile.getAttribute('data-col')); // Extract column index
     const key = `${row},${col}`;
     console.log(letterDict[key])
+
     tiles[row][col].textContent = letterDict[key]
     tiles[row][col].style.color = "Blue"
 
