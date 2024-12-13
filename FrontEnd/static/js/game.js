@@ -98,6 +98,13 @@ function highlightTilesHint(hint, color,ignoreReds) {
     let hintList = hintDict[hint]
 
     let [row, col, word, dir] = hintList; // Destructure the hint data
+    console.log(hintList)
+     const woop = parseInt(currentTile.getAttribute('data-row')); // Extract row index
+    const otherwoo = parseInt(currentTile.getAttribute('data-col')); // Extract column index
+    console.log(woop,otherwoo)
+    console.log(tiles)
+    console.log(tiles[row][col])
+    console.log(currentTile)
 
     for (let j = 0; j < word.length; j++) {
         if (dir) {
