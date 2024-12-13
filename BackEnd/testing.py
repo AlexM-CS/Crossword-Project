@@ -1,5 +1,5 @@
 # Created: 9-19-2024
-# Last updated: 12-5-2024
+# Last updated: 12-13-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file is used for testing only.
@@ -8,12 +8,10 @@
 import time
 
 # When running from here, use these imports:
-from gridMakerNew import *
-from display import *
+# from gridMakerNew import *
 
 # When running from main, use these imports:
-# from BackEnd.gridMakerNew import *
-# from BackEnd.display import *
+from BackEnd.gridMakerNew import *
 
 #Special version of main() to get needed data for frontEnd
 def returnMain(size):

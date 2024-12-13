@@ -1,5 +1,5 @@
 # Created: 12-10-2024
-# Last updated: 12-12-2024
+# Last updated: 12-13-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file runs the BackEnd of the Crossword Project.
@@ -8,14 +8,14 @@
 import random
 
 # When running from here, use these imports:
-from gridMakerNew import initGrid
-from Grid import *
-from OpenAITest.OpenAIAPITest import get_hints
+# from gridMakerNew import initGrid
+# from Grid import *
+# from OpenAITest.OpenAIAPITest import get_hints
 
 # When running from main, use these imports:
-# from BackEnd.gridMakerNew import initGrid
-# from BackEnd.Grid import *
-# from BackEnd.OpenAITest.OpenAIAPITest import get_hints
+from BackEnd.gridMakerNew import initGrid
+from BackEnd.Grid import *
+from BackEnd.OpenAITest.OpenAIAPITest import get_hints
 
 def run(size: int, debug : bool = False):
     """
@@ -27,7 +27,9 @@ def run(size: int, debug : bool = False):
     g = initGrid(size)
 
     # Next, convert the grid a format that can be used by the FrontEnd
-    jsonGrid = g.convert()
+    jsonIndex = g.convertIndexCells()
+    jsonBlocked = g.blockedCells
+    print(jsonBlocked)
 
     if (debug): # If debug mode is enabled, generate dummy hints so we save money lol:
         hints = []
@@ -59,9 +61,9 @@ def run(size: int, debug : bool = False):
 
     # Add hints to each of the words in jsonGrid
     for i in range(len(hints)):
-        jsonGrid[i]["hint"] = hints[i]
+        jsonIndex[i]["hint"] = hints[i]
 
-    return g, jsonGrid, hints
+    return jsonIndex, jsonBlocked, hints
 
 if __name__ == "__main__":
     run(9)

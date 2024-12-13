@@ -1,15 +1,15 @@
 # Created: 9-29-2024
-# Last updated: 12-12-2024
+# Last updated: 12-13-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file contains the Grid object, which holds the Cells
 # and words that make up the puzzle.
 
 # When running from here, use these imports:
-from Cell import *
+# from Cell import *
 
 # When running from main, use these imports:
-# from BackEnd.Cell import *
+from BackEnd.Cell import *
 
 class Grid:
     """
@@ -49,11 +49,11 @@ class Grid:
                 gridLine.append(LetterCell(i, j))
             self.grid.append(gridLine)
 
-    def convert(self) -> list[dict]:
+    def convertIndexCells(self) -> list[dict]:
         """
         Credit: Oliver Strauss
-        Converts this grid's IndexCells into a list to be passed to the front end
-        @return: the list of dictionaries representing the grid
+        Converts this Grid's IndexCells into a list to be passed to the front end
+        @return: the list of dictionaries representing the Grid's IndexCells
         """
         indexList = list()
 
@@ -72,7 +72,7 @@ class Grid:
                 indexList.append(cellData)
 
         jsonData = [
-            {"row": row, "column": column, "word": word, "direction": direction}
+            {"row" : row, "column" : column, "word" : word, "direction" : direction}
             for row, column, word, direction in indexList
         ]
 
@@ -110,7 +110,7 @@ class Grid:
         @param y: y coordinate of where the BlockedCell should be added
         """
         self.grid[x][y] = BlockedCell(x, y)
-        self.blockedCells.append(self.grid[x][y])
+        self.blockedCells.append([x, y])
 
     def addIndexHere(self, x: int, y: int) -> None:
         """
@@ -142,7 +142,7 @@ class Grid:
         @param b: the BlockedCell to add
         """
         self.grid[b.x][b.y] = b
-        self.blockedCells.append(b)
+        self.blockedCells.append([b.x, b.y])
 
     def addIndexCell(self, i: IndexCell) -> None:
         """

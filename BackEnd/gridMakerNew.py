@@ -1,24 +1,23 @@
 # Created: 10-10-2024
-# Last updated: 12-12-2024
+# Last updated: 12-13-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This class will be used to make grids, this time by looking for words first
 
 # External imports:
 import copy
+from math import floor
 import random
 
 # When running from here, use these imports:
-from DataBaseConvert import findWord
-from Grid import *
-from Cell import *
-from OpenAITest.OpenAIAPITest import get_hints
+# from DataBaseConvert import findWord
+# from Grid import *
+# from Cell import *
 
 # When running from main, use these imports:
-# from BackEnd.DataBaseConvert import findWord
-# from BackEnd.Grid import *
-# from BackEnd.Cell import *
-# from BackEnd.OpenAITest.OpenAIAPITest import get_hints
+from BackEnd.DataBaseConvert import findWord
+from BackEnd.Grid import *
+from BackEnd.Cell import *
 
 def generateBridge(size: int) -> Grid:
     """
@@ -251,6 +250,7 @@ def fill(g: Grid, last: int) -> None:
 
         while (len(dupeList) > 0 and maxAllowed < size - wordSize - 1):
             randomIndexCell = random.choice(dupeList)
+            print(randomIndexCell)
             randomBody = randomIndexCell.body
             perpDir = not randomIndexCell.getDirection()
             for current in randomBody:
@@ -443,7 +443,6 @@ def finalize(g: Grid) -> None:
         for j in range(0, g.size):
             if (g.grid[i][j].letter == ""):
                 g.addBlockedHere(i, j)
-                g.blockedCells.append([i, j])
 
 def initGrid(size: int) -> Grid:
     """

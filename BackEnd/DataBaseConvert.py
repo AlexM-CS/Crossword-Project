@@ -9,10 +9,10 @@ import os
 import random
 
 # When running from here, use these imports:
-from Cell import LetterCell
+# from Cell import LetterCell
 
 # When running from main, use these imports:
-# from BackEnd.Cell import LetterCell
+from BackEnd.Cell import LetterCell
 
 def convertBase() -> None:
     """
@@ -96,8 +96,8 @@ def findWord(letterCells) -> tuple[list[str], bool]:
     # The list of words that meet our requirements
     finalWords = []
 
-    filePath = "../Words/" # Use this path when testing from here
-    # filePath = "Words/" # Use this path when testing from main
+    # filePath = "../Words/" # Use this path when testing from here
+    filePath = "Words/" # Use this path when testing from main
 
     # This flag lets use know if a word was found or not
     flag = False
