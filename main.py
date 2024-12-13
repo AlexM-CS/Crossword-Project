@@ -2,7 +2,9 @@
 # Last updated: 12-11-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
+# External imports:
 from flask import Flask, render_template
+
 from BackEnd.backendMain import run
 
 debugMode = True
@@ -27,7 +29,7 @@ def about():
 def grid9():
     # Run the backend, and collect necessary data
     grid, jsonGrid, hints = run(9,debugMode)
-
+    print(grid.blockedCells)
     #Runs html file with a dictionary of Index Cells
     return render_template("grid.html", size = 9, jsonIndex = jsonGrid, hints = hints, blockedTiles = grid.blockedCells)
 
