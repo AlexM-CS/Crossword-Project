@@ -1,3 +1,7 @@
+// Created:
+// Last updated: 12-12-2024
+// Alexander Myska, Oliver Strauss, and Brandon Knautz
+
 let grid = document.querySelector('#game')
 
 let fragment = document.createDocumentFragment();
@@ -8,34 +12,52 @@ let winCon
 
 document.getElementById("endScreen").classList.add("hidden");
 
-/**Checks to see if row,col pair is in the grid or not
+/**
+ * Credit: Oliver Strauss
+ * Checks to see if (row, col) pair is not a black tile
  *
- * @param row
- * @param col
- * @returns {boolean}
+ * @param row the row to check
+ * @param col the column to check
+ * @returns {boolean} true if the tile is valid, false otherwise
  */
-function isValidTile(row,col){
-
-     if (row >= 0 && row < tiles.length && col >= 0 && col < tiles[row].length ) {
-        if(tiles[row][col].style.backgroundColor !== "black"){
+function isValidTile(row, col){
+    console.log("before",row,col)
+     if (inBounds(row, col)) {
+         console.log("after" , row,col)
+        if (tiles[row][col].style.backgroundColor !== "black"){
             return true;
         }
     }
     return false;
 }
 
-function inBounds(row,col){
-     return row >= 0 && row < tiles.length && col >= 0 && col < tiles[row].length;
-
+/**
+ * Credit: Oliver Strauss
+ * Returns true if (row, col) is in bounds, and false otherwise
+ *
+ * @param row the row to check
+ * @param col the column to check
+ * @returns {boolean} true if (row, col) is in bounds, false otherwise
+ */
+function inBounds(row, col){
+     return row >= 0 && row < size && col >= 0 && col < size;
 }
 
 /**
+ * Credit: Oliver Strauss
  * Resets current tile color to default
  */
 function clearCurrent() {
     currentTile.style.backgroundColor = '#e0e0e0';
 }
 
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param jsonData
+ * @param hints
+ * @returns {{}}
+ */
 function makeHintDict(jsonData, hints) {
     const hintDict = {}; // The dictionary to store the hint and corresponding data
 
@@ -49,11 +71,12 @@ function makeHintDict(jsonData, hints) {
     }
     return hintDict
 }
+
 let hintDict = makeHintDict(data, hints)
 
-
-/** Resets all tiles back to default color
- *
+/**
+ * Credit: Oliver Strauss
+ * Resets all tiles back to default color
  *
  * @param ignoreReds
  */
@@ -65,42 +88,44 @@ function clearHighlights(ignoreReds) {
     highLightCurrent()
 }
 
-
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param hint
+ * @param color
+ * @param ignoreReds
+ */
 function highlightTilesHint(hint, color,ignoreReds) {
 
     let hintList = hintDict[hint]
-    //console.log(hintDict)
-    //console.log(hint)
-   //console.log(hintList)
 
     let [row, col, word, dir] = hintList; // Destructure the hint data
+    console.log(hintList)
 
 
     for (let j = 0; j < word.length; j++) {
         if (dir) {
             if (tiles[row][col + j] !== currentTile) {
                 if(ignoreReds || tiles[row][col+j].style.backgroundColor !== "red") {
-
                     tiles[row][col + j].style.backgroundColor = color;
                 }
-
-
             }
-
         } else {
             if (tiles[row + j][col] !== currentTile) {
                  if(ignoreReds || tiles[row+j][col].style.backgroundColor !== "red" ) {
-
                      tiles[row + j][col].style.backgroundColor = color;
                  }
             }
         }
     }
-
-
 }
 
-
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param jsonData
+ * @returns {{}}
+ */
 function createRealWordDict(jsonData) {
     const wordDict = {}; // Initialize an empty dictionary
 
@@ -117,10 +142,12 @@ function createRealWordDict(jsonData) {
     return wordDict; // Return the populated dictionary
 }
 
-
-
-
-
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param jsonData
+ * @returns {{}}
+ */
 function makeRowColDict(jsonData) {
     const xyDict = {};
 
@@ -155,53 +182,45 @@ function makeRowColDict(jsonData) {
     return xyDict;
 }
 
-
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param event
+ * @param xyDict
+ */
 function onTileClick(event, xyDict) {
-
 
     let color = "lightblue"
     const row = event.target.getAttribute('data-row');
     const col = event.target.getAttribute('data-col');
     currentTile = tiles[row][col]
-    if(currentTile.style.backgroundColor === "black"){
+    if (currentTile.style.backgroundColor === "black"){
         return
     }
+    console.log("woppoy")
+    console.log(row,col)
+    handleDirectionSwap(row,col)
     clearCurrent()
     clearHighlights()
 
-
     let hints = xyDict[`${row},${col}`]
-
 
     if (hints.length === 1) {
         highlightTilesHint(hints[0], color)
         highlightHintBox(hints[0])
-
     } else {
         if (direction) {
             highlightTilesHint( hints[0], color)
             highlightHintBox(hints[0])
-
         } else {
             highlightTilesHint( hints[1], color)
             highlightHintBox(hints[1])
-
         }
     }
-
-
     highLightCurrent()
-    // console.log(xyDict)
-   // console.log(hintDict)
-
-
 }
 
-
 xyDict = makeRowColDict(data)
-//Dict { hint -> [row,col,word,direction]
-
-
 
 Array.from({length: size}).forEach((_, rowIdx) => {
     let row = document.createElement('div');
@@ -223,62 +242,73 @@ Array.from({length: size}).forEach((_, rowIdx) => {
         row.appendChild(tile);
     });
     fragment.appendChild(row);
-
 });
 
 currentTile = tiles[0][0]
 grid.append(fragment)
 
-
-
+/**
+ * Credit: Oliver Strauss
+ */
 function highLightCurrent() {
 
-    if (currentTile && currentTile.style.backgroundColor !== 'black' && currentTile.getAttribute('contenteditable') !== 'false') {
-
+   // if (currentTile && currentTile.style.backgroundColor !== 'black' && currentTile.getAttribute('contenteditable') !== 'false') {
         currentTile.style.backgroundColor = 'yellow';
 
-    } else {
-
-        console.error('currentTile is blocked or undefined.');
-
-
-    }
+   // } else {
+     //   console.error('currentTile is blocked or undefined.');
+    //}
 }
+
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param row
+ * @param col
+ * @param prevOrNext
+ * @param jump
+ */
 function moveTile(row,col,prevOrNext,jump){
     clearCurrent()
 
     row = parseInt(row);
     col = parseInt(col);
-    //Sets current tile to move to previous or next tile
+    // Sets current tile to move to previous or next tile
     let move
-    if(prevOrNext){
+    if (prevOrNext){
         move = jump
-    }else{
+    } else {
         move = (jump)*-1
     }
-
 
     // Sets current tile to next tile depending on direction
     if (direction) {
 
         if (isValidTile(row,col+move)) {
             currentTile = tiles[row][col + move];
+            console.log("yo righ there")
+            console.log(row, col+move)
         }
 
     } else {
         if (isValidTile(row+move,col) ) {
             currentTile = tiles[row + move][col];
-
         }
-
     }
-
+    console.log("yo righ there")
+    console.log(row+move, col)
+     console.log(row, col+move)
     highLightCurrent();
     currentTile.focus();
 }
 
-
-
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param row
+ * @param col
+ * @returns {boolean}
+ */
 function areAllAdjacentTilesInvalid(row, col) {
     const directions = [
         [-1, 0], // Up
@@ -298,29 +328,36 @@ function areAllAdjacentTilesInvalid(row, col) {
     return true; // All adjacent tiles are invalid
 }
 
-
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param row
+ * @param col
+ * @returns {boolean}
+ */
 function handleDirectionSwap(row,col){
-    if(direction){
-        if((!isValidTile(row+1,col) || tiles[row+1][col].style.backgroundColor === "black") && (!isValidTile(row-1,col) || tiles[row-1][col].style.backgroundColor === "black" )){
-            console.log("invaalid place to swap across dir")
-            return true;
+     row = parseInt(row)
+     col = parseInt(col)
+   // if(direction){
+        if( !isValidTile((row+1),col)  && !isValidTile((row-1),col)) {
+
+           direction = true
         }
-        else {
-            direction = !direction
-            return false;
-        }
-    }
-    else{
-         if(( !isValidTile(row,col+1)  || tiles[row][col+1].style.backgroundColor === "black")  && (!isValidTile(row,col-1) || tiles[row][col-1].style.backgroundColor === "black" )){
-            console.log("invaalid place to swap down dir")
-             return true ;
-        }
-        else {
-            direction = !direction
-            return false ;
-        }
-    }
+
+  //  } else {
+         if ((!isValidTile(row,col+1) ) && (!isValidTile(row,col-1) )){
+             console.log("invaalid place to swap down dir")
+             direction =  false
+        } //else {
+            //direction = !direction
+           // return false;
+       // }
+   // }
 }
+
+/**
+ * Credit: Oliver Strauss
+ */
 function checkIfWon(){
     const letterDict = createRealWordDict(data)
     for (let i = 0; i < tiles.length; i++) { // Loop through rows
@@ -335,13 +372,21 @@ function checkIfWon(){
         }
     }
     document.getElementById("endScreen").classList.remove("hidden");
- // Show the win menu
+    // Show the win menu
     console.log("won")
-
 }
 
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param event
+ * @param row
+ * @param col
+ * @param color
+ */
 function handleSpace(event,row,col,color){
     event.preventDefault();
+    direction = !direction
     handleDirectionSwap(row,col)
     let hint;
     if (direction || xyDict[`${row},${col}`].length === 1) {
@@ -354,7 +399,14 @@ function handleSpace(event,row,col,color){
     highlightHintBox(hint)
 }
 
-
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param userChar
+ * @param row
+ * @param col
+ * @returns {(*|number)[]|number[]}
+ */
 function handleBlackTileJump(userChar, row, col) {
     let jumpIndx = 0;
     console.log(userChar)
@@ -370,20 +422,24 @@ function handleBlackTileJump(userChar, row, col) {
             row++;
         }
 
-
         // Check bounds after each move
         if (!inBounds(row, col)) {
             return [-1,-1,-1];
         }
-         if (isValidTile(row, col)) {
-
+        if (isValidTile(row, col)) {
             break; // Exit the loop if a valid tile is found
         }
     }
-
     return [row, col, jumpIndx ];
 }
 
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param userChar
+ * @param row
+ * @param col
+ */
 function handleArrowKey(userChar, row, col) {
     console.log(direction)
     console.log(xyDict)
@@ -409,8 +465,25 @@ function handleArrowKey(userChar, row, col) {
         newRow = row + 1;
     }
     if(!inBounds(newRow,newCol)){
+        console.log(row,col)
+        const hint = xyDict[`${row},${col}`];
+        let pluginHint
+        if(hint.length > 1){
+            if(direction){
+                pluginHint = hint[0]
+
+            }
+            else {
+                pluginHint = hint[1]
+            }
+        }
+        else {
+            pluginHint = hint[0]
+        }
+
+        highlightTilesHint(pluginHint,"lightblue",false)
         console.log("gothca bitch")
-            return;
+        return;
     }
     console.log(newRow , newCol)
     console.log(xyDict)
@@ -421,24 +494,19 @@ function handleArrowKey(userChar, row, col) {
 
     // Check if the new position is within bounds
     if (!isValidTile(newRow, newCol)) {
-
         let hintIndex = direction ? 0 : 1;
         let  [updatedRow, updatedCol, jumpIndx] = handleBlackTileJump(userChar, newRow,newCol)
-        if(updatedRow < 0){
+        if (updatedRow < 0){
             return;
         }
-        if(xyDict[`${updatedRow},${updatedCol}`].length === 1){
+        if (xyDict[`${updatedRow},${updatedCol}`].length === 1){
             hintIndex = 0
         }
-
-            moveTile(row,col,userChar === "ArrowRight" || userChar === "ArrowDown",jumpIndx)
+            moveTile(newRow,newCol,userChar === "ArrowRight" || userChar === "ArrowDown",jumpIndx)
             handleDirectionSwap(newRow,newCol)
-            console.log(xyDict[`${updatedRow},${updatedCol}`][hintIndex])
-            highlightTilesHint(xyDict[`${updatedRow},${updatedCol}`][hintIndex],"lightblue")
-            //if(areAllAdjacentTilesInvalid(new))
-            highLightCurrent();
 
-        //}
+            highlightTilesHint(xyDict[`${updatedRow},${updatedCol}`][hintIndex],"lightblue")
+           // highLightCurrent();
 
         console.log(hintIndex)
         console.log(xyDict[`${updatedRow},${updatedCol}`])
@@ -449,26 +517,23 @@ function handleArrowKey(userChar, row, col) {
     // Update the current tile
     moveTile(row, col, userChar === "ArrowRight" || userChar === "ArrowDown",1);
 
-
-
-    if(keyList.length === 1){
+    if (keyList.length === 1){
         highlightTilesHint(keyList[0], "lightblue");
-
-    }
-    else if (xyDict[newKey]) {
+    } else if (xyDict[newKey]) {
         const hintIndex = direction ? 0 : 1;
-
         highlightTilesHint(keyList[hintIndex], "lightblue");
     } else {
         console.warn("No hint found for position:", newKey);
     }
-
     // Highlight the new current tile
     highLightCurrent();
-
 }
 
-
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param event
+ */
 function handleTextInput(event) {
     const row = parseInt(currentTile.getAttribute('data-row')); // Extract row index
     const col = parseInt(currentTile.getAttribute('data-col')); // Extract column index
@@ -483,28 +548,22 @@ function handleTextInput(event) {
     }
 
     if(userChar === " ") {
-
         handleSpace(event, row, col, color)
         return;
-    }
-    else if(userChar === "Backspace") {
+    } else if (userChar === "Backspace") {
         event.preventDefault(); // Prevent default backspace behavior
         currentTile.textContent = ""; // Clear the current tile
         moveTile(row, col, false,1); // Moves Current Tile to previous tile
         clearHighlights()
-        highlightTilesHint( hint, color) //Highlights appropriate Tile
+        highlightTilesHint( hint, color) // Highlights appropriate Tile
         return;
-    }
-    else if( /^Arrow(Up|Down|Left|Right)$/.test(userChar)){
+    } else if ( /^Arrow(Up|Down|Left|Right)$/.test(userChar)){
         handleArrowKey(userChar,row,col)
         return;
     }
 
-
-
-
-    //Ensures that the input consists of exactly one alphanumeric character.
-     if (/^[a-zA-Z0-9]$/.test(event.key)) {
+    // Ensures that the input consists of exactly one alphanumeric character.
+    if (/^[a-zA-Z0-9]$/.test(event.key)) {
         event.preventDefault();
         currentTile.textContent = event.key.toUpperCase(); // Set tile content (convert to uppercase if needed)
     } else {
@@ -512,51 +571,39 @@ function handleTextInput(event) {
         return;
     }
 
-
-
-
     currentTile = tiles[row][col]
-
     clearHighlights(hintDict);
-
 
     if (currentTile.textContent.length === 1) {
         currentTile.textContent = userChar.toUpperCase();
        event.preventDefault();
     }
 
-    if(!inBounds(row,col+1) && direction  ){
+    if(!inBounds(row,col+1) && direction){
         direction = false
-    }
-    else if((!inBounds(row+1,col) &&  !direction ) ){
+    } else if ((!inBounds(row+1,col) && !direction )){
         direction = true
-
     }
 
-    if(direction ){
+    if (direction ){
         userChar = "ArrowRight"
-    }
-    else {
+    } else {
         userChar = "ArrowDown"
     }
 
     let [newRow, newCol, jumpIdx] = handleBlackTileJump(userChar,row,col)
-
     moveTile(row,col,true,jumpIdx)
-
-
-
-
     highlightHintBox(hint)
-
-    highlightTilesHint(hint, color)
-
+    highlightTilesHint(xyDict[`${newRow},${newCol}`], color)
     checkIfWon()
-
-
 }
 
-
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param data
+ * @returns {*[][]}
+ */
 function generateHints(data) {
     const acrossHints = []
     const downHints = []
@@ -571,7 +618,11 @@ function generateHints(data) {
     return [acrossHints, downHints]
 }
 
-
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param hintText
+ */
 function onHintClick(hintText) {
     let color = 'lightblue'
     clearHighlights()
@@ -583,11 +634,13 @@ function onHintClick(hintText) {
     direction = hintDict[hintText][3]
     highLightCurrent()
     currentTile.focus();
-
-
-
 }
 
+/**
+ * Credit: Oliver Strauss
+ *
+ * @param hintText
+ */
 function highlightHintBox(hintText) {
     // Remove 'highlighted' class from all list items
     const allHintItems = document.querySelectorAll('#acrossHints li, #downHints li');
@@ -602,12 +655,12 @@ function highlightHintBox(hintText) {
     }
 }
 
-
 let listOfHints = generateHints(data)
 let [acrossHints, downHints] = listOfHints;
 
-/** Sets all tiles that do not accept text to black
- *
+/**
+ * Credit: Oliver Strauss
+ * Sets all tiles that do not accept text to black
  */
 function createBlockTiles() {
 
@@ -620,8 +673,7 @@ function createBlockTiles() {
     }
 }
 
-
-//Builds "Hint Menu" by taking in across and down hints separately
+// Builds "Hint Menu" by taking in across and down hints separately
 let acrossHintsList = document.querySelector('#acrossHints');
 acrossHints.forEach(hint => {
     let listItem = document.createElement('li');
@@ -640,12 +692,16 @@ downHints.forEach((hint) => {
     downHintsList.appendChild(listItem);
 });
 
+/**
+ * Restarts the page
+ * Credit: Oliver Strauss
+ */
 function restartPage(){
      location.reload();
 }
 
 
-//createIndexCellNumbers(data)
+// createIndexCellNumbers(data)
 createBlockTiles()
 
 document.getElementById('autocheckButton').addEventListener('click', onAutoCheckClick);
@@ -656,13 +712,13 @@ document.getElementById('revealTileButton').addEventListener('click', onTileChec
 document.getElementById("startGameButton").addEventListener("click", () => {
     document.getElementById("startScreen").classList.add("hidden");
 });
-    // Reload the page
-
-
+// Reload the page
 const letterDict = createRealWordDict(data)
+
+/**
+ * Credit: Oliver Strauss
+ */
 function onRevealClick() {
-
-
     for (let i = 0; i < tiles.length; i++) { // Loop through rows
         for (let j = 0; j < tiles[i].length; j++) { // Loop through columns
             const key = `${i},${j}`; // Form the key for the current tile
@@ -671,6 +727,10 @@ function onRevealClick() {
         }
     }
 }
+
+/**
+ * Credit: Oliver Strauss
+ */
 function onAutoCheckClick() {
     if (document.getElementById('autocheckButton').style.backgroundColor === "lightblue") {
         document.getElementById('autocheckButton').style.backgroundColor = '#007BFF'
@@ -693,12 +753,16 @@ function onAutoCheckClick() {
     }
 }
 
-    function onTileCheckClick(){
-        const row = parseInt(currentTile.getAttribute('data-row')); // Extract row index
-        const col = parseInt(currentTile.getAttribute('data-col')); // Extract column index
-        const key = `${row},${col}`;
-        console.log(letterDict[key])
-        tiles[row][col].textContent = letterDict[key]
-        tiles[row][col].style.color = "Blue"
+/**
+ * Credit: Oliver Strauss
+ */
+function onTileCheckClick(){
+    const row = parseInt(currentTile.getAttribute('data-row')); // Extract row index
+    const col = parseInt(currentTile.getAttribute('data-col')); // Extract column index
+    const key = `${row},${col}`;
+    console.log(letterDict[key])
 
-    }
+    tiles[row][col].textContent = letterDict[key]
+    tiles[row][col].style.color = "Blue"
+
+}

@@ -1,8 +1,10 @@
 # Created: 11-18-2024
-# Last updated: 12-11-2024
+# Last updated: 12-13-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
+# External imports:
 from flask import Flask, render_template
+
 from BackEnd.backendMain import run
 
 debugMode = True
@@ -26,25 +28,25 @@ def about():
 @app.route('/grid9')
 def grid9():
     # Run the backend, and collect necessary data
-    grid, jsonGrid, hints = run(9,debugMode)
+    jsonIndexCells, jsonBlockedCells, hints = run(9,debugMode)
 
     #Runs html file with a dictionary of Index Cells
-    return render_template("grid.html", size = 9, jsonIndex = jsonGrid, hints = hints, blockedTiles = grid.blockedCells)
+    return render_template("grid.html", size = 9, jsonIndex = jsonIndexCells, hints = hints, blockedTiles = jsonBlockedCells)
 
 @app.route('/grid11')
 def grid11():
     # Run the backend, and collect necessary data
-    grid, jsonGrid, hints = run(11, debugMode)
+    jsonIndexCells, jsonBlockedCells, hints = run(11, debugMode)
 
     # Runs html file with a dictionary of Index Cells
-    return render_template("grid.html", size = 11, jsonIndex = jsonGrid, hints = hints, blockedTiles = grid.blockedCells)
+    return render_template("grid.html", size = 11, jsonIndex = jsonIndexCells, hints = hints, blockedTiles = jsonBlockedCells)
 
 @app.route('/grid13')
 def grid13():
     # Run the backend, and collect necessary data
-    grid, jsonGrid, hints = run(13, debugMode)
+    jsonIndexCells, jsonBlockedCells, hints = run(13, debugMode)
 
     # Runs html file with a dictionary of Index Cells
-    return render_template("grid.html", size = 13, jsonIndex = jsonGrid, hints = hints, blockedTiles = grid.blockedCells)
+    return render_template("grid.html", size = 11, jsonIndex = jsonIndexCells, hints = hints, blockedTiles = jsonBlockedCells)
 
 app.run(host='127.0.0.1', port=7000, debug = debugMode)

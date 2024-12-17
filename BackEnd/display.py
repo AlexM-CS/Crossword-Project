@@ -2,8 +2,8 @@
 # Last updated: 10-19-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
+# External imports:
 import tkinter as tk
-
 
 # Method used to close the main window
 def closeWindow(event):

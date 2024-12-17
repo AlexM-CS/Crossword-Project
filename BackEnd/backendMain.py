@@ -1,26 +1,37 @@
 # Created: 12-10-2024
-# Last updated: 12-11-2024
+# Last updated: 12-13-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file runs the BackEnd of the Crossword Project.
 
+# External imports:
 import random
 
+# When running from here, use these imports:
+# from gridMakerNew import initGrid
+# from Grid import *
+# from OpenAITest.OpenAIAPITest import get_hints
+
+# When running from main, use these imports:
 from BackEnd.gridMakerNew import initGrid
 from BackEnd.Grid import *
 from BackEnd.OpenAITest.OpenAIAPITest import get_hints
 
 def run(size: int, debug : bool = False):
-    """ Runs the BackEnd, and returns data that will be used in the display. """
+    """
+    Credit: Alexander Myska and Oliver Strauss
+    Runs the BackEnd, and returns data that will be used in the display.
+    """
 
     # First, we make the grid
     g = initGrid(size)
 
     # Next, convert the grid a format that can be used by the FrontEnd
-    jsonGrid = g.convert()
+    jsonIndex = g.convertIndexCells()
+    jsonBlocked = g.blockedCells
+    print(jsonBlocked)
 
-    # If debug mode is enabled, generate dummy hints so we save money lol
-    if (debug):
+    if (debug): # If debug mode is enabled, generate dummy hints so we save money lol:
         hints = []
         letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', "r", "s", "t",
                    "u", "v", "w", "x", "y", "z"]
@@ -37,12 +48,9 @@ def run(size: int, debug : bool = False):
 
             letters.remove(randlet)
 
-    else:
-        # Generate the hints for the list of sorted IndexCells
+    else: # Otherwise, generate the hints for the list of sorted IndexCells
         sortedCells = sorted(g.indexCells, key=lambda cell: (cell.x, cell.y))
         words = list()
-
-
         for cell in sortedCells:
             if(isinstance(cell, HybridCell)):
                 words.append(cell.down.word)
@@ -53,9 +61,9 @@ def run(size: int, debug : bool = False):
 
     # Add hints to each of the words in jsonGrid
     for i in range(len(hints)):
-        jsonGrid[i]["hint"] = hints[i]
+        jsonIndex[i]["hint"] = hints[i]
 
-    return g, jsonGrid, hints
+    return jsonIndex, jsonBlocked, hints
 
 if __name__ == "__main__":
     run(9)
