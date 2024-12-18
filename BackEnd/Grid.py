@@ -57,11 +57,14 @@ class Grid:
         """
         indexList = list()
 
+
         for i in range(0, len(self.indexCells)):
             cell = self.indexCells[i]
+
             if (isinstance(cell, HybridCell)):
                 # If the cell is a Hybrid, we need to add the coordinates,
                 # word, and direction for both words here
+
                 cellData = [cell.x, cell.y, cell.across.word, cell.across.getDirection()]
                 cellData2 = [cell.x, cell.y, cell.down.word, cell.down.getDirection()]
                 indexList.append(cellData)
@@ -78,6 +81,8 @@ class Grid:
 
         # Sorts the index cells in jsonData by position
         jsonData = sorted(jsonData, key=lambda x: (x["row"], x["column"]))
+
+
 
         return jsonData
 

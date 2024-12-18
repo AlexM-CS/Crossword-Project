@@ -35,33 +35,39 @@ def run(size: int, debug : bool = False):
         hints = []
         letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', "r", "s", "t",
                    "u", "v", "w", "x", "y", "z"]
+        count = 0
         for cell in g.indexCells:
-            randlet = random.choice(letters)
+
             if (isinstance(cell, HybridCell)):
-                hints.append(("Hint_" + randlet))
+                hints.append(("Hint_" + letters[count]))
 
-                letters.remove(randlet)
-                randlet = random.choice(letters)
-                hints.append(("Hint_" + randlet))
+                count += 1
+
+                hints.append(("Hint_" + letters[count]))
             else:
-                hints.append(("Hint_" + randlet))
+                hints.append(("Hint_" + letters[count]))
 
-            letters.remove(randlet)
+            count += 1
 
     else: # Otherwise, generate the hints for the list of sorted IndexCells
         sortedCells = sorted(g.indexCells, key=lambda cell: (cell.x, cell.y))
+
         words = list()
         for cell in sortedCells:
-            if(isinstance(cell, HybridCell)):
-                words.append(cell.down.word)
+            if isinstance(cell, HybridCell):
                 words.append(cell.across.word)
+                words.append(cell.down.word)
+
             else:
                 words.append(cell.word)
+
         hints = get_hints(words)
+
 
     # Add hints to each of the words in jsonGrid
     for i in range(len(hints)):
-        jsonIndex[i]["hint"] = hints[i]
+        if hints[i] != '':
+            jsonIndex[i]["hint"] = hints[i]
 
     return jsonIndex, jsonBlocked, hints
 

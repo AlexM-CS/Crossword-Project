@@ -21,6 +21,8 @@
 
 }
 
+
+a.button,
 button {
     padding: 10px 20px;
     font-size: 16px;
@@ -29,11 +31,12 @@ button {
     background-color: #007BFF;
     color: white;
     border-radius: 5px;
-    align-self: center;
+    text-align: center;
+    display: inline-block; /* Ensures it behaves like a block element */
+    text-decoration: none; /* Removes the underline from anchor tags */
 }
 
-
-
+a.button:hover,
 button:hover {
     background-color: #0056b3;
 }
@@ -228,8 +231,7 @@ button:hover {
     <button id="autocheckButton">AutoCheck</button>
     <button id="revealButton">Reveal Grid</button>
     <button id="revealTileButton">Reveal Tile</button>
-    <button href="/menu"  id="gridBackButton">Return to Menu</button>
-
+    <a href="/menu" id="gridBackButton" class="button">Return to Menu</a>
 </div>
 
 

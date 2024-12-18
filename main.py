@@ -7,7 +7,7 @@ from flask import Flask, render_template
 
 from BackEnd.backendMain import run
 
-debugMode = True
+debugMode = False
 
 # Sets up folder for HTML tabs
 app = Flask(__name__, template_folder='FrontEnd/templates',static_folder='FrontEnd/static')
@@ -47,6 +47,6 @@ def grid13():
     jsonIndexCells, jsonBlockedCells, hints = run(13, debugMode)
 
     # Runs html file with a dictionary of Index Cells
-    return render_template("grid.html", size = 11, jsonIndex = jsonIndexCells, hints = hints, blockedTiles = jsonBlockedCells)
+    return render_template("grid.html", size = 13, jsonIndex = jsonIndexCells, hints = hints, blockedTiles = jsonBlockedCells)
 
 app.run(host='127.0.0.1', port=7000, debug = debugMode)
