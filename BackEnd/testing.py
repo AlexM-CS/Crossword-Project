@@ -74,7 +74,7 @@ def test11():
     print(g.getEdges())
 
 def main():
-    test10()
+    test9()
 
 if (__name__ == '__main__'):
     main()
