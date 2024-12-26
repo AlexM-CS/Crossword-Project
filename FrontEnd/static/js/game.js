@@ -234,6 +234,8 @@ function makeRowColDict(jsonData) {
 
     return xyDict;
 }
+//Initializes this dictionary to be used later
+xyDict = makeRowColDict(data)
 
 /**
  * Credit: Oliver Strauss
@@ -263,12 +265,15 @@ function onTileClick(event, xyDict) {
     //Clears all current highlighted tiles
     clearHighlights()
 
+    //List of hints on specific tile
     let hints = xyDict[`${row},${col}`]
 
+    //If only one hint on tile highlight tiles and hint box
     if (hints.length === 1) {
         highlightTilesHint(hints[0], color)
         highlightHintBox(row,col)
     } else {
+    //Else highlight both
         if (direction) {
             highlightTilesHint( hints[0], color)
             highlightHintBox(row,col)
@@ -277,40 +282,37 @@ function onTileClick(event, xyDict) {
             highlightHintBox(row,col)
         }
     }
+    //Highlight current tile
     highLightCurrent()
 }
 
-xyDict = makeRowColDict(data)
+
 
 
 
 
 /**
  * Credit: Oliver Strauss
+ * Sets color of current tile to yellow
  */
 function highLightCurrent() {
-
-   // if (currentTile && currentTile.style.backgroundColor !== 'black' && currentTile.getAttribute('contenteditable') !== 'false') {
-        currentTile.style.backgroundColor = 'yellow';
-
-   // } else {
-     //   console.error('currentTile is blocked or undefined.');
-    //}
+     currentTile.style.backgroundColor = 'yellow';
 }
 
 /**
  * Credit: Oliver Strauss
- *
+ * Moves the current tile depending on input
  * @param row
  * @param col
- * @param prevOrNext
- * @param jump
+ * @param prevOrNext //Boolean to move forward or back
+ * @param jump //Num of tiles the current tile will mov
  */
 function moveTile(row,col,prevOrNext,jump){
     clearCurrent()
-
+    //Gets row and col
     row = parseInt(row);
     col = parseInt(col);
+
     // Sets current tile to move to previous or next tile
     let move
     if (prevOrNext){
@@ -324,76 +326,43 @@ function moveTile(row,col,prevOrNext,jump){
 
         if (isValidTile(row,col+move)) {
             currentTile = tiles[row][col + move];
-           // console.log("yo righ there")
-           // console.log(row, col+move)
         }
-
     } else {
         if (isValidTile(row+move,col) ) {
             currentTile = tiles[row + move][col];
         }
     }
-   // console.log("yo righ there")
-   // console.log(row+move, col)
-   //  console.log(row, col+move)
+
+    //Highlights new current tile
     highLightCurrent();
+    //Sets all inputs to happen on current tile
     currentTile.focus();
 }
 
-/**
- * Credit: Oliver Strauss
- *
- * @param row
- * @param col
- * @returns {boolean}
- */
-function areAllAdjacentTilesInvalid(row, col) {
-    const directions = [
-        [-1, 0], // Up
-        [1, 0],  // Down
-        [0, -1], // Left
-        [0, 1],  // Right
-    ];
 
-    for (let [rowOffset, colOffset] of directions) {
-        const newRow = row + rowOffset;
-        const newCol = col + colOffset;
-
-        if (inBounds(newRow, newCol) && tiles[newRow][newCol].style.backgroundColor !== "black") {
-            return false; // Found a valid adjacent tile
-        }
-    }
-    return true; // All adjacent tiles are invalid
-}
 
 /**
  * Credit: Oliver Strauss
- *
+ * Handles certain direction swap logic
  * @param row
  * @param col
- * @returns {boolean}
  */
 function handleDirectionSwap(row,col){
-     row = parseInt(row)
-     col = parseInt(col)
-   // if(direction){
-        if( !isValidTile((row+1),col)  && !isValidTile((row-1),col)) {
+    //Gets row and col
+    row = parseInt(row)
+    col = parseInt(col)
 
-           direction = true
-        }
-
-  //  } else {
-         if ((!isValidTile(row,col+1) ) && (!isValidTile(row,col-1) )){
-             //console.log("invaalid place to swap down dir")
-             direction =  false
-        } //else {
-            //direction = !direction
-           // return false;
-       // }
-   // }
+    //If current tile has black tiles above and below sets direction across
+    if( !isValidTile((row+1),col)  && !isValidTile((row-1),col)) {
+        direction = true
+    }
+    //If current tile has black tiles to the sides of it sets direction dpwn
+    if ((!isValidTile(row,col+1) ) && (!isValidTile(row,col-1) )){
+        direction =  false
+    }
 }
 
-/**
+/** Checks to see if user has won the game
  * Credit: Oliver Strauss
  */
 function checkIfWon(){
@@ -401,6 +370,7 @@ function checkIfWon(){
     for (let i = 0; i < tiles.length; i++) { // Loop through rows
         for (let j = 0; j < tiles[i].length; j++) { // Loop through columns
             const key = `${i},${j}`; // Form the key for the current tile
+            //If a tile has the wrong letter, return
             if(tiles[i][j].style.backgroundColor !=="black") {
                 if (tiles[i][j].textContent !== letterDict[key]) {
                     return
@@ -408,6 +378,7 @@ function checkIfWon(){
             }
         }
     }
+    //If all tiles are correct, un-hide the wine menu
     // Show the win menu
     document.getElementById("endScreen").classList.remove("hidden");
 
@@ -416,38 +387,50 @@ function checkIfWon(){
 
 /**
  * Credit: Oliver Strauss
+ * Handles logic for when space bar is clicked
  *
- * @param event
+ * @param event //Space bar clicked event
  * @param row
  * @param col
- * @param color
+ * @param color //Color to be passed in and high
  */
 function handleSpace(event,row,col,color){
+    //Stops input
     event.preventDefault();
+
+    //Swaps direction
     direction = !direction
+    //Handles logic if direction is not allowed to swap
     handleDirectionSwap(row,col)
+
+    //Gets hint depending on direction
     let hint;
     if (direction || xyDict[`${row},${col}`].length === 1) {
         hint = xyDict[`${row},${col}`][0]
     } else {
         hint = xyDict[`${row},${col}`][1]
     }
+    //Clears previous highlighted tiles
     clearHighlights()
+    //Highlights new tiles
     highlightTilesHint( hint, color)
+
+    //Highlights appropriate hint box
     highlightHintBox(row,col)
 }
 
 /**
  * Credit: Oliver Strauss
- *
- * @param userChar
+ * Finds how many tiles currentTile needs to skip if they are black
+ * @param userChar //Inputted character
  * @param row
  * @param col
- * @returns {(*|number)[]|number[]}
+ * @returns {(*|number)[]|number[]} // [Row,Col, num of tiles needed tp be jumped]
  */
 function handleBlackTileJump(userChar, row, col) {
     let jumpIndx = 0;
-    //console.log(userChar)
+
+    //Iterates until a non blaack tile is found
     while (true) {
          jumpIndx++;
         if (userChar === "ArrowRight") {
@@ -473,16 +456,16 @@ function handleBlackTileJump(userChar, row, col) {
 
 /**
  * Credit: Oliver Strauss
- *
- * @param userChar
+ * Handles logic when user hits an arrow key
+ * @param userChar //Character user inputted
  * @param row
  * @param col
  */
 function handleArrowKey(userChar, row, col) {
-   // console.log(direction)
-    //console.log(xyDict)
-    clearHighlights(); // Clear previous highlights
+    // Clear previous highlights
+    clearHighlights();
 
+    //Sets row and col to newRow and newCol
     let newRow = row;
     let newCol = col;
 
@@ -502,10 +485,13 @@ function handleArrowKey(userChar, row, col) {
         direction = false;
         newRow = row + 1;
     }
+    //Checks if position is out of bounds
     if(!inBounds(newRow,newCol)){
-       // console.log(row,col)
+        //Gets hint
         const hint = xyDict[`${row},${col}`];
+        //Dummy value to save hint too
         let pluginHint
+        //If multiple hints, choose one based on direction
         if(hint.length > 1){
             if(direction){
                 pluginHint = hint[0]
@@ -515,51 +501,61 @@ function handleArrowKey(userChar, row, col) {
                 pluginHint = hint[1]
             }
         }
+        //Else choose the only one in the list
         else {
             pluginHint = hint[0]
         }
-
+        //Highlight appropriate tiles
         highlightTilesHint(pluginHint,"lightblue",false)
 
         return;
     }
 
-     // Check if `xyDict` has a hint for the new position
+    //If moved position in bounds
+
+    // Check if `xyDict` has a hint for the new position
     const newKey = `${newRow},${newCol}`;
+
 
     let keyList = xyDict[newKey]
 
-    // Check if the new position is within bounds
+    // Check if the new position is a black tile
     if (!isValidTile(newRow, newCol)) {
+        //Chooses what hint to choose
         let hintIndex = direction ? 0 : 1;
+        //Finds the new row, new col and amount of tiles currentTile needs to jump
         let  [updatedRow, updatedCol, jumpIndx] = handleBlackTileJump(userChar, newRow,newCol)
+        //If out of bounds return
         if (updatedRow < 0){
             return;
         }
+        //If only one hint available set hintIndex to find it
         if (xyDict[`${updatedRow},${updatedCol}`].length === 1){
             hintIndex = 0
         }
-            moveTile(newRow,newCol,userChar === "ArrowRight" || userChar === "ArrowDown",jumpIndx)
-            handleDirectionSwap(newRow,newCol)
 
-            highlightTilesHint(xyDict[`${updatedRow},${updatedCol}`][hintIndex],"lightblue")
-           // highLightCurrent();
+        //Moves tile sets previous or next depending on arrow direction
+        moveTile(newRow,newCol,userChar === "ArrowRight" || userChar === "ArrowDown",jumpIndx)
+        handleDirectionSwap(newRow,newCol)
 
-        //console.log(hintIndex)
-        //console.log(xyDict[`${updatedRow},${updatedCol}`])
+        //Highlights new tiles
+        highlightTilesHint(xyDict[`${updatedRow},${updatedCol}`][hintIndex],"lightblue")
 
-        return; // Exit early to prevent errors
+        // Returns early to prevent errors
+        return;
     }
 
-    // Update the current tile
+    // Update the current tile if in bounds and a white tile
     moveTile(row, col, userChar === "ArrowRight" || userChar === "ArrowDown",1);
 
+    //Highlights new tiles
     if (keyList.length === 1){
         highlightTilesHint(keyList[0], "lightblue");
     } else if (xyDict[newKey]) {
         const hintIndex = direction ? 0 : 1;
         highlightTilesHint(keyList[hintIndex], "lightblue");
     } else {
+        //If no hints found throw a warning
         console.warn("No hint found for position:", newKey);
     }
     // Highlight the new current tile
@@ -568,94 +564,115 @@ function handleArrowKey(userChar, row, col) {
 
 /**
  * Credit: Oliver Strauss
- *
+ * Handles text input typed by user
  * @param event
  */
 function handleTextInput(event) {
-    const row = parseInt(currentTile.getAttribute('data-row')); // Extract row index
-    const col = parseInt(currentTile.getAttribute('data-col')); // Extract column index
-    let color = 'lightblue'
-    let hint
+
+    let color = "lightblue"
+
+    // Extract row index
+    const row = parseInt(currentTile.getAttribute('data-row'));
+    // Extract column index
+    const col = parseInt(currentTile.getAttribute('data-col'));
+    // Extracts inputed character
     let userChar = event.key
 
-    const key = `${row},${col}`
+     let hint
 
-
-
-    console.log(autocheck)
-
-
-
-
+    //Gets hint based on direction
     if (direction ||  xyDict[`${row},${col}`].length === 1) {
         hint = xyDict[`${row},${col}`][0]
     } else {
         hint = xyDict[`${row},${col}`][1]
     }
-    //console.log(hint)
-    //console.log(hintDict)
 
+    //If user types a space handle it,
     if(userChar === " ") {
         handleSpace(event, row, col, color)
         return;
+    //If user types a BackSpace, handle it
     } else if (userChar === "Backspace") {
-        event.preventDefault(); // Prevent default backspace behavior
-        currentTile.textContent = ""; // Clear the current tile
-        moveTile(row, col, false,1); // Moves Current Tile to previous tile
+        // Prevent default backspace behavior
+        event.preventDefault();
+
+        // Clear the current tile
+        currentTile.textContent = "";
+        // Moves Current Tile to previous tile
+        moveTile(row, col, false,1);
+
         clearHighlights()
-        highlightTilesHint( hint, color) // Highlights appropriate Tile
+        //Highlights appropriate Tile
+        highlightTilesHint( hint, color)
         return;
+    //If user types an ArrowKey, handle it
     } else if ( /^Arrow(Up|Down|Left|Right)$/.test(userChar)){
         handleArrowKey(userChar,row,col)
         return;
     }
 
-    // Ensures that the input consists of exactly one alphanumeric character.
+    // If user types exactly one alphanumeric character.
     if (/^[a-zA-Z0-9]$/.test(event.key)) {
-
         event.preventDefault();
-        currentTile.textContent = event.key.toUpperCase(); // Set tile content (convert to uppercase if needed)
+        // Set tile content (convert to uppercase if needed)
+        currentTile.textContent = event.key.toUpperCase();
     } else {
-        event.preventDefault(); // Block invalid inputs
+        // Block invalid inputs
+        event.preventDefault();
         return;
     }
-
+    //Sets current tile
     currentTile = tiles[row][col]
 
-   ; // Form the key for the current tile
-
-
+    //Clear current tiles
     clearHighlights(hintDict);
 
+    /**
     if (currentTile.textContent.length === 1) {
         currentTile.textContent = userChar.toUpperCase();
        event.preventDefault();
     }
 
+        **/
 
 
+    //If user tries to types out of bounds set direction accordingly
     if(!inBounds(row,col+1) && direction){
         direction = false
     } else if ((!inBounds(row+1,col) && !direction )){
         direction = true
     }
 
+    //Sets char to an arrowkey to handle movement
     if (direction ){
         userChar = "ArrowRight"
     } else {
         userChar = "ArrowDown"
     }
+
+    //Handles if their are black tiles
     let newHint
     let [newRow, newCol, jumpIdx] = handleBlackTileJump(userChar,row,col)
+
+    //Moves tile
     moveTile(row,col,true,jumpIdx)
+
+    //Finds new hint depending on direction
     if (direction ||  xyDict[`${row},${col}`].length === 1) {
         newHint = xyDict[`${row},${col}`][0]
     } else {
         newHint = xyDict[`${row},${col}`][1]
     }
+    //Highlights appropriate hint box
     highlightHintBox(newRow,newCol)
+
+    //Highlights appropriate Tiles
     highlightTilesHint(newHint, color)
+
+    //Checks if user has won
     checkIfWon()
+
+    //Handles logic if autocheck is toggled on
     if(autocheck){
        runAutoCheck()
     }
@@ -663,15 +680,18 @@ function handleTextInput(event) {
 
 /**
  * Credit: Oliver Strauss
- *
+ * Creates a 2-D list containing acrossHints and DownHints to be used to build the hint menu
  * @param data
  * @returns {*[][]}
  */
 function generateHints(data) {
+    //Initializes arrays
     const acrossHints = []
     const downHints = []
+
     for (let i = 0; i < data.length; i++) {
         const item = data[i];
+        //Adds hint to appropriate list depending on direction
         if (item.direction === true) {
             acrossHints.push(item.hint)
         } else {
@@ -683,51 +703,72 @@ function generateHints(data) {
 
 /**
  * Credit: Oliver Strauss
- *
+ * Handles logic when user clicks on a tile
  * @param hintText
  */
 function onHintClick(hintText) {
     let color = 'lightblue'
+    //Clears all tiles
     clearHighlights()
-    highlightTilesHint( hintText, color)
-    highlightHintBox(hintDict[hintText][0],hintDict[hintText][1])
 
+    //Highlights appropriate tiles
+    highlightTilesHint( hintText, color)
+    //Highlights appropriate hint box
+    highlightHintBox(hintDict[hintText][0],hintDict[hintText][1])
+    //Clears highlight current tile
     clearCurrent()
+    //Sets current tile to one user clicked on
     currentTile = tiles[hintDict[hintText][0]][hintDict[hintText][1]]
+    //Sets direction
     direction = hintDict[hintText][3]
+    //Highlights new CurrentTile
     highLightCurrent()
     currentTile.focus();
 }
 
 /**
  * Credit: Oliver Strauss
- *
+ * Highlights hint box in the hint menu
  * @param hintText
  */
 function highlightHintBox(row,col) {
+    //Removes highlighted borders from all hint boxes
     clearClueBorders()
     // Remove 'highlighted' class from all list items
     const allHintItems = document.querySelectorAll('#acrossHints li, #downHints li');
     allHintItems.forEach(item => {
         item.classList.remove('highlighted');
     });
-     const key = `${row},${col}`;
-     let words= xyDict[key]
+
+    //Finds word associated to specific row and col
+    const key = `${row},${col}`;
+    let words= xyDict[key]
+
     let hintText
+    //If multiple words lie on one tile
     if(words.length > 1 ){
+        //if word is across
         if(direction){
+            //Adds border highlights to perpendicular hint box
             const hintItem = Array.from(allHintItems).find(item => item.textContent === words[1]);
-            hintItem.style.boxShadow = '0 0 0 4px lightblue'; // Apply dynamic highlight
+            // Apply dynamic highlight
+            hintItem.style.boxShadow = '0 0 0 4px lightblue';
+            //Saves other hint to be fully highlighted
             hintText = words[0]
 
         }
         else{
+            //Adds border highlights to perpendicular hint box
             const hintItem = Array.from(allHintItems).find(item => item.textContent === words[0]);
-            hintItem.style.boxShadow = '0 0 0 4px lightblue'; // Apply dynamic highlight
+            //Apply dynamic highlight
+            hintItem.style.boxShadow = '0 0 0 4px lightblue';
+            //Saves other hint to be fully highlighted
             hintText = words[1]
         }
     }
+    //Else the tile only has one word
     else{
+        //Saves hint to be fully highlighted
         hintText = words[0]
     }
 
@@ -735,10 +776,15 @@ function highlightHintBox(row,col) {
     // Find the clicked hint and add 'highlighted' class to it
     const hintItem = Array.from(allHintItems).find(item => item.textContent === hintText);
     if (hintItem) {
+        // Fully Highlights hint box
         hintItem.classList.add('highlighted');
     }
 }
 
+/**
+ * Credit: Oliver Strauss
+ * Clears all highlighted hint box borders
+ */
 function clearClueBorders() {
     // Select all hint items in both hint banks
     const allHintItems = document.querySelectorAll('#acrossHints li, #downHints li');
@@ -749,25 +795,26 @@ function clearClueBorders() {
     });
 }
 
+//2-D array of across and down hints
 let listOfHints = generateHints(data)
+//Unpacks array into 2 separate ones
 let [acrossHints, downHints] = listOfHints;
 
 /**
  * Credit: Oliver Strauss
- * Sets all tiles that do not accept text to black
+ * Sets all tiles that do not accept text to black and untypeable
  */
 function createBlockTiles() {
-
+    //Iterates through blocked tiles 2-D array and sets them accordingly
     for (let i = 0; i < blockedTiles.length; i++) {
         const [row, col] = blockedTiles[i];
-
         tiles[row][col].style.backgroundColor = "black";
         tiles[row][col].setAttribute('contenteditable', 'false'); // Disable editing
 
     }
 }
 
-// Builds "Hint Menu" by taking in across and down hints separately
+// Builds "Hint Menu" by taking in across hints
 let acrossHintsList = document.querySelector('#acrossHints');
 acrossHints.forEach(hint => {
     let listItem = document.createElement('li');
@@ -777,6 +824,7 @@ acrossHints.forEach(hint => {
     acrossHintsList.appendChild(listItem);
 });
 
+// Builds "Hint Menu" by taking in down hints
 let downHintsList = document.querySelector("#downHints");
 downHints.forEach((hint) => {
     let listItem = document.createElement("li");
@@ -794,23 +842,25 @@ function restartPage(){
      location.reload();
 }
 
-
-// createIndexCellNumbers(data)
+//Calls the method to add the block tiles to the grid
 createBlockTiles()
+//All the event listener handling for buttons
+document.getElementById('autocheckButton').addEventListener('click', onAutoCheckClick);//AutoCheck Button
+document.getElementById('revealButton').addEventListener('click', onRevealClick);//Reveal grid button
+document.getElementById('revealTileButton').addEventListener('click', onTileCheckClick)//Reveal tile button
+document.getElementById('restartButton').addEventListener('click', restartPage)//Restart page button
 
-document.getElementById('autocheckButton').addEventListener('click', onAutoCheckClick);
-document.getElementById('revealButton').addEventListener('click', onRevealClick);
-document.getElementById('restartButton').addEventListener('click', restartPage)
-document.getElementById('revealTileButton').addEventListener('click', onTileCheckClick)
-
+//Creates start screen
 document.getElementById("startGameButton").addEventListener("click", () => {
     document.getElementById("startScreen").classList.add("hidden");
 });
-// Reload the page
+
+//Creates letterDict
 const letterDict = createRealWordDict(data)
 
 /**
  * Credit: Oliver Strauss
+ * Handles when user hits reveal grid button
  */
 function onRevealClick() {
     for (let i = 0; i < tiles.length; i++) { // Loop through rows
@@ -829,21 +879,31 @@ function onRevealClick() {
 
 /**
  * Credit: Oliver Strauss
+ * Handles when user clicks the autocheck toggle
  */
 function onAutoCheckClick() {
+    //Toggles autocheck on or off
     autocheck = !autocheck
+    //If button is already toggled turn it back to og color
     if (document.getElementById('autocheckButton').style.backgroundColor === "lightblue") {
         document.getElementById('autocheckButton').style.backgroundColor = '#007BFF'
+        //Clear all highlights except red tiles
         clearHighlights(true)
 
     }
     else{
+        //If autocheck was just turned on run autoCheck
         document.getElementById('autocheckButton').style.backgroundColor = "lightblue"
         runAutoCheck()
     }
 
 }
 
+
+/**
+ * Credit: Oliver Strauss
+ * Handles highlighting any incorrect tiles on the grid when autocheck is toggled on
+ */
 function runAutoCheck(){
         const letterDict = createRealWordDict(data)
 
@@ -854,9 +914,9 @@ function runAutoCheck(){
                     tiles[i][j].style.backgroundColor = "red" // Set the letter if it exists in the dictionary
                 }
                 else if(tiles[i][j].textContent === letterDict[key]){
+                    //Sets correct tile color as blue
                     tiles[i][j].style.color = "Blue"
-                    // Disable editing for corecct tiles
-                    //tiles[i][j].setAttribute('contenteditable', 'false');
+
                 }
             }
         }
@@ -864,16 +924,16 @@ function runAutoCheck(){
 
 /**
  * Credit: Oliver Strauss
+ * Handles when Tile check button is clicked
  */
 function onTileCheckClick(){
     const row = parseInt(currentTile.getAttribute('data-row')); // Extract row index
     const col = parseInt(currentTile.getAttribute('data-col')); // Extract column index
     const key = `${row},${col}`;
-    //console.log(letterDict[key])
 
+    //Reveals current tile letter and sets text color to blue
     tiles[row][col].textContent = letterDict[key]
     tiles[row][col].style.color = "Blue"
-    tiles[row][col].setAttribute('contenteditable',false)
 
 
 }
