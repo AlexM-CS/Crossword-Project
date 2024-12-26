@@ -250,7 +250,7 @@ def fill(g: Grid, last: int) -> None:
 
         while (len(dupeList) > 0 and maxAllowed < size - wordSize - 1):
             randomIndexCell = random.choice(dupeList)
-            print(randomIndexCell)
+
             randomBody = randomIndexCell.body
             perpDir = not randomIndexCell.getDirection()
             for current in randomBody:
