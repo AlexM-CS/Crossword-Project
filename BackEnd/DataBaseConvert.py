@@ -12,7 +12,7 @@ import random
 # from Cell import LetterCell
 
 # When running from main, use these imports:
-from BackEnd.Cell import LetterCell
+# from BackEnd.Cell import LetterCell
 
 def convertBase() -> None:
     """
@@ -172,85 +172,47 @@ def genWord(filePath, indices):
     return finalWords , flag
 
 def main():
+    findBadWords()
 
-    convert_githubList(35, 15, [" ", "," "'"])
-    #quit()
+def findBadWords():
 
-    #Test code for findWord
+    alph = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
+            "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
+    for letter in alph:
+        writeTo = f"../Words/{letter}-Words/words_0.txt"
+        writeFile = open(writeTo, 'w')
 
+        for i in range(2, 16):
+            directory = f"../Words/{letter}-Words/words_{i}.txt"
 
+            try:
+                readFile = open(directory, 'r')
+                words = readFile.read().split("\n")
 
+                for word in words:
+                    if (checks(word)):
+                        writeFile.write(f"{word}\n")
 
-   # convertBase()
+            except FileNotFoundError as e:
+                print(e)
 
+consonants = ["B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Y", "Z"]
 
-    #Cell4 = LetterCell(4, 0)
+def checks(word : str) -> bool:
+    if (word in disallowed):
+        return True
 
-    #Cell5 = LetterCell(5, 0)
-    #Cell5.setLetter("a")
-    #Cell6 = LetterCell(6, 0)
-   # Cell7 = LetterCell(7, 0)
-    #Cell8 = LetterCell(8, 0)
-    #Cell9 =LetterCell(9, 0)
-    #Cell9.setLetter("r")
+    numConsonants = 0
+    for i in range (0, len(word)):
+        if (word[i] in consonants):
+            numConsonants += 1
+            if (numConsonants > 3):
+                return True
+        else:
+            numConsonants = 0
 
-
-   # Cell5 = LetterCell(4, 0)
-    #Cell5.setLetter("N")
-    wordlist = [LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0),LetterCell(0,0)]
-
-    words,wordCheck =  findWord(wordlist)
-
-    print(words)
-    print(wordCheck)
-
-def notify(word: str, disallowed: str, alwaysRemove = True, alwaysModify = True):
-    if (alwaysRemove):
-        return ""
-    if (alwaysModify):
-        return modify(word, disallowed)
-    print()
-    print("Found a word '" + word + "' that contains the disallowed character '" + disallowed + "'.")
-    print("Press 1 to skip writing this word.")
-    print("Press 2 to write this word anyway.")
-    print("Press 3 to modify this word before writing.")
-    choice = input("Input: ")
-
-    while (choice != '1' and choice != '2' and choice != '3'):
-        print("Invalid input.")
-        choice = input("Input: ")
-
-    print()
-
-    if (choice == '1'):
-        return word
-    elif (choice == '2'):
-        return ""
-    elif (choice == '3'):
-        return modify(word, disallowed)
-
-def modify(word: str, disallowed: str):
-    newWord = ""
-    for letter in word:
-        if letter == disallowed:
-            continue
-        newWord += letter
-    return newWord
-
-def convert_githubList(requiredScore: int, lengthCap: int, disallowed: list):
-    database = open("../githubList/crossword_wordlist.txt", "r")
-    writeToFile = open("../githubList/sortedGithubList.txt", "w")
-    for line in database:
-        line = line.strip()
-        data = line.split(";")
-        if (int(data[1]) >= requiredScore and len(data[0]) <= lengthCap):
-            for char in disallowed:
-                if char in data[0]:
-                    data[0] = notify(data[0], char, False)
-            if (len(data[0]) > 0):
-                writeToFile.write(data[0].upper() + "\n")
-
+    return False
 
 if __name__ == "__main__":
     main()
