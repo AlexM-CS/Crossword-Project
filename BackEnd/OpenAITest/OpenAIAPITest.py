@@ -12,10 +12,10 @@ from dotenv import load_dotenv, find_dotenv
 from pyexpat.errors import messages
 
 # When running from here, use these imports:
-from PromptsTest import system_message, generate_Prompt
+# from PromptsTest import system_message, generate_Prompt
 
 # When running from main, use these imports:
-# from BackEnd.OpenAITest.PromptsTest import system_message, generate_Prompt
+from BackEnd.OpenAITest.PromptsTest import system_message, generate_Prompt
 
 _ = load_dotenv(find_dotenv())
 client = OpenAI()
