@@ -6,10 +6,10 @@
 # and words that make up the puzzle.
 
 # When running from here, use these imports:
-# from Cell import *
+from Cell import *
 
 # When running from main, use these imports:
-from BackEnd.Cell import *
+# from BackEnd.Cell import *
 
 class Grid:
     """
@@ -64,7 +64,6 @@ class Grid:
             if (isinstance(cell, HybridCell)):
                 # If the cell is a Hybrid, we need to add the coordinates,
                 # word, and direction for both words here
-
                 cellData = [cell.x, cell.y, cell.across.word, cell.across.getDirection()]
                 cellData2 = [cell.x, cell.y, cell.down.word, cell.down.getDirection()]
                 indexList.append(cellData)
@@ -82,8 +81,6 @@ class Grid:
         # Sorts the index cells in jsonData by position
         jsonData = sorted(jsonData, key=lambda x: (x["row"], x["column"]))
 
-
-
         return jsonData
 
     def __repr__(self) -> str:
@@ -97,7 +94,10 @@ class Grid:
             for j in range(self.size):
                 currentCell = self.grid[i][j]
                 if isinstance(currentCell, LetterCell):
-                    output += currentCell.letter
+                    if (currentCell.letter):
+                        output += currentCell.letter
+                    else:
+                        output += "_"
                 else:
                     output += "*"
                 if (j + 1 < self.size):
@@ -175,7 +175,7 @@ class Grid:
         self.grid[h.x][h.y] = h
         self.indexCells.append(h)
 
-    def getEdges(self) -> list[list[LetterCell]]:
+    def getEdges(self, sort = True) -> list[list[LetterCell]]:
         """
         Credit: Alexander Myska
         Returns a 2D list representing the edges of the Grid.
@@ -231,7 +231,10 @@ class Grid:
         output.append(edge2)
 
         # Finally, we will sort the edges by size, in order of largest to smallest:
-        return sorted(output, key = len, reverse = True)
+        if (sort):
+            return sorted(output, key = len, reverse = True)
+        else:
+            return output
 
     def getNumAdjacents(self, x: int, y: int) -> int:
         """

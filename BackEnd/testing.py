@@ -8,10 +8,10 @@
 import time
 
 # When running from here, use these imports:
-# from gridMakerNew import *
+from gridMakerNew import *
 
 # When running from main, use these imports:
-from BackEnd.gridMakerNew import *
+# from BackEnd.gridMakerNew import *
 
 #Special version of main() to get needed data for frontEnd
 def returnMain(size):
@@ -34,7 +34,7 @@ def test9():
 
     while True:
         try:
-            g = initOld(11)
+            g = initGridOld(11)
             success += 1
         except Exception as e:
             print(e)
@@ -61,20 +61,34 @@ def test7():
     g = initGrid(9)
     return g
 
-def test8():
-    while True:
-        try:
-            g = createEdges(11)
-        except:
-            continue
-
 def test11():
     g = generateBridge(9)
-    createEdges(g)
     print(g.getEdges())
 
+def test3():
+    while True:
+        hundredGridsTime = 0
+        numGrids = 0
+        while (numGrids < 100):
+            startTime = time.time_ns()
+            g = initGrid(11)
+            print(g)
+            endTime = round((time.time_ns() - startTime) / 1000000000, 5)
+            print(f"Time: {endTime} seconds")
+            hundredGridsTime += endTime
+            numGrids += 1
+        print(f"Total Time: {round(hundredGridsTime, 5)} seconds")
+        input()
+
+def test2():
+    startTime = time.time_ns()
+    g = initGrid(13)
+    print(g)
+    print(g.words)
+    print(f"Time: {round((time.time_ns() - startTime) / 1000000000, 5)}")
+
 def main():
-    test9()
+    test2()
 
 if (__name__ == '__main__'):
     main()

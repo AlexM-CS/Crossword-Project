@@ -1,6 +1,7 @@
 # Created: 11-18-2024
 # Last updated: 12-13-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
+import time
 
 # External imports:
 from flask import Flask, render_template
@@ -50,3 +51,8 @@ def grid13():
     return render_template("grid.html", size = 13, jsonIndex = jsonIndexCells, hints = hints, blockedTiles = jsonBlockedCells)
 
 app.run(host='127.0.0.1', port=7000, debug = debugMode)
+
+startTime = time.time_ns()
+# Run stuff
+
+print(round((time.time_ns() - startTime) / 1000000000, 5))

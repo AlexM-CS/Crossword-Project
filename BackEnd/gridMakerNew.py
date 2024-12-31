@@ -10,16 +10,16 @@ from math import floor
 import random
 
 # When running from here, use these imports:
-# from DataBaseConvert import findWord
-# from Grid import *
-# from Cell import *
+from DataBaseConvert import findWord
+from Grid import *
+from Cell import *
 
 # When running from main, use these imports:
-from BackEnd.DataBaseConvert import findWord
-from BackEnd.Grid import *
-from BackEnd.Cell import *
+# from BackEnd.DataBaseConvert import findWord
+# from BackEnd.Grid import *
+# from BackEnd.Cell import *
 
-def generateBridge(size: int) -> Grid:
+def generateBridge(size: int) -> tuple[Grid, str]:
     """
     Credit: Alexander Myska
     Generates a Grid with a bridge, guaranteeing that the entire
@@ -31,7 +31,7 @@ def generateBridge(size: int) -> Grid:
     # First, create the Grid and add partitions
     g = Grid(size)
     partitions = list()
-    allEdges = g.getEdges()
+    allEdges = g.getEdges(sort = False)
 
     # We need to add 2 partitions to the Grid
     while (len(partitions) < 2):
@@ -64,85 +64,85 @@ def generateBridge(size: int) -> Grid:
         # In the case of an H-Split, we should choose any row between:
         # 2 and size - 2
         for i in range(2, g.size - 2):
-            validBridges.append((i, True))
+            validBridges.append((i, True, "HSPLIT"))
 
     elif ((y1 == 0 and y2 == g.size - 1) or (y2 == 0 and y1 == g.size - 1)): # V-Split
         # In the case of an V-Split, we should choose any column between:
         # 2 and size - 2
         for i in range(2, g.size - 2):
-            validBridges.append((i, False))
+            validBridges.append((i, False, "VSPLIT"))
 
-    elif ((x1 == 0 and y2 == 0) or (x2 == 0 and y1 == 0)): # 270-L
-        # In the case of a 270-L, we can choose between the following:
-        # Rows: 2 and x2/x1
-        # Columns: 2 and y2/y1
-        if (x1 == 0):
-            for i in range(2, x2):
-                validBridges.append((i, True))
-
-            for j in range(2, y1):
-                validBridges.append((j, False))
-
-        else:
-            for i in range(2, x1):
-                validBridges.append((i, True))
-
-            for j in range(2, y2):
-                validBridges.append((j, False))
-
-    elif ((x1 == 0 and y2 == g.size - 1) or (x2 == 0 and y1 == g.size - 1)): # 180-L
-        # In the case of a 180-L, we can choose between the following:
+    elif ((x1 == 0 and y2 == g.size - 1) or (x2 == 0 and y1 == g.size - 1)): # 0-L
+        # In the case of a 0-L, we can choose between the following:
         # Rows: 2 and size - x1/x2 - 1
         # Columns: y2/y1 + 1 and size - 2
         if (x1 == 0):
             for i in range(2, x2):
-                validBridges.append((i, True))
+                validBridges.append((i, True, "0L"))
 
             for j in range(y1 + 1, g.size - 2):
-                validBridges.append((j, False))
+                validBridges.append((j, False, "0L"))
 
         else:
             for i in range(2, x1):
-                validBridges.append((i, True))
+                validBridges.append((i, True, "0L"))
 
             for j in range(y2 + 1, g.size - 2):
-                validBridges.append((j, False))
+                validBridges.append((j, False, "0L"))
 
-    elif ((y1 == g.size - 1 and x2 == g.size - 1) or (y2 == g.size - 1 and x1 == g.size - 1)): # 90-L
+    elif ((x1 == 0 and y2 == 0) or (x2 == 0 and y1 == 0)): # 90-L
         # In the case of a 90-L, we can choose between the following:
-        # Rows: x2/x1 + 1 and size - 2
-        # Columns: y1/y2 + 1 and size - 2
-        if (y1 == g.size - 1):
-            for i in range(x1 + 1, g.size - 2):
-                validBridges.append((i, True))
+        # Rows: 2 and x2/x1
+        # Columns: 2 and y2/y1
+        if (x1 == 0):
+            for i in range(2, x2):
+                validBridges.append((i, True, "90L"))
 
-            for j in range(y2 + 1, g.size - 2):
-                validBridges.append((j, False))
+            for j in range(2, y1):
+                validBridges.append((j, False, "90L"))
 
         else:
-            for i in range(x2 + 1, g.size - 2):
-                validBridges.append((i, True))
+            for i in range(2, x1):
+                validBridges.append((i, True, "90L"))
 
-            for j in range(y1 + 1, g.size - 2):
-                validBridges.append((j, False))
+            for j in range(2, y2):
+                validBridges.append((j, False, "90L"))
 
-    elif ((y1 == 0 and x2 == g.size - 1) or (y2 == 0 and x1 == g.size - 1)): # 0-L
-        # In the case of a 90-L, we can choose between the following:
+    elif ((y1 == 0 and x2 == g.size - 1) or (y2 == 0 and x1 == g.size - 1)): # 180-L
+        # In the case of a 180-L, we can choose between the following:
         # Rows: x2/x1 + 1 and size - 2
         # Columns: 2 and size - y1/y2 - 1
         if (y1 == 0):
             for i in range(x1 + 1, g.size - 2):
-                validBridges.append((i, True))
+                validBridges.append((i, True, "180L"))
 
             for j in range(2, y2):
-                validBridges.append((j, False))
+                validBridges.append((j, False, "180L"))
 
         else:
             for i in range(x2 + 1, g.size - 2):
-                validBridges.append((i, True))
+                validBridges.append((i, True, "180L"))
 
             for j in range(2, y1):
-                validBridges.append((j, False))
+                validBridges.append((j, False, "180L"))
+
+    elif ((y1 == g.size - 1 and x2 == g.size - 1) or (y2 == g.size - 1 and x1 == g.size - 1)): # 270-L
+        # In the case of a 270-L, we can choose between the following:
+        # Rows: x2/x1 + 1 and size - 2
+        # Columns: y1/y2 + 1 and size - 2
+        if (y1 == g.size - 1):
+            for i in range(x1 + 1, g.size - 2):
+                validBridges.append((i, True, "270L"))
+
+            for j in range(y2 + 1, g.size - 2):
+                validBridges.append((j, False, "270L"))
+
+        else:
+            for i in range(x2 + 1, g.size - 2):
+                validBridges.append((i, True, "270L"))
+
+            for j in range(y1 + 1, g.size - 2):
+                validBridges.append((j, False, "270L"))
 
     else: # Something unexpected happened
         raise RuntimeError
@@ -167,75 +167,186 @@ def generateBridge(size: int) -> Grid:
     bridge[0] = ic
     ic.setBody(bridge, bridgeWord)
 
-    return g
+    return g, randChoice[2]
 
-def createEdges(original: Grid) -> Grid:
+def createEdgesNew(g: Grid, bridgeType: str) -> Grid:
     """
-    Credit: Alexander Myska, Oliver Strauss, and Brandon Knautz
+    Credit: Alexander Myska
     Adds words to the edges of the Grid.
-    @param original: the original Grid to add words to
+    @param g: the original Grid to add words to
     @return: a modified Grid
     """
+    edges = g.getEdges(sort = False)
 
-    # First, copy the grid. We do this so that the original can be preserved,
-    # even if we fail to create edges properly the first time.
-    temp = copy.deepcopy(original)
+    if (bridgeType == "HSPLIT"):
+        newIndexCell(g, edges[4])
+        edges[0][0] = edges[4][0]
+        edges[1][0] = edges[4][-1]
 
-    # Loop over the edges and give them words
-    allEdges = temp.getEdges()
-    for thisWord in allEdges:
+        newIndexCell(g, edges[5])
+        edges[2][-1] = edges[5][0]
+        edges[3][-1] = edges[5][-1]
 
-        for i in range(0, len(thisWord)):
-            thisWord[i] = temp.grid[thisWord[i].x][thisWord[i].y]
+        newHybridCell(g, edges[0])
+        edges[4][0] = edges[0][0]
 
-        if (isinstance(thisWord[0], IndexCell)):
-            currentDir = thisWord[0].getDirection()
-            hc = HybridCell(thisWord[0].x, thisWord[0].y)
+        newIndexCell(g, edges[1])
 
-            if (currentDir):  # True: word is across
-                hc.across = thisWord[0]
-                word = getWord(thisWord)
-                if (word == ""):
-                    raise AttributeError("Edge not filled: Line 42")
-                ic = IndexCell(thisWord[0].x, thisWord[0].y)
-                temp.addIndexCell(hc)
-                temp.words.append(word)
-                thisWord[0] = ic
-                ic.setBody(thisWord, word)
-                hc.down = ic
+        newIndexCell(g, edges[2])
 
-            else:  # False: word is down
-                hc.down = thisWord[0]
-                word = getWord(thisWord)
-                if (word == ""):
-                    raise AttributeError("Edge not filled: Line 54")
-                ic = IndexCell(thisWord[0].x, thisWord[0].y)
-                temp.addIndexCell(hc)
-                temp.words.append(word)
-                thisWord[0] = ic
-                ic.setBody(thisWord, word)
-                hc.across = ic
+        newIndexCell(g, edges[3])
 
-            hc.setLetter(thisWord[0].letter)
+    elif (bridgeType == "VSPLIT"):
+        newIndexCell(g, edges[0])
+        edges[2][0] = edges[0][0]
+        edges[3][0] = edges[0][-1]
 
-        if not (isinstance(thisWord[0], IndexCell)):
-            word = getWord(thisWord)
-            if (word == ""):
-                raise AttributeError("Edge not filled: Line 67")
-            ic = IndexCell(thisWord[0].x, thisWord[0].y)
-            temp.addIndexCell(ic)
-            temp.words.append(word)
-            thisWord[0] = ic
-            ic.setBody(thisWord, word)
+        newIndexCell(g, edges[1])
+        edges[4][-1] = edges[1][0]
+        edges[5][-1] = edges[1][-1]
 
-    return temp
+        newHybridCell(g, edges[2])
+        edges[0][0] = edges[2][0]
+
+        newIndexCell(g, edges[3])
+
+        newIndexCell(g, edges[4])
+
+        newIndexCell(g, edges[5])
+
+    elif (bridgeType == "270L"):
+        newIndexCell(g, edges[1])
+        edges[4][0] = edges[1][0]
+        edges[3][0] = edges[1][-1]
+
+        newHybridCell(g, edges[4])
+        edges[1][0] = edges[4][0]
+        edges[0][0] = edges[4][-1]
+
+        newIndexCell(g, edges[0])
+
+        newIndexCell(g, edges[2])
+        edges[5][-1] = edges[2][-1]
+
+        newIndexCell(g, edges[3])
+
+        newIndexCell(g, edges[5])
+
+    elif (bridgeType == "180L"):
+        newIndexCell(g, edges[1])
+        edges[3][0] = edges[1][0]
+        edges[5][0] = edges[1][-1]
+
+        newIndexCell(g, edges[5])
+        edges[2][-1] = edges[5][-1]
+
+        newIndexCell(g, edges[0])
+        edges[4][-1] = edges[0][0]
+
+        newIndexCell(g, edges[2])
+
+        newHybridCell(g, edges[3])
+        edges[1][0] = edges[3][0]
+
+        newIndexCell(g, edges[4])
+
+    elif (bridgeType == "90L"):
+        newIndexCell(g, edges[2])
+        edges[4][-1] = edges[2][0]
+        edges[5][-1] = edges[2][-1]
+
+        newIndexCell(g, edges[5])
+        edges[1][-1] = edges[5][0]
+
+        newIndexCell(g, edges[0])
+        edges[3][0] = edges[0][0]
+
+        newIndexCell(g, edges[1])
+
+        newHybridCell(g, edges[3])
+        edges[0][0] = edges[3][0]
+
+        newIndexCell(g, edges[4])
+
+    elif (bridgeType == "0L"):
+        newIndexCell(g, edges[2])
+        edges[4][-1] = edges[2][0]
+        edges[5][-1] = edges[2][-1]
+
+        newIndexCell(g, edges[4])
+        edges[0][0] = edges[4][0]
+
+        newHybridCell(g, edges[0])
+        edges[0][0] = edges[4][0]
+
+        newIndexCell(g, edges[1])
+        edges[3][0] = edges[1][-1]
+
+        newIndexCell(g, edges[3])
+
+        newIndexCell(g, edges[5])
+
+    else:
+        raise ValueError("Invalid bridgeType")
+
+    return g
+
+def newIndexCell(g: Grid, thisWord: list[Cell]) -> None:
+    """
+    Adds an IndexCell to the Grid
+    @param thisWord: the list of Cells
+    """
+    word = getWord(thisWord)
+    if (word == ""):
+        raise AttributeError(f"Edge not filled: Line 368")
+    ic = IndexCell(thisWord[0].x, thisWord[0].y)
+    g.addIndexCell(ic)
+    g.words.append(word)
+    thisWord[0] = ic
+    ic.setBody(thisWord, word)
+
+def newHybridCell(g: Grid, thisWord: list[Cell]) -> None:
+    """
+    Adds a HybridCell to Grid
+    @param thisWord: the list of Cells
+    """
+    currentDir = thisWord[0].getDirection()
+    hc = HybridCell(thisWord[0].x, thisWord[0].y)
+
+    if (currentDir):  # True: word is across
+        hc.across = thisWord[0]
+        word = getWord(thisWord)
+        if (word == ""):
+            raise AttributeError(f"Edge not filled: Line 385")
+        ic = IndexCell(thisWord[0].x, thisWord[0].y)
+        g.addIndexCell(ic)
+        g.words.append(word)
+        thisWord[0] = ic
+        ic.setBody(thisWord, word)
+        hc.down = ic
+
+    else:  # False: word is down
+        hc.down = thisWord[0]
+        word = getWord(thisWord)
+        if (word == ""):
+            raise AttributeError(f"Edge not filled: Line 395")
+        ic = IndexCell(thisWord[0].x, thisWord[0].y)
+        g.addIndexCell(ic)
+        g.words.append(word)
+        thisWord[0] = ic
+        ic.setBody(thisWord, word)
+        hc.across = ic
+
+    hc.setLetter(thisWord[0].letter)
+
+    thisWord[0] = hc
 
 def fill(g: Grid, last: int) -> None:
     """
     Credit: Alexander Myska, Oliver Strauss, Brandon Knautz
     Fills in the Grid with words.
     @param g: the Grid to edit
-    @param last: the number of letters prevously filled in the Grid
+    @param last: the number of letters previously filled in the Grid
     @return: the final, edited Grid
     """
     size = g.size
@@ -451,11 +562,11 @@ def initGrid(size: int) -> Grid:
     @return: the created Grid
     """
     # First, we create the edges and bridge
-    g = generateBridge(size)
+    g, bridgeType = generateBridge(size)
     failedBridgeLimit = 40
     while True:
         try:
-            g = createEdges(g)
+            g = createEdgesNew(g, bridgeType)
             # Second, we fill in the grid with words
             fill(g, 0)
             break
@@ -463,31 +574,13 @@ def initGrid(size: int) -> Grid:
             failedBridgeLimit -= 1
             if (failedBridgeLimit < 0): # If the Grid has failed to fill its edges properly too many times, restart
                 failedBridgeLimit = 40
-                g = generateBridge(size)
+                g, bridgeType = generateBridge(size)
             continue
         except RuntimeError: # If the Grid cannot be properly filled in, restart
             failedBridgeLimit = 40
-            g = generateBridge(size)
+            g, bridgeType = generateBridge(size)
             continue
 
-    # Lastly, we finalize the Grid by placing all the black spaces
-    finalize(g)
-    return g
-
-def initGridOld(size: int) -> Grid:
-    """
-    Credit: Alexander Myska
-    Initializes an entire Grid, and returns it to be used.
-    Does not loop until a successful Grid is made.
-    For testing only.
-    @param size: the size of the Grid to create
-    @return: the created Grid
-    """
-    # First, we create the edges and bridge
-    g = generateBridge(size)
-    g = createEdges(g)
-    # Second, we fill in the Grid with words
-    fill(g, 0)
     # Lastly, we finalize the Grid by placing all the black spaces
     finalize(g)
     return g
@@ -508,6 +601,7 @@ def getWord(letterCells) -> str:
 def main():
     g = initGrid(9)
     print(g)
+    print(g.words)
 
 if __name__ == "__main__":
     main()

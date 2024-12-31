@@ -9,7 +9,7 @@ import os
 import random
 
 # When running from here, use these imports:
-# from Cell import LetterCell
+from Cell import LetterCell
 
 # When running from main, use these imports:
 # from BackEnd.Cell import LetterCell
@@ -80,7 +80,7 @@ def findWord(letterCells) -> tuple[list[str], bool]:
     Credit: Oliver Strauss, Alexander Myska
     Takes in a list of Cells, and finds a word for them
     @param letterCells: the list of cells to get a word for
-    @return: a tuple with a string and boolean. The boolean tells if a word was found
+    @return: a tuple with a list and boolean. The list contains found words, the boolean tells if any words were found
     """
 
     # List of tuples containing an index and a possible letter
@@ -96,8 +96,8 @@ def findWord(letterCells) -> tuple[list[str], bool]:
     # The list of words that meet our requirements
     finalWords = []
 
-    # filePath = "../Words/" # Use this path when testing from here
-    filePath = "Words/" # Use this path when testing from main
+    filePath = "../Words/" # Use this path when testing from here
+    # filePath = "Words/" # Use this path when testing from main
 
     # This flag lets use know if a word was found or not
     flag = False
@@ -107,10 +107,11 @@ def findWord(letterCells) -> tuple[list[str], bool]:
         # Makes filepath according to first letter
         filePath += f"{indices[0][1].lower()}-Words/words_{wordLength}.txt"
         try:
-            finalWords, flag = genWord(filePath, indices)
+            finalWords, flag = validWords(filePath, indices)
 
         except FileNotFoundError:
-            print("File not found")
+            # The file name with the given starting letter and length does not
+            # exist, so we should return nothing.
             return [], flag
 
     else: # Otherwise, we can search in any file:
@@ -126,50 +127,63 @@ def findWord(letterCells) -> tuple[list[str], bool]:
             filePath += f"{random_letter.lower()}-Words/words_{wordLength}.txt"
             try:
                 # Generate a word from this file:
-                finalWords, flag = genWord(filePath, indices)
+                finalWords, flag = validWords(filePath, indices)
 
             except FileNotFoundError:
                 # If the file does not exist, skip over it
+                # This is different from the above because the starting letter is not specified
                 continue
 
     # Returns list of words and boolean determining if words were found
     return finalWords, flag
 
-def genWord(filePath, indices):
+def validWords(filePath, indices) -> tuple[list[str], bool]:
     """
+    Credit: Oliver Strauss
     Finds a random word that meets specific criteria
     @param filePath: the filepath to search for a word in
-    @param indices:
+    @param indices: a list of tuples, each containing an index and a letter
     @return:
     """
-    # Credit: Oliver Strauss
-    #List of words found
+
+    # List of words found
     finalWords = []
+    randomWord = True
 
     with open(filePath, 'r') as file:
         # Split the content by newlines
         words = file.read().splitlines()
 
-    for i in range(len(words)):
+    for i in range(1, len(indices)):
+        if (indices[i][1] != ""):
+            randomWord = False
+            break
 
-        flag = True
-        for indexs in indices:
-            # If wordcell is blank, skip checking if it matches word
-            if indexs[1] == '':
-                continue
-            # If not, check if letters align. If not, word won't be added
-            if words[i][indexs[0]].lower() != indexs[1].lower():
+    if (randomWord):
+        return [random.choice(words)], True
 
-                flag = False
-        #If words valid it gets added here
-        if flag:
-            finalWords.append(words[i])
+    else:
+        for line in words:
+            flag = True
+            for required in indices:
+                # If there is no required letter at this index, skip
+                if (required[1] == ""):
+                    continue
+                # Check if letters align. If not, set flag to false,
+                # and break out early because the word will not work
+                if (line[required[0]].lower() != required[1].lower()):
+                    flag = False
+                    break
 
-    #flag set to true if word was found
-    flag = len(finalWords) > 0
+            # If words valid it gets added here
+            if flag:
+                finalWords.append(line)
 
-    #Returns list of valid words and flag determining if something was found or not
-    return finalWords , flag
+        # Flag set to true if word was found
+        flag = len(finalWords) > 0
+
+        # Returns list of valid words and flag determining if something was found or not
+        return finalWords, flag
 
 def main():
     findBadWords()
