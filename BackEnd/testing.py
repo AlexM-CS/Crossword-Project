@@ -9,6 +9,7 @@ import time
 
 # When running from here, use these imports:
 from gridMakerNew import *
+from display import *
 
 # When running from main, use these imports:
 # from BackEnd.gridMakerNew import *
@@ -71,7 +72,7 @@ def test3():
         numGrids = 0
         while (numGrids < 100):
             startTime = time.time_ns()
-            g = initGrid(11)
+            g = initGridNew(11)
             print(g)
             endTime = round((time.time_ns() - startTime) / 1000000000, 5)
             print(f"Time: {endTime} seconds")
@@ -82,10 +83,11 @@ def test3():
 
 def test2():
     startTime = time.time_ns()
-    g = initGrid(13)
+    g = initGridNew(11)
     print(g)
     print(g.words)
     print(f"Time: {round((time.time_ns() - startTime) / 1000000000, 5)}")
+    displayGrid(g)
 
 def main():
     test2()

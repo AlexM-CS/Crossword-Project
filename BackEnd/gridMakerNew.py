@@ -1,5 +1,5 @@
 # Created: 10-10-2024
-# Last updated: 12-13-2024
+# Last updated: 12-29-2024
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This class will be used to make grids, this time by looking for words first
@@ -13,6 +13,7 @@ import random
 from DataBaseConvert import findWord
 from Grid import *
 from Cell import *
+from display import *
 
 # When running from main, use these imports:
 # from BackEnd.DataBaseConvert import findWord
@@ -169,7 +170,7 @@ def generateBridge(size: int) -> tuple[Grid, str]:
 
     return g, randChoice[2]
 
-def createEdgesNew(g: Grid, bridgeType: str) -> Grid:
+def createEdgesNew(g: Grid, bridgeType: str) -> None:
     """
     Credit: Alexander Myska
     Adds words to the edges of the Grid.
@@ -289,23 +290,23 @@ def createEdgesNew(g: Grid, bridgeType: str) -> Grid:
     else:
         raise ValueError("Invalid bridgeType")
 
-    return g
-
-def newIndexCell(g: Grid, thisWord: list[Cell]) -> None:
+def newIndexCell(g: Grid, thisWord: list[Cell], word : str = None) -> None:
     """
     Adds an IndexCell to the Grid
     @param thisWord: the list of Cells
     """
-    word = getWord(thisWord)
-    if (word == ""):
-        raise AttributeError(f"Edge not filled: Line 368")
+    if (word is None):
+        word = getWord(thisWord)
+        if (word == ""):
+            raise AttributeError(f"Edge not filled: Line 301")
+
     ic = IndexCell(thisWord[0].x, thisWord[0].y)
     g.addIndexCell(ic)
     g.words.append(word)
     thisWord[0] = ic
     ic.setBody(thisWord, word)
 
-def newHybridCell(g: Grid, thisWord: list[Cell]) -> None:
+def newHybridCell(g: Grid, thisWord: list[Cell], word : str = None) -> None:
     """
     Adds a HybridCell to Grid
     @param thisWord: the list of Cells
@@ -315,9 +316,11 @@ def newHybridCell(g: Grid, thisWord: list[Cell]) -> None:
 
     if (currentDir):  # True: word is across
         hc.across = thisWord[0]
-        word = getWord(thisWord)
-        if (word == ""):
-            raise AttributeError(f"Edge not filled: Line 385")
+        if (word is None):
+            word = getWord(thisWord)
+            if (word == ""):
+                raise AttributeError(f"Edge not filled: Line 322")
+
         ic = IndexCell(thisWord[0].x, thisWord[0].y)
         g.addIndexCell(ic)
         g.words.append(word)
@@ -327,9 +330,11 @@ def newHybridCell(g: Grid, thisWord: list[Cell]) -> None:
 
     else:  # False: word is down
         hc.down = thisWord[0]
-        word = getWord(thisWord)
-        if (word == ""):
-            raise AttributeError(f"Edge not filled: Line 395")
+        if (word is None):
+            word = getWord(thisWord)
+            if (word == ""):
+                raise AttributeError(f"Edge not filled: Line 338")
+
         ic = IndexCell(thisWord[0].x, thisWord[0].y)
         g.addIndexCell(ic)
         g.words.append(word)
@@ -341,11 +346,82 @@ def newHybridCell(g: Grid, thisWord: list[Cell]) -> None:
 
     thisWord[0] = hc
 
+def fillNew(g: Grid) -> None:
+    """
+    Credit: Alexander Myska
+    Fills in the Grid with words
+    @param g: the Grid to edit
+    """
+    wordSize = g.size - 2
+    maxAllowed = g.size - wordSize - 1
+
+    while (wordSize > 1):
+
+        newWords = 0
+        indexCells = g.indexCells.copy()
+
+        while (indexCells and newWords < maxAllowed):
+
+            currentCell = random.choice(indexCells)
+            indexCells.remove(currentCell)
+
+            newWords += addWordOfSize(g, wordSize, currentCell)
+
+        wordSize -= 1
+        maxAllowed = g.size - wordSize
+
+def addWordOfSize(g: Grid, wordSize: int, indexCell : IndexCell) -> int:
+    """
+    Credit: Alexander Myska
+    Adds a word of the given size to the grid
+    @param g: the Grid to edit
+    @param wordSize: the size of word to add
+    @param indexCell: the cell to build this word off of
+    @return int: 1 if a word was added, and 0 otherwise
+    """
+    bodyCopy = indexCell.body.copy()
+    perpDir = not indexCell.getDirection()
+
+    while (bodyCopy):
+
+        cell = random.choice(bodyCopy)
+        bodyCopy.remove(cell)
+
+        if (sizeCheck(g, cell, perpDir, wordSize) and
+            occupiedCheck(g, cell, perpDir, wordSize) and
+            diagonalCheck(g, cell, perpDir) and
+            lastLetterCheck(g, cell, perpDir, wordSize) and
+            perpendicularCheck(g, cell, perpDir, wordSize)):
+
+            newWordBody = list()
+
+            if (perpDir): # True: the word should go across
+                for i in range(0, wordSize):
+                    newWordBody.append(g.grid[cell.x][cell.y + i])
+
+            else: # False: the word should go down
+                for i in range(0, wordSize):
+                    newWordBody.append(g.grid[cell.x + i][cell.y])
+
+            newWord = getWord(newWordBody)
+            if (newWord == ""):
+                continue
+            else:
+                if (isinstance(cell, IndexCell)): # The cell will become a HybridCell
+                    newHybridCell(g, newWordBody, newWord)
+
+                else: # The cell will become an IndexCell
+                    newIndexCell(g, newWordBody, newWord)
+                return 1
+
+    return 0
+
 def fill(g: Grid, last: int) -> None:
     """
     Credit: Alexander Myska, Oliver Strauss, Brandon Knautz
     Fills in the Grid with words.
     @param g: the Grid to edit
+    @param last: the number of letters prevously filled in the Grid
     @param last: the number of letters previously filled in the Grid
     @return: the final, edited Grid
     """
@@ -473,14 +549,26 @@ def occupiedCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) -> b
     @param wordSize: the size of the word trying to be added
     @return: True if no word already occupies this space, and False otherwise
     """
+    flag = False
+
     if (isAcross): # True: do check for across
-        for i in range(1, wordSize):
-            if (g.grid[cell.x][cell.y + i - 1].letter != "" and g.grid[cell.x][cell.y + i].letter != ""):
-                return False
+        for i in range(0, wordSize):
+            if (g.grid[cell.x][cell.y + i].letter != ""):
+                if (flag):
+                    return False
+                else:
+                    flag = True
+            else:
+                flag = False
     else: # False: do check for down
-        for i in range(1, wordSize):
-            if (g.grid[cell.x + i - 1][cell.y].letter != "" and g.grid[cell.x + i][cell.y].letter != ""):
-                return False
+        for i in range(0, wordSize):
+            if (g.grid[cell.x + i][cell.y].letter != ""):
+                if (flag):
+                    return False
+                else:
+                    flag = True
+            else:
+                flag = False
 
     return True
 
@@ -514,31 +602,24 @@ def lastLetterCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) ->
 
 def perpendicularCheck(g: Grid, cell: LetterCell, isAcross: bool, wordSize: int) -> bool:
     """
-    # Credit: Alexander Myska
+    Credit: Alexander Myska
     Checks that every cell in this word's would-be body has either two empty neighbors or two named neighbors.
-    A cell that has one of each should not be allowed, as doing so would create uninteded intersections.
+    A cell that has one of each should not be allowed, as doing so would create unintended intersections.
     @param g: the Grid to use for this check
     @param cell: the Cell to start from
     @param isAcross: True if the direction is across, and False if the direction is Down
     @param wordSize: the size of the word trying to be added
     @return: True if no unintended intersections are created, and False otherwise
     """
-    body = list()
-    for i in range(0, wordSize):
-        if (isAcross):
-            body.append(g.grid[cell.x][cell.y + i])
-        else:
-            body.append(g.grid[cell.x + i][cell.y])
-
     if (isAcross):
-        for eachCell in body:
-            if ((g.grid[eachCell.x + 1][eachCell.y].letter != "" and g.grid[eachCell.x - 1][eachCell.y].letter == "")
-                or (g.grid[eachCell.x - 1][eachCell.y].letter != "" and g.grid[eachCell.x + 1][eachCell.y].letter == "")):
+        for i in range(0, wordSize):
+            if ((g.grid[cell.x + 1][cell.y + i].letter != "" and g.grid[cell.x - 1][cell.y + i].letter == "")
+                or (g.grid[cell.x - 1][cell.y + i].letter != "" and g.grid[cell.x + 1][cell.y + i].letter == "")):
                 return False
     else:
-        for eachCell in body:
-            if ((g.grid[eachCell.x][eachCell.y + 1].letter != "" and g.grid[eachCell.x][eachCell.y - 1].letter == "")
-                or (g.grid[eachCell.x][eachCell.y - 1].letter != "" and g.grid[eachCell.x][eachCell.y + 1].letter == "")):
+        for i in range(0, wordSize):
+            if ((g.grid[cell.x + i][cell.y + 1].letter != "" and g.grid[cell.x + i][cell.y - 1].letter == "")
+                or (g.grid[cell.x + i][cell.y - 1].letter != "" and g.grid[cell.x + i][cell.y + 1].letter == "")):
                 return False
 
     return True
@@ -563,27 +644,47 @@ def initGrid(size: int) -> Grid:
     """
     # First, we create the edges and bridge
     g, bridgeType = generateBridge(size)
-    failedBridgeLimit = 40
     while True:
         try:
-            g = createEdgesNew(g, bridgeType)
+            createEdgesNew(g, bridgeType)
             # Second, we fill in the grid with words
             fill(g, 0)
             break
-        except AttributeError: # If an edge cannot be properly filled, retry with the original Grid
-            failedBridgeLimit -= 1
-            if (failedBridgeLimit < 0): # If the Grid has failed to fill its edges properly too many times, restart
-                failedBridgeLimit = 40
-                g, bridgeType = generateBridge(size)
-            continue
-        except RuntimeError: # If the Grid cannot be properly filled in, restart
-            failedBridgeLimit = 40
+        except Exception as e:
+            print(e)
             g, bridgeType = generateBridge(size)
-            continue
 
     # Lastly, we finalize the Grid by placing all the black spaces
     finalize(g)
     return g
+
+def initGridNew(size: int) -> Grid:
+    """
+    Credit: Alexander Myska
+    @param size: the size of the Grid to create
+    @return: the created Grid
+    """
+    g, bridgeType = generateBridge(size)
+    while True:
+        try:
+            createEdgesNew(g, bridgeType)
+            fillNew(g)
+
+            cellsFilled = 0
+            for i in range(0, size):
+                for j in range(0, size):
+                    if (g.grid[i][j].letter != ""):
+                        cellsFilled += 1
+
+            if (cellsFilled < size**2 * 0.66):
+                raise RuntimeError(f"Not enough cells filled")
+
+            finalize(g)
+            return g
+
+        except Exception as e:
+            print(e)
+            g, bridgeType = generateBridge(size)
 
 def getWord(letterCells) -> str:
     """
@@ -599,9 +700,10 @@ def getWord(letterCells) -> str:
         return ""
 
 def main():
-    g = initGrid(9)
+    g = initGridNew(9)
     print(g)
     print(g.words)
+    displayGrid(g)
 
 if __name__ == "__main__":
     main()
