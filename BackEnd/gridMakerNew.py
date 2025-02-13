@@ -8,15 +8,15 @@
 from math import floor
 
 # When running from here, use these imports:
-from DataBaseConvert import findWord
-from Grid import *
-from Cell import *
-from display import *
+# from DataBaseConvert import findWord
+# from Grid import *
+# from Cell import *
+# from display import *
 
 # When running from main, use these imports:
-# from BackEnd.DataBaseConvert import findWord
-# from BackEnd.Grid import *
-# from BackEnd.Cell import *
+from BackEnd.DataBaseConvert import findWord
+from BackEnd.Grid import *
+from BackEnd.Cell import *
 
 def generateBridge(size: int) -> tuple[Grid, str]:
     """
