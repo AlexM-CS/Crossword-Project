@@ -5,8 +5,6 @@
 # <File description here>
 
 # External imports:
-import os
-import openai
 from openai import OpenAI
 from dotenv import load_dotenv, find_dotenv
 from pyexpat.errors import messages

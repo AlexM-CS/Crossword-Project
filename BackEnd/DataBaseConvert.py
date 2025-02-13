@@ -96,8 +96,8 @@ def findWord(letterCells : list[Cell]) -> tuple[list[str], bool]:
     # The list of words that meet our requirements
     finalWords = []
 
-    filePath = "../Words/" # Use this path when running from test file
-    # filePath = "Words/" # Use this path when running from main
+    # filePath = "../Words/" # Use this path when running from test file
+    filePath = "Words/" # Use this path when running from main
 
     # This flag lets use know if a word was found or not
     flag = False
