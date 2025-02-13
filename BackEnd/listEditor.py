@@ -1,5 +1,5 @@
 # Created: 12-2-2024
-# Last updated: 12-2-2024
+# Last updated: 2-12-2025
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file rewrites the word database to remove some words we don't want in the database.

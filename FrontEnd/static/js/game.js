@@ -2,7 +2,7 @@
 // Last updated: 12-12-2024
 // Alexander Myska, Oliver Strauss, and Brandon Knautz
 
-let grid = document.querySelector('#game') // HTML representation of the gid
+let grid = document.querySelector('#game') // HTML representation of the grid
 let tiles = []; // 2D array holding html divs in grid
 let direction = true // Boolean indicating direction of user input
 let currentTile; // Tile user input typing occurs
@@ -10,7 +10,7 @@ let autocheck = false // Toggle autocheck
 
 document.getElementById("endScreen").classList.add("hidden"); // Hides end screen
 
-let tempGrid = document.createDocumentFragment(); //Temporary grid tiles are appended too
+let tempGrid = document.createDocumentFragment(); // Temporary grid tiles are appended too
 
 // Nested for loop iterating over rows and cols
 Array.from({length: size}).forEach((_, rowIdx) => {

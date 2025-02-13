@@ -1,8 +1,10 @@
 # Created: 9-19-2024
-# Last updated: 12-13-2024
+# Last updated: 2-12-2025
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file is used for testing only.
+# As the project evolved and changed, we removed obsolete tests or ones that would
+# no longer work as a result of large-scale changes, which is why there is little organization.
 
 # External imports:
 import time
@@ -14,7 +16,7 @@ from display import *
 # When running from main, use these imports:
 # from BackEnd.gridMakerNew import *
 
-#Special version of main() to get needed data for frontEnd
+# Special version of main() to get needed data for frontEnd
 def returnMain(size):
     crashes = 0
     while True:
@@ -59,7 +61,7 @@ def test10():
 
 # Tests getEdges
 def test7():
-    g = initGrid(9)
+    g = initGridNew(11)
     return g
 
 def test11():
@@ -89,8 +91,14 @@ def test2():
     print(f"Time: {round((time.time_ns() - startTime) / 1000000000, 5)}")
     displayGrid(g)
 
+def test5():
+    g = initGrid(9)
+    print(g)
+    print(g.indexCells)
+    displayGrid(g)
+
 def main():
-    test2()
+    test5()
 
 if (__name__ == '__main__'):
     main()

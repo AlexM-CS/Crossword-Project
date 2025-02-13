@@ -1,18 +1,18 @@
 # Created: 9-30-2024
-# Last updated: 10-15-2024
+# Last updated: 2-12-2025
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
-# This file handles all file access and writing done by the project.
+# This file handles all file access and file writing done by the project.
 
 # External imports:
 import os
 import random
 
-# When running from here, use these imports:
-from Cell import LetterCell
+# When running from test file, use these imports:
+# from Cell import Cell
 
 # When running from main, use these imports:
-# from BackEnd.Cell import LetterCell
+from BackEnd.Cell import Cell
 
 def convertBase() -> None:
     """
@@ -44,7 +44,7 @@ def convertBase() -> None:
         # Organize words by their starting letters
         for word in words:
             first_letter = word[0].lower()  # Get the first letter in lowercase
-            if first_letter in words_by_letter:
+            if (first_letter in words_by_letter):
                 words_by_letter[first_letter].append(word)
 
         # Create directories and write words to files based on their starting letters
@@ -63,7 +63,7 @@ def convertBase() -> None:
             # Organize words by their lengths for the current letter
             for word in words_by_letter[letter]:
                 word_length = len(word)
-                if word_length not in words_by_length:
+                if (word_length not in words_by_length):
                     words_by_length[word_length] = []
                 words_by_length[word_length].append(word)
 
@@ -75,9 +75,9 @@ def convertBase() -> None:
                     word_file.write('\n'.join(words_list))  # Write all words, separated by newlines
                     print(f"File '{file_path}' created with {len(words_list)} words of length {length}.")
 
-def findWord(letterCells) -> tuple[list[str], bool]:
+def findWord(letterCells : list[Cell]) -> tuple[list[str], bool]:
     """
-    Credit: Oliver Strauss, Alexander Myska
+    Credit: Oliver Strauss and Alexander Myska
     Takes in a list of Cells, and finds a word for them
     @param letterCells: the list of cells to get a word for
     @return: a tuple with a list and boolean. The list contains found words, the boolean tells if any words were found
@@ -96,8 +96,8 @@ def findWord(letterCells) -> tuple[list[str], bool]:
     # The list of words that meet our requirements
     finalWords = []
 
-    filePath = "../Words/" # Use this path when testing from here
-    # filePath = "Words/" # Use this path when testing from main
+    filePath = "../Words/" # Use this path when running from test file
+    # filePath = "Words/" # Use this path when running from main
 
     # This flag lets use know if a word was found or not
     flag = False
@@ -137,13 +137,13 @@ def findWord(letterCells) -> tuple[list[str], bool]:
     # Returns list of words and boolean determining if words were found
     return finalWords, flag
 
-def validWords(filePath, indices) -> tuple[list[str], bool]:
+def validWords(filePath : str, indices: list[tuple[int, str]]) -> tuple[list[str], bool]:
     """
     Credit: Oliver Strauss
     Finds a random word that meets specific criteria
     @param filePath: the filepath to search for a word in
     @param indices: a list of tuples, each containing an index and a letter
-    @return:
+    @return: a tuple containing a list of valid words and flag determining if something was found or not
     """
 
     # List of words found
@@ -184,49 +184,3 @@ def validWords(filePath, indices) -> tuple[list[str], bool]:
 
         # Returns list of valid words and flag determining if something was found or not
         return finalWords, flag
-
-def main():
-    findBadWords()
-
-def findBadWords():
-
-    alph = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
-            "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-
-    for letter in alph:
-        writeTo = f"../Words/{letter}-Words/words_0.txt"
-        writeFile = open(writeTo, 'w')
-
-        for i in range(2, 16):
-            directory = f"../Words/{letter}-Words/words_{i}.txt"
-
-            try:
-                readFile = open(directory, 'r')
-                words = readFile.read().split("\n")
-
-                for word in words:
-                    if (checks(word)):
-                        writeFile.write(f"{word}\n")
-
-            except FileNotFoundError as e:
-                print(e)
-
-consonants = ["B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Y", "Z"]
-
-def checks(word : str) -> bool:
-    if (word in disallowed):
-        return True
-
-    numConsonants = 0
-    for i in range (0, len(word)):
-        if (word[i] in consonants):
-            numConsonants += 1
-            if (numConsonants > 3):
-                return True
-        else:
-            numConsonants = 0
-
-    return False
-
-if __name__ == "__main__":
-    main()

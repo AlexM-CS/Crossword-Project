@@ -1,21 +1,21 @@
 # Created: 9-29-2024
-# Last updated: 12-13-2024
+# Last updated: 2-12-2025
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file contains the Grid object, which holds the Cells
 # and words that make up the puzzle.
 
-# When running from here, use these imports:
-from Cell import *
+# When running from test file, use these imports:
+# from Cell import *
 
 # When running from main, use these imports:
-# from BackEnd.Cell import *
+from BackEnd.Cell import *
 
 class Grid:
     """
-    Description:
+    Credit: Alexander Myska, Oliver Strauss, and Brandon Knautz
     A Grid representation of the crossword.
-    Holds the words, the actual grid, and the IndexCells for each word.
+    Holds the grid structure, the words, and the IndexCells for each word.
 
     Fields:
     int size - the size of the grid (size x size)
@@ -51,12 +51,11 @@ class Grid:
 
     def convertIndexCells(self) -> list[dict]:
         """
-        Credit: Oliver Strauss
+        Credit: Oliver Strauss and Alexander Myska
         Converts this Grid's IndexCells into a list to be passed to the front end
         @return: the list of dictionaries representing the Grid's IndexCells
         """
         indexList = list()
-
 
         for i in range(0, len(self.indexCells)):
             cell = self.indexCells[i]
@@ -175,12 +174,12 @@ class Grid:
         self.grid[h.x][h.y] = h
         self.indexCells.append(h)
 
-    def getEdges(self, sort = True) -> list[list[LetterCell]]:
+    def getEdges(self) -> list[list[LetterCell]]:
         """
         Credit: Alexander Myska
         Returns a 2D list representing the edges of the Grid.
         Edges that contain BlockedCells will be split into multiple lists.
-        @return: a sorted (by length, descending) 2D list representing the edges
+        @return: a 2D list representing the edges (order: top, bottom, left, right)
         """
         output = list()
         edge1 = list()
@@ -230,11 +229,7 @@ class Grid:
         output.append(edge1)
         output.append(edge2)
 
-        # Finally, we will sort the edges by size, in order of largest to smallest:
-        if (sort):
-            return sorted(output, key = len, reverse = True)
-        else:
-            return output
+        return output
 
     def getNumAdjacents(self, x: int, y: int) -> int:
         """
@@ -272,6 +267,9 @@ class CustomGrid(Grid):
                 self.grid[i][j].letter = grid[i][j]
 
 def main() -> Grid:
+    """
+    Planned to be used to the "About Us!" page.
+    """
     cells = [
         ["*", "*", "*", "*", "*"],
         ["A", "B", "O", "U", "T"],

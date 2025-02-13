@@ -1,16 +1,24 @@
 # Created: 9-21-2024
-# Last updated: 10-19-2024
+# Last updated: 2-12-2025
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # External imports:
 import tkinter as tk
 
-# Method used to close the main window
-def closeWindow(event):
+def closeWindow(event) -> None:
+    """
+    Credit: Oliver Strauss
+    Closes the currently displayed window.
+    """
     event.widget.quit()
 
-# Creates the main window
-def displayGrid(g):
+def displayGrid(g) -> None:
+    """
+    Credit: Oliver Strauss
+    Displays the main window.
+    @param g: the Grid to display
+    """
+
     window = tk.Tk()
 
     # Binds left click to closeWindow method
@@ -33,11 +41,3 @@ def displayGrid(g):
             label.grid(row=i, column=j)
 
     window.mainloop()
-
-    index = {
-        "x" : 0,
-        "y" : 1,
-        "dir" : True,
-        "word" : "ASS",
-        "hint" : "Rear end"
-    }

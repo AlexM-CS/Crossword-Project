@@ -1,5 +1,5 @@
 # Created: 9-29-2024
-# Last Updated: 1-27-2025
+# Last Updated: 2-12-2025
 # Alexander Myska, Oliver Strauss, and Brandon Knautz
 
 # This file contains the Cell classes that will be used as the
@@ -10,6 +10,7 @@ import random
 
 class Cell:
     """
+    Credit: Alexander Myska, Oliver Strauss, and Brandon Knautz
     A Parent Cell class to be used as a base for the other Cell Types.
 
     Fields:
@@ -41,10 +42,12 @@ class Cell:
 
 class BlockedCell(Cell):
     """
+    Credit: Alexander Myska, Oliver Strauss, and Brandon Knautz
     A Cell that cannot contain letters, displayed as black or "*".
 
     Fields:
-    str name - "B" for Blocked Cells
+    str name - "B" for BlockedCells
+    str letter - "*" for BlockedCells
     """
     name = "B"
     letter = "*"
@@ -58,6 +61,7 @@ class BlockedCell(Cell):
 
 class LetterCell(Cell):
     """
+    Credit: Alexander Myska, Oliver Strauss, and Brandon Knautz
     A LetterCell contains a letter and is part of a word.
 
     Fields:
@@ -94,6 +98,7 @@ class LetterCell(Cell):
 
 class IndexCell(LetterCell):
     """
+    Credit: Alexander Myska, Oliver Strauss, and Brandon Knautz
     A Cell that contains a letter and is the beginning of a word.
 
     Fields:
@@ -119,6 +124,7 @@ class IndexCell(LetterCell):
 
     def setWord(self, word: str) -> None:
         """
+        Credit: Alexander Myska, Oliver Strauss, and Brandon Knautz
         Sets the letters in this IndexCell's body.
         @param word: the word stored by this IndexCell
         """
@@ -129,6 +135,7 @@ class IndexCell(LetterCell):
 
     def setBody(self, body: list, word: str) -> None:
         """
+        Credit: Alexander Myska, Oliver Strauss, and Brandon Knautz
         Sets the body of this IndexCell to be a list of LetterCells
         @param body: the body of this IndexCell
         @param word: the word stored by this IndexCell
@@ -139,6 +146,7 @@ class IndexCell(LetterCell):
 
     def getDirection(self) -> bool:
         """
+        Credit: Alexander Myska
         Gets the direction of this IndexCell's body. True means across, False means down.
         @return: the direction of this IndexCell's body.
         """
@@ -157,6 +165,7 @@ class IndexCell(LetterCell):
 
 class HybridCell(IndexCell):
     """
+    Credit: Alexander Myska, Oliver Strauss, and Brandon Knautz
     HybridCells are Cells where two different words start,
     one across and one down.
 
@@ -170,6 +179,10 @@ class HybridCell(IndexCell):
     down = None
 
     def __init__(self, x: int, y: int, letter : str = "") -> None:
+        """
+        Credit: Alexander Myska, Oliver Strauss, and Brandon Knautz
+        Initializes a HybridCell.
+        """
         self.x = x
         self.y = y
         self.letter = ""
